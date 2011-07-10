@@ -1,7 +1,6 @@
 package eu.amaxilatis.java.traceparser;
 
-import eu.amaxilatis.java.traceparser.parsers.AbstractParser;
-import eu.amaxilatis.java.traceparser.parsers.SendParser;
+import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -9,7 +8,6 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Observable;
 
 /**
@@ -19,24 +17,21 @@ import java.util.Observable;
  * Time: 2:06 PM
  * To change this template use File | Settings | File Templates.
  */
-public class TraceReader extends Observable implements Runnable   {
+public class TraceReader extends Observable implements Runnable {
 
 
+    private TraceFile file;
 
-      static String urnText = "Source [";
+    static String urnText = "Source [";
     static String textText = "Text [";
     static String dateText = "Time [";
     static String levelText = "Level [";
     static String endText = "]";
-    static logger log;
+    private Logger log;
 
-    static String filename="";
-
-
-       public TraceReader(logger logy,String file) {
-           log=logy;
-        filename =file;
-
+    public TraceReader(TraceFile file_) {
+        log = TraceParserApp.log;
+        file = file_;
     }
 
 
@@ -44,7 +39,7 @@ public class TraceReader extends Observable implements Runnable   {
         try {
             // Open the file that is the first
             // command line parameter
-            FileInputStream fstream = new FileInputStream(filename);
+            FileInputStream fstream = new FileInputStream(file.filename());
             // Get the object of DataInputStream
             DataInputStream in = new DataInputStream(fstream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -52,11 +47,13 @@ public class TraceReader extends Observable implements Runnable   {
             //Read File Line By Line
             while ((strLine = br.readLine()) != null) {
                 // Print the content on the console
-                log.debug(strLine,logger.EXTRA);
-                log.debug(extractNodeUrn(strLine) + "@" + extractDate(strLine) + ":" + extractText(strLine), logger.EXTRA);
-                notifyObservers(strLine);
+                //log.debug(strLine);
+                //log.debug(extractNodeUrn(strLine) + "@" + extractDate(strLine) + ":" + extractText(strLine));
+                notifyObservers(new TraceMessage(strLine));
+                notifyObservers();
+                this.setChanged();
 
-                Thread.sleep(100);
+                //Thread.sleep(100);
             }
             //Close the input stream
             in.close();
@@ -65,27 +62,27 @@ public class TraceReader extends Observable implements Runnable   {
         }
     }
 
-     String extractNodeUrn(String line) {
-        final int nodeurn_start  = line.indexOf(urnText) + urnText.length();
-        final int nodeurn_stop  = line.indexOf(endText,nodeurn_start) ;
-        return line.substring(nodeurn_start,nodeurn_stop);
+    String extractNodeUrn(String line) {
+        final int nodeurn_start = line.indexOf(urnText) + urnText.length();
+        final int nodeurn_stop = line.indexOf(endText, nodeurn_start);
+        return line.substring(nodeurn_start, nodeurn_stop);
     }
 
     String extractText(String line) {
-        final int text_start  = line.indexOf(textText) + textText.length();
-        final int text_stop  = line.indexOf(endText,text_start) ;
-        return line.substring(text_start,text_stop);
+        final int text_start = line.indexOf(textText) + textText.length();
+        final int text_stop = line.indexOf(endText, text_start);
+        return line.substring(text_start, text_stop);
     }
 
     long extractDate(String line) {
-        final int date_start  = line.indexOf(dateText) + dateText.length();
-        final int date_stop  = line.indexOf("+02:00"+endText,date_start) ;
-        final String date = line.substring(date_start,date_stop);
+        final int date_start = line.indexOf(dateText) + dateText.length();
+        final int date_stop = line.indexOf("+02:00" + endText, date_start);
+        final String date = line.substring(date_start, date_stop);
         final SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.'S");
         try {
             final Date d = f.parse(date);
             return d.getTime();
-        }catch(Exception e ){
+        } catch (Exception e) {
         }
         return -1;
     }

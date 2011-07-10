@@ -11,31 +11,61 @@
 
 package eu.amaxilatis.java.traceparser;
 
-import eu.amaxilatis.java.traceparser.parsers.AbstractParser;
-import eu.amaxilatis.java.traceparser.parsers.EventParser;
-import eu.amaxilatis.java.traceparser.parsers.SendParser;
+import eu.amaxilatis.java.traceparser.parsers.*;
+import org.apache.log4j.Logger;
+import org.jfree.chart.ChartPanel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-              import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
+import java.util.List;
+
 /**
  * @author amaxilatis
  */
 public class TraceParserFrame extends javax.swing.JFrame implements ActionListener {
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+
+    private Logger log;
+
+    private javax.swing.JButton generatePlotButton;
+    private javax.swing.JButton generateFileButton;
+    private JButton openFileChooserButton;
+
+    private javax.swing.JPanel fileOptionsPanel;
+    private javax.swing.JPanel plotterOptionsPanel;
+    private javax.swing.JPanel parserOptionsPanel;
+
+    private javax.swing.JLabel[] parserOptionsLabel = new javax.swing.JLabel[3];
+    private javax.swing.JTextField[] parserOptionsText = new javax.swing.JTextField[3];
+    private javax.swing.JLabel selectedFileText;
+    private javax.swing.JLabel durationFileLabel;
+    private javax.swing.JLabel durationFileText;
+    private javax.swing.JLabel nodesFileLabel;
+    private javax.swing.JLabel nodesFileText;
+    private javax.swing.JTabbedPane jTabbedPane1;
+
+
+    public TraceFile mytracefile;
+
+    public SendParser sendparser;
+    public EventParser eventparser;
 
 
     /**
      * Creates new form TraceParserFrame
      */
     public TraceParserFrame() {
-        log = new logger();
-        log.setLevel(logger.EXTRA);
+        log = TraceParserApp.log;
+        //log = new logger();
+        //log.setLevel(logger.EXTRA);
         initComponents();
         this.show();
     }
+
 
     /**
      * This method is called from within the constructor to
@@ -55,7 +85,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        fileOptionsPanel.setLayout(new java.awt.GridLayout(1, 2, 10, 10));
+        fileOptionsPanel.setLayout(new java.awt.GridLayout(3, 2, 10, 10));
         parserOptionsPanel.setLayout(new java.awt.GridLayout(3, 2, 10, 10));
         plotterOptionsPanel.setLayout(new java.awt.GridLayout(3, 2, 10, 10));
 
@@ -72,11 +102,19 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         openFileChooserButton = new JButton("Open File...");
         openFileChooserButton.addActionListener(this);
         setSize(openFileChooserButton, 150, 40);
-
         fileOptionsPanel.add(openFileChooserButton);
 
+        durationFileLabel = new JLabel("Trace Duration");
+        durationFileText = new JLabel("0");
+        fileOptionsPanel.add(durationFileLabel);
+        fileOptionsPanel.add(durationFileText);
+        nodesFileLabel = new JLabel("Total Nodes in Trace");
+        nodesFileText = new JLabel("0");
+        fileOptionsPanel.add(nodesFileLabel);
+        fileOptionsPanel.add(nodesFileText);
 
-        final String[] parserOptionsTexts = {"Send;%s;%t;%d;", "Send;%s;%t;%d;", "Send;%s;%t;%d;"};
+
+        final String[] parserOptionsTexts = {"CLS;%s;%t;%d", "CLP;%s;%t;%d", "Event;blah"};
         final String[] parserOptionsLabels = {"Send Text", "Cluster Text", "Event Text"};
         for (int i = 0; i < 3; i++) {
             parserOptionsLabel[i] = new javax.swing.JLabel(parserOptionsLabels[i]);
@@ -108,7 +146,10 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
     /**
      * @param args the command line arguments
      */
+
     public static void main(String args[]) {
+
+
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new TraceParserFrame().setVisible(true);
@@ -124,30 +165,6 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
     }
 
-    private void pressedGeneratePlot() {
-
-    }
-
-    private void pressedGenerateFile() {
-
-    }
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-
-    private logger log;
-
-    private javax.swing.JButton generatePlotButton;
-    private javax.swing.JButton generateFileButton;
-    private JButton openFileChooserButton;
-
-    private javax.swing.JPanel fileOptionsPanel;
-    private javax.swing.JPanel plotterOptionsPanel;
-    private javax.swing.JPanel parserOptionsPanel;
-
-    private javax.swing.JLabel[] parserOptionsLabel = new javax.swing.JLabel[3];
-    private javax.swing.JTextField[] parserOptionsText = new javax.swing.JTextField[3];
-    private javax.swing.JLabel selectedFileText;
-    private javax.swing.JTabbedPane jTabbedPane1;
 
     // End of variables declaration//GEN-END:variables
 
@@ -155,13 +172,33 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         //To change body of implemented methods use File | Settings | File Templates.
         final Object e = actionEvent.getSource();
         if (e.equals(generatePlotButton)) {
-            JFrame jf = new JFrame("Plot");
-            jf.setVisible(true);
+
+
+            TraceReader tracereader = new TraceReader(mytracefile);
+            sendparser = new SendParser(mytracefile, parserOptionsText[0].getText());
+            eventparser = new EventParser(mytracefile, parserOptionsText[2].getText());
+            tracereader.addObserver(sendparser);
+            tracereader.addObserver(eventparser);
+            tracereader.run();
+
+
+            presentPlot(sendparser.getPlot(false));
+            presentPlot(eventparser.getPlot(false));
+
+
             log.debug("not implemented yet!" + ((javax.swing.JButton) e).getText());
         } else if (e.equals(generateFileButton)) {
-            TraceReader tracereader = new TraceReader(log,selectedFileText.getText());
-            tracereader.addObserver(new SendParser());
-            tracereader.addObserver(new EventParser());
+
+            TraceReader tracereader = new TraceReader(mytracefile);
+
+            sendparser = new SendParser(mytracefile, parserOptionsText[0].getText());
+            eventparser = new EventParser(mytracefile, parserOptionsText[2].getText());
+
+
+            tracereader.addObserver(sendparser);
+            tracereader.addObserver(eventparser);
+
+
             tracereader.run();
 
             //final Thread thr = new Thread(tracereader);
@@ -171,17 +208,29 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
         } else if ((e.equals(openFileChooserButton)) || ((e.equals(selectedFileText)))) {
             JFileChooser chooser = new JFileChooser("~/");
-            chooser.setDialogTitle("Select File name to Save the plot");
+            chooser.setDialogTitle("Select trace file to load");
             int returnVal = chooser.showOpenDialog(chooser);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 if (chooser.getSelectedFile().canRead()) {
                     final String filename2open = chooser.getSelectedFile().getAbsolutePath();
                     log.debug("opening " + filename2open);
+                    durationFileText.setText("calculating");
                     selectedFileText.setText(filename2open);
+                    mytracefile = new TraceFile(filename2open);
+                    durationFileText.setText(mytracefile.duration() / 60000 + " min");
+                    nodesFileText.setText(mytracefile.nodesize() + " nodes");
                 }
             }
 
         }
+    }
+
+    private void presentPlot(ChartPanel plot) {
+        JFrame jf = new JFrame("Plot");
+        jf.setVisible(true);
+        jf.add(plot);
+        jf.pack();
+
     }
 
 }
