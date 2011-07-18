@@ -38,6 +38,7 @@ public class EventParser implements Observer, AbstractParser {
 
     }
 
+    //TODO: add multiple Events
     public EventParser(TraceFile f, String template) {
 
         log = TraceParserApp.log;
@@ -52,7 +53,7 @@ public class EventParser implements Observer, AbstractParser {
             events[j] = 0;
         }
 
-        prefix = template.substring(0,template.indexOf(delimiter));
+        prefix = template.substring(0, template.indexOf(delimiter));
 
         log.info("EventParser initialized");
     }
@@ -69,7 +70,7 @@ public class EventParser implements Observer, AbstractParser {
         }
     }
 
-    public ChartPanel getPlot(boolean has_title) {
+    public ChartPanel getPlot(boolean has_title, boolean aggregate) {
         String title = "";
         if (has_title) {
             title = "Messages over time";
@@ -98,5 +99,16 @@ public class EventParser implements Observer, AbstractParser {
             series[0].add(i, events[i]);
         }
         return series;
+    }
+
+    //TODO: add aggregate plots
+    public XYSeries[] getSeries_aggregate() {
+        XYSeries[] series = new XYSeries[1];
+        series[0] = new XYSeries("Events " + prefix);
+        for (int i = 0; i < duration; i++) {
+            series[0].add(i, events[i]);
+        }
+        return series;
+
     }
 }

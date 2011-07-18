@@ -48,6 +48,8 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
     private javax.swing.JLabel nodesFileText;
     private javax.swing.JTabbedPane jTabbedPane1;
 
+    private JRadioButton aggregatePlots;
+
 
     public TraceFile mytracefile;
 
@@ -76,6 +78,8 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+
+        //TODO: add ploter options - titles , etc-
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
 
@@ -122,6 +126,10 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
             parserOptionsPanel.add(parserOptionsLabel[i]);
             parserOptionsPanel.add(parserOptionsText[i]);
         }
+
+
+        aggregatePlots = new JRadioButton("Aggregate");
+        plotterOptionsPanel.add(aggregatePlots);
 
 
         jTabbedPane1.addTab("file Options", fileOptionsPanel);
@@ -181,9 +189,13 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
             tracereader.addObserver(eventparser);
             tracereader.run();
 
-
-            presentPlot(sendparser.getPlot(false));
-            presentPlot(eventparser.getPlot(false));
+            if (aggregatePlots.isSelected()) {
+                presentPlot(sendparser.getPlot(false, true));
+                presentPlot(eventparser.getPlot(false, true));
+            } else {
+                presentPlot(sendparser.getPlot(false, false));
+                presentPlot(eventparser.getPlot(false, false));
+            }
 
 
             log.debug("not implemented yet!" + ((javax.swing.JButton) e).getText());

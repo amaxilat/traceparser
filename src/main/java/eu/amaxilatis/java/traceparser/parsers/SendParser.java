@@ -96,13 +96,19 @@ public class SendParser implements Observer, AbstractParser {
     }
 
 
-    public ChartPanel getPlot(boolean has_title) {
+    public ChartPanel getPlot(boolean has_title, boolean aggregate) {
         String title = "";
         if (has_title) {
             title = "Messages over time";
         }
         XYSeriesCollection dataset = new XYSeriesCollection();
-        XYSeries[] messageTypes = getSeries();
+        XYSeries[] messageTypes = null;
+        if (aggregate) {
+            messageTypes = getSeries_aggregate();
+        } else {
+            messageTypes = getSeries();
+        }
+
         for (int i = 0; i < messageTypes.length; i++) {
             dataset.addSeries(messageTypes[i]);
         }
@@ -149,5 +155,38 @@ public class SendParser implements Observer, AbstractParser {
             }
         }
         return series;
+    }
+
+
+    public XYSeries[] getSeries_aggregate() {
+
+        int total = 0;
+        for (int i = 0; i < 255; i++) {
+            if (exists(i)) {
+                total++;
+            }
+        }
+        //TODO: add aggregate plots
+        XYSeries[] series = new XYSeries[total];
+        int ctype = 0;
+        for (int types = 0; types < 255; types++) {
+            if (exists(types)) {
+                series[ctype] = new XYSeries("Mes. " + types);
+                for (int i = 0; i < duration; i++) {
+                    series[ctype].add(i, count_until(types, i));
+                }
+                ctype++;
+            }
+        }
+        return series;
+
+    }
+
+    private int count_until(int type, int time_until) {
+        int sum = 0;
+        for (int i = 0; i <= time_until; i++) {
+            sum += messages[type][i];
+        }
+        return sum;
     }
 }

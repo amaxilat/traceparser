@@ -62,7 +62,7 @@
       <file leaf-file-name="TraceParserFrame.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/TraceParserFrame.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="185" column="40" selection-start="6231" selection-end="6231" vertical-scroll-proportion="0.0">
+            <state line="193" column="59" selection-start="6507" selection-end="6507" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -74,9 +74,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/TraceReader.java">
           <provider selected="true" editor-type-id="text-editor">
             <state line="51" column="27" selection-start="1606" selection-end="1606" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -84,10 +82,8 @@
       <file leaf-file-name="TraceFile.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/TraceFile.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="97" column="23" selection-start="2485" selection-end="2485" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state line="91" column="62" selection-start="2422" selection-end="2422" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -95,30 +91,26 @@
       <file leaf-file-name="AbstractParser.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/parsers/AbstractParser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="104" selection-start="47" selection-end="47" vertical-scroll-proportion="0.0">
+            <state line="29" column="34" selection-start="644" selection-end="663" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SendParser.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="SendParser.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/parsers/SendParser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="151" column="44" selection-start="3465" selection-end="4071" vertical-scroll-proportion="-28.48">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state line="108" column="27" selection-start="3024" selection-end="3024" vertical-scroll-proportion="-0.57526255">
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="EventParser.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="EventParser.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/parsers/EventParser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="54" column="67" selection-start="1480" selection-end="1480" vertical-scroll-proportion="0.57759625">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state line="104" column="22" selection-start="2865" selection-end="2865" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -129,6 +121,10 @@
     <FindUsagesManager>
       <setting name="OPEN_NEW_TAB" value="false" />
     </FindUsagesManager>
+  </component>
+  <component name="Git.Settings">
+    <option name="CHECKOUT_INCLUDE_TAGS" value="false" />
+    <option name="UPDATE_CHANGES_POLICY" value="STASH" />
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/parsers/SendParser.java" root0="FORCE_HIGHLIGHTING" />
@@ -144,12 +140,12 @@
         <option value="$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/AbstractParser.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/SendParser.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/parsers/TraceMessage.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/parsers/AbstractParser.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/TraceFile.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/TraceReader.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/parsers/SendParser.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/TraceParserFrame.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/parsers/AbstractParser.java" />
         <option value="$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/parsers/EventParser.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/TraceParserFrame.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/parsers/SendParser.java" />
       </list>
     </option>
   </component>
@@ -236,6 +232,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Favorites" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -258,111 +255,26 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="parseorplot" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="traceparser" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="parseorplot" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="traceparser" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="parseorplot" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="traceparser" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="traceparser" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="parseorplot" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="traceparser" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="traceparser" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="parsers" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
       <pane id="Scope" />
       <pane id="PackagesPane" />
-      <pane id="Favorites" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="GoToFile.includeJavaFiles" value="false" />
     <property name="OverrideImplement.combined" value="true" />
-    <property name="GoToClass.toSaveIncludeLibraries" value="false" />
-    <property name="recentsLimit" value="5" />
+    <property name="options.splitter.main.proportions" value="0.3" />
     <property name="MemberChooser.sorted" value="false" />
+    <property name="recentsLimit" value="5" />
+    <property name="options.lastSelected" value="preferences.keymap" />
+    <property name="MemberChooser.copyJavadoc" value="false" />
+    <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="dynamic.classpath" value="false" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="RunManager">
     <configuration default="true" type="MavenRunConfiguration" factoryName="Maven">
@@ -611,30 +523,41 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/TraceParserApp.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="24" selection-start="243" selection-end="249" vertical-scroll-proportion="0.25240386">
-          <folding />
-        </state>
+        <state line="15" column="24" selection-start="243" selection-end="249" vertical-scroll-proportion="0.25240386" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/TraceMessage.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="11" selection-start="910" selection-end="910" vertical-scroll-proportion="-9.28">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/parsers/AbstractParser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="104" selection-start="47" selection-end="47" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="36" column="11" selection-start="910" selection-end="910" vertical-scroll-proportion="-9.28" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/TraceFile.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="97" column="23" selection-start="2485" selection-end="2485" vertical-scroll-proportion="0.0">
+        <state line="91" column="62" selection-start="2422" selection-end="2422" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/TraceReader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="51" column="27" selection-start="1606" selection-end="1606" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/parsers/EventParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="104" column="22" selection-start="2865" selection-end="2865" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/parsers/AbstractParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="29" column="34" selection-start="644" selection-end="663" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/TraceParserFrame.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="193" column="59" selection-start="6507" selection-end="6507" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -643,77 +566,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/parsers/SendParser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="151" column="44" selection-start="3465" selection-end="4071" vertical-scroll-proportion="-28.48">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/TraceParserFrame.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="185" column="40" selection-start="6231" selection-end="6231" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/TraceReader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="51" column="27" selection-start="1606" selection-end="1606" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/parsers/EventParser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="54" column="67" selection-start="1480" selection-end="1480" vertical-scroll-proportion="0.57759625">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state line="108" column="27" selection-start="3024" selection-end="3024" vertical-scroll-proportion="-0.57526255">
+          <folding />
         </state>
       </provider>
     </entry>
   </component>
   <component name="masterDetails">
     <states>
-      <state key="ArtifactsStructureConfigurable.UI">
-        <settings>
-          <artifact-editor />
-          <splitter-proportions />
-        </settings>
-      </state>
-      <state key="FacetStructureConfigurable.UI">
+      <state key="Copyright.UI">
         <settings>
           <splitter-proportions />
         </settings>
       </state>
-      <state key="GlobalLibrariesConfigurable.UI">
-        <settings>
-          <splitter-proportions />
-        </settings>
-      </state>
-      <state key="ModuleStructureConfigurable.UI">
-        <settings>
-          <splitter-proportions />
-        </settings>
-      </state>
-      <state key="ProjectJDKs.UI">
-        <settings>
-          <last-edited>1.6</last-edited>
-          <splitter-proportions>
-            <option name="proportions">
-              <list>
-                <option value="0.2" />
-              </list>
-            </option>
-          </splitter-proportions>
-        </settings>
-      </state>
-      <state key="ProjectLibrariesConfigurable.UI">
+      <state key="ScopeChooserConfigurable.UI">
         <settings>
           <splitter-proportions />
         </settings>
