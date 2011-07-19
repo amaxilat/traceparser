@@ -24,6 +24,7 @@ public class TraceFile {
     private long end_time;
     private ArrayList<String> node_names = new ArrayList();
     private Logger log;
+    private long lines;
 
 
     public TraceFile(String file) {
@@ -33,6 +34,7 @@ public class TraceFile {
         duration = 0;
         start_time = (new Date()).getTime();
         end_time = 0;
+        lines=0;
         node_names.clear();
 
         filename = file;
@@ -47,6 +49,7 @@ public class TraceFile {
             String strLine;
             //Read File Line By Line
             while ((strLine = br.readLine()) != null) {
+                lines++;
                 // Print the content on the console
                 final TraceMessage m = new TraceMessage(strLine);
                 final long date = m.time();
@@ -68,6 +71,7 @@ public class TraceFile {
             in.close();
         } catch (Exception e) {//Catch exception if any
             log.error("Error: reading the file : " + filename);
+            e.printStackTrace();
             log.error(e.toString());
         }
 
@@ -87,19 +91,16 @@ public class TraceFile {
         return start_time;
     }
 
-    ;
-
     public long endtime() {
         return end_time;
     }
-
-    ;
 
     public int nodesize() {
         return node_names.size();
     }
 
-    ;
-
+    public long lines(){
+        return lines;
+    }
 
 }

@@ -62,7 +62,7 @@ public class TraceMessage {
 
     long extractDate(String line) {
         final int date_start = line.indexOf(dateText) + dateText.length();
-        final int date_stop = line.indexOf("+02:00" + endText, date_start);
+        final int date_stop = line.indexOf("+", date_start);
         final String date = line.substring(date_start, date_stop);
         final SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.'S");
         try {

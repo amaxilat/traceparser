@@ -26,11 +26,13 @@ public class EventParser implements Observer, AbstractParser {
     TraceFile file;
     private Logger log;
     private long duration;
-    private int events[];
+    private int events[][];
+    private int eventTypes;
     private XYSeries[] series;
 
-    private String prefix;
+    private String[] prefixes;
     private String delimiter = ";";
+    private String partitioner = "-";
 
     public EventParser() {
         log = TraceParserApp.log;
@@ -45,15 +47,28 @@ public class EventParser implements Observer, AbstractParser {
         //log.info("EventParser initialized");
         duration = f.duration();
 
+
+        eventTypes = template.split(partitioner).length;
+
         file = f;
         duration = f.duration() / 1000;
-        events = new int[(int) duration];
+        events = new int[eventTypes][(int) duration];
 
-        for (int j = 0; j < (int) duration; j++) {
-            events[j] = 0;
+        for (int type = 0; type < eventTypes; type++) {
+            for (int j = 0; j < (int) duration; j++) {
+                events[type][j] = 0;
+            }
         }
 
-        prefix = template.substring(0, template.indexOf(delimiter));
+        prefixes = new String[eventTypes];
+        final String[] templates = template.split(partitioner);
+
+
+        for (int type = 0; type < eventTypes; type++) {
+            log.info(templates[type]);
+            prefixes[type] = templates[type].substring(0, templates[type].indexOf(delimiter));
+            log.info(prefixes[type]);
+        }
 
         log.info("EventParser initialized");
     }
@@ -64,27 +79,31 @@ public class EventParser implements Observer, AbstractParser {
 
     public void update(Observable observable, Object o) {
         final TraceMessage m = (TraceMessage) o;
-        if (m.text().startsWith(prefix)) {
-            log.info("Event@" + m.time() + ":" + m.urn());
-            events[((int) ((m.time() - file.starttime()) / 1000))]++;
+        for (int type = 0; type < eventTypes; type++) {
+            if (m.text().startsWith(prefixes[type])) {
+                //log.info("Event@" + m.time() + ":" + m.urn());
+                events[type][((int) ((m.time() - file.starttime()) / 1000))]++;
+            }
         }
     }
 
-    public ChartPanel getPlot(boolean has_title, boolean aggregate) {
-        String title = "";
-        if (has_title) {
-            title = "Messages over time";
-        }
+    public ChartPanel getPlot(boolean has_title, boolean aggregate, String title, String xlabel, String ylabel) {
+
         XYSeriesCollection dataset = new XYSeriesCollection();
-        XYSeries[] messageTypes = getSeries();
+        XYSeries[] messageTypes = null;
+        if (aggregate) {
+            messageTypes = getSeries_aggregate();
+        } else {
+            messageTypes = getSeries();
+        }
         for (int i = 0; i < messageTypes.length; i++) {
             dataset.addSeries(messageTypes[i]);
         }
 
         JFreeChart chart = ChartFactory.createXYLineChart(
                 title,
-                "xlabel",
-                "ylabel",
+                xlabel,
+                ylabel,
                 dataset, PlotOrientation.VERTICAL, true, true, false);
 
 
@@ -93,22 +112,33 @@ public class EventParser implements Observer, AbstractParser {
 
 
     public XYSeries[] getSeries() {
-        XYSeries[] series = new XYSeries[1];
-        series[0] = new XYSeries("Events " + prefix);
-        for (int i = 0; i < duration; i++) {
-            series[0].add(i, events[i]);
+        XYSeries[] series = new XYSeries[eventTypes];
+        for (int type = 0; type < eventTypes; type++) {
+            series[type] = new XYSeries("Events " + prefixes[type]);
+            for (int i = 0; i < duration; i++) {
+                series[type].add(i, events[type][i]);
+            }
         }
         return series;
     }
 
     //TODO: add aggregate plots
     public XYSeries[] getSeries_aggregate() {
-        XYSeries[] series = new XYSeries[1];
-        series[0] = new XYSeries("Events " + prefix);
-        for (int i = 0; i < duration; i++) {
-            series[0].add(i, events[i]);
+        XYSeries[] series = new XYSeries[eventTypes];
+        for (int type = 0; type < eventTypes; type++) {
+            series[type] = new XYSeries("Events " + prefixes[type]);
+            for (int i = 0; i < duration; i++) {
+                series[type].add(i, count_until(type, i));
+            }
         }
         return series;
+    }
 
+    private int count_until(int type, int time_until) {
+        int sum = 0;
+        for (int i = 0; i <= time_until; i++) {
+            sum += events[type][i];
+        }
+        return sum;
     }
 }

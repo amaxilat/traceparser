@@ -23,7 +23,7 @@ public interface AbstractParser {
     Logger log = null;
     long duration = 0;
 
-    public ChartPanel getPlot(boolean has_title, boolean aggregate);
+    public ChartPanel getPlot(boolean has_title, boolean aggregate, String title, String xlabel, String ylabel);
 
     XYSeries[] getSeries();
 

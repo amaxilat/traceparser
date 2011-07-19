@@ -89,18 +89,14 @@ public class SendParser implements Observer, AbstractParser {
     public void update(Observable observable, Object o) {
         final TraceMessage m = (TraceMessage) o;
         if (m.text().startsWith(prefix)) {
-            log.info("Send@" + m.time() + ":" + m.urn());
+            //log.info("Send@" + m.time() + ":" + m.urn());
             final String[] mess = m.text().split(delimiter);
             messages[Integer.parseInt(mess[type])][((int) ((m.time() - file.starttime()) / 1000))]++;
         }
     }
 
 
-    public ChartPanel getPlot(boolean has_title, boolean aggregate) {
-        String title = "";
-        if (has_title) {
-            title = "Messages over time";
-        }
+    public ChartPanel getPlot(boolean has_title, boolean aggregate, String title, String xlabel, String ylabel) {
         XYSeriesCollection dataset = new XYSeriesCollection();
         XYSeries[] messageTypes = null;
         if (aggregate) {
@@ -115,8 +111,8 @@ public class SendParser implements Observer, AbstractParser {
 
         JFreeChart chart = ChartFactory.createXYLineChart(
                 title,
-                "xlabel",
-                "ylabel",
+                xlabel,
+                ylabel,
                 dataset, PlotOrientation.VERTICAL, true, true, false);
 
 
