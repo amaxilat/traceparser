@@ -215,6 +215,8 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         jTabbedPane1.setPreferredSize(new Dimension(1000, 500));
         getContentPane().add(jTabbedPane1, BorderLayout.CENTER);
 
+
+        open_trace(properties.getProperty("parser.filename"));
         pack();
 
     }// </editor-fold>//GEN-END:initComponents
@@ -289,13 +291,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 if (chooser.getSelectedFile().canRead()) {
                     final String filename2open = chooser.getSelectedFile().getAbsolutePath();
-                    log.debug("opening " + filename2open);
-                    durationFileText.setText("calculating");
-                    selectedFileText.setText(filename2open);
-                    mytracefile = new TraceFile(filename2open);
-                    durationFileText.setText(mytracefile.duration() / 60000 + " min");
-                    nodesFileText.setText(mytracefile.nodesize() + " nodes");
-                    linesFileText.setText(mytracefile.lines() + " lines");
+                    open_trace(filename2open);
                 }
             }
 
@@ -332,6 +328,17 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         }
 
     }
+
+    private void open_trace(String filename) {
+        log.debug("opening " + filename);
+        durationFileText.setText("calculating");
+        selectedFileText.setText(filename);
+        mytracefile = new TraceFile(filename);
+        durationFileText.setText(mytracefile.duration() / 60000 + " min");
+        nodesFileText.setText(mytracefile.nodesize() + " nodes");
+        linesFileText.setText(mytracefile.lines() + " lines");
+    }
+
 
     private void presentPlot(ChartPanel plot) {
         JFrame jf = new JFrame("Plot");
