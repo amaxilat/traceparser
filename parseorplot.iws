@@ -62,7 +62,7 @@
       <file leaf-file-name="TraceParserFrame.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/TraceParserFrame.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="124" column="40" selection-start="3945" selection-end="3945" vertical-scroll-proportion="0.50236964">
+            <state line="220" column="30" selection-start="8563" selection-end="8563" vertical-scroll-proportion="0.3957346">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -502,7 +502,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-2" y="-3" width="1684" height="1030" extended-state="7" />
+    <frame x="-2" y="-3" width="1684" height="1030" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -640,7 +640,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eu/amaxilatis/java/traceparser/TraceParserFrame.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="124" column="40" selection-start="3945" selection-end="3945" vertical-scroll-proportion="0.50236964">
+        <state line="220" column="30" selection-start="8563" selection-end="8563" vertical-scroll-proportion="0.3957346">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

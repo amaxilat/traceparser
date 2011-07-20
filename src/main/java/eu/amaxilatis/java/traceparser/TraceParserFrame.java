@@ -218,7 +218,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         plotterOptionsPanel.add(aggregatePlots);
 
 
-        jTabbedPane1.addTab("file Options", fileOptionsPanel);
+        jTabbedPane1.addTab("File Options", fileOptionsPanel);
         jTabbedPane1.addTab("Parser Options", parserOptionsPanel);
         jTabbedPane1.addTab("Plotter Options", plotterOptionsPanel);
 
