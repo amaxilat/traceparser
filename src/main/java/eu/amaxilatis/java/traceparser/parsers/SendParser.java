@@ -47,7 +47,7 @@ public class SendParser implements Observer, AbstractParser {
         log = TraceParserApp.log;
 
         file = f;
-        duration = f.duration() / 1000;
+        duration = f.duration() / 1000+1;
         messages = new int[255][(int) duration];
         for (int i = 0; i < 255; i++) {
             for (int j = 0; j < (int) duration; j++) {
@@ -91,6 +91,7 @@ public class SendParser implements Observer, AbstractParser {
         if (m.text().startsWith(prefix)) {
             //log.info("Send@" + m.time() + ":" + m.urn());
             final String[] mess = m.text().split(delimiter);
+            //log.info(((int) ((m.time() - file.starttime()) / 1000)));
             messages[Integer.parseInt(mess[type])][((int) ((m.time() - file.starttime()) / 1000))]++;
         }
     }

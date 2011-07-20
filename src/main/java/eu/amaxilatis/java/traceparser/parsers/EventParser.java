@@ -51,7 +51,7 @@ public class EventParser implements Observer, AbstractParser {
         eventTypes = template.split(partitioner).length;
 
         file = f;
-        duration = f.duration() / 1000;
+        duration = f.duration() / 1000+1;
         events = new int[eventTypes][(int) duration];
 
         for (int type = 0; type < eventTypes; type++) {

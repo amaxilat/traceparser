@@ -33,6 +33,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
     // Variables declaration - do not modify//GEN-BEGIN:variables
 
     private Logger log;
+    private static String propfilename = "classes/traceparser.properties";
 
 
     private javax.swing.JButton generatePlotButton;
@@ -56,11 +57,13 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
     private JRadioButton messagesPlots;
     private JRadioButton clustersPlots;
     private JRadioButton eventsPlots;
+    private JRadioButton neighborhoodPlots;
 
     private JRadioButton plotToFilePlots;
     private JTextField[] labelsMessages = new JTextField[3];
     private JTextField[] labelsClusters = new JTextField[3];
     private JTextField[] labelsEvents = new JTextField[3];
+    private JTextField[] labelsNeighborhood = new JTextField[3];
 
 
     public TraceFile mytracefile;
@@ -68,6 +71,8 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
     public SendParser sendparser;
     public ClustersParser clustersparser;
     public EventParser eventparser;
+    public NeighborhoodParser neighborhoodparser;
+
 
     private Properties properties;
 
@@ -96,7 +101,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
         properties = new Properties();
         try {
-            properties.load(new FileInputStream("traceparser.properties"));
+            properties.load(new FileInputStream(propfilename));
         } catch (IOException e) {
             log.error("could not load property file!");
         }
@@ -157,15 +162,18 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         messagesPlots = new JRadioButton("enable");
         clustersPlots = new JRadioButton("enable");
         eventsPlots = new JRadioButton("enable");
+        neighborhoodPlots = new JRadioButton("enable");
         messagesPlots.setSelected(properties.getProperty("plotter.messages").equals("true") ? true : false);
         clustersPlots.setSelected(properties.getProperty("plotter.clusters").equals("true") ? true : false);
         eventsPlots.setSelected(properties.getProperty("plotter.events").equals("true") ? true : false);
+        neighborhoodPlots.setSelected(properties.getProperty("plotter.neighborhood").equals("true") ? true : false);
 
         for (int i = 0; i < 3; i++) {
 
             labelsMessages[i] = new JTextField(properties.getProperty("plotter.labels.messages").split(",")[i]);
             labelsClusters[i] = new JTextField(properties.getProperty("plotter.labels.clusters").split(",")[i]);
             labelsEvents[i] = new JTextField(properties.getProperty("plotter.labels.events").split(",")[i]);
+            labelsNeighborhood[i] = new JTextField(properties.getProperty("plotter.labels.neighborhood").split(",")[i]);
         }
 
         plotterOptionsPanel.add(new JLabel("Plot Messages"));
@@ -194,6 +202,15 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         plotterOptionsPanel.add(labelsEvents[0]);
         plotterOptionsPanel.add(labelsEvents[1]);
         plotterOptionsPanel.add(labelsEvents[2]);
+
+        plotterOptionsPanel.add(new JLabel("Plot Neigborhood"));
+        plotterOptionsPanel.add(new JLabel("Title"));
+        plotterOptionsPanel.add(new JLabel("xLabel"));
+        plotterOptionsPanel.add(new JLabel("yLabel"));
+        plotterOptionsPanel.add(neighborhoodPlots);
+        plotterOptionsPanel.add(labelsNeighborhood[0]);
+        plotterOptionsPanel.add(labelsNeighborhood[1]);
+        plotterOptionsPanel.add(labelsNeighborhood[2]);
 
 
         aggregatePlots = new JRadioButton("Aggregate");
@@ -255,20 +272,26 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
             sendparser = new SendParser(mytracefile, parserOptionsText[0].getText());
             clustersparser = new ClustersParser(mytracefile, parserOptionsText[1].getText());
             eventparser = new EventParser(mytracefile, parserOptionsText[2].getText());
-            tracereader.addObserver(sendparser);
-            tracereader.addObserver(clustersparser);
-            tracereader.addObserver(eventparser);
+            neighborhoodparser = new NeighborhoodParser(mytracefile, "NB;");
+            if (messagesPlots.isSelected())
+                tracereader.addObserver(sendparser);
+            if (clustersPlots.isSelected())
+                tracereader.addObserver(clustersparser);
+            if (eventsPlots.isSelected())
+                tracereader.addObserver(eventparser);
+            tracereader.addObserver(neighborhoodparser);
             tracereader.run();
 
-            if (aggregatePlots.isSelected()) {
-                presentPlot(sendparser.getPlot(false, true, labelsMessages[0].getText(), labelsMessages[1].getText(), labelsMessages[2].getText()));
-                presentPlot(clustersparser.getPlot(false, true, labelsClusters[0].getText(), labelsClusters[1].getText(), labelsClusters[2].getText()));
-                presentPlot(eventparser.getPlot(false, true, labelsEvents[0].getText(), labelsEvents[1].getText(), labelsEvents[2].getText()));
-            } else {
-                presentPlot(sendparser.getPlot(false, false, labelsMessages[0].getText(), labelsMessages[1].getText(), labelsMessages[2].getText()));
-                presentPlot(clustersparser.getPlot(false, false, labelsClusters[0].getText(), labelsClusters[1].getText(), labelsClusters[2].getText()));
-                presentPlot(eventparser.getPlot(false, false, labelsEvents[0].getText(), labelsEvents[1].getText(), labelsEvents[2].getText()));
-            }
+            final boolean aggPlot = aggregatePlots.isSelected();
+            if (messagesPlots.isSelected())
+                presentPlot(sendparser.getPlot(false, aggPlot, labelsMessages[0].getText(), labelsMessages[1].getText(), labelsMessages[2].getText()));
+            if (clustersPlots.isSelected())
+                presentPlot(clustersparser.getPlot(false, aggPlot, labelsClusters[0].getText(), labelsClusters[1].getText(), labelsClusters[2].getText()));
+            if (eventsPlots.isSelected())
+                presentPlot(eventparser.getPlot(false, aggPlot, labelsEvents[0].getText(), labelsEvents[1].getText(), labelsEvents[2].getText()));
+            if (neighborhoodPlots.isSelected())
+                presentPlot(neighborhoodparser.getPlot(false, aggPlot, labelsNeighborhood[0].getText(), labelsNeighborhood[1].getText(), labelsNeighborhood[2].getText()));
+
 
         } else if (e.equals(generateFileButton)) {
 
@@ -312,15 +335,18 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
             properties.setProperty("plotter.clusters", clustersPlots.isSelected() ? "true" : "false");
             log.info("plotter.events=" + aggregatePlots.isSelected());
             properties.setProperty("plotter.events", eventsPlots.isSelected() ? "true" : "false");
+            log.info("plotter.neighborhood=" + neighborhoodPlots.isSelected());
+            properties.setProperty("plotter.neighborhood", neighborhoodPlots.isSelected() ? "true" : "false");
 
 
             properties.setProperty("plotter.labels.messages", labelsMessages[0].getText() + "," + labelsMessages[1].getText() + "," + labelsMessages[2].getText());
             properties.setProperty("plotter.labels.clusters", labelsClusters[0].getText() + "," + labelsClusters[1].getText() + "," + labelsClusters[2].getText());
             properties.setProperty("plotter.labels.events", labelsEvents[0].getText() + "," + labelsEvents[1].getText() + "," + labelsEvents[2].getText());
+            properties.setProperty("plotter.labels.neighborhood", labelsNeighborhood[0].getText() + "," + labelsNeighborhood[1].getText() + "," + labelsNeighborhood[2].getText());
 
             // Write properties file.
             try {
-                properties.store(new FileOutputStream("traceparser.properties"), null);
+                properties.store(new FileOutputStream(propfilename), null);
             } catch (IOException a) {
                 log.warn("Could not write properties file");
 

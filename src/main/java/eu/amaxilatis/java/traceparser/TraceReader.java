@@ -36,6 +36,8 @@ public class TraceReader extends Observable implements Runnable {
 
 
     public void run() {
+        int count = 0;
+
         try {
             // Open the file that is the first
             // command line parameter
@@ -53,12 +55,14 @@ public class TraceReader extends Observable implements Runnable {
                 notifyObservers();
                 this.setChanged();
 
+                count++;
                 //Thread.sleep(100);
             }
             //Close the input stream
             in.close();
         } catch (Exception e) {//Catch exception if any
-            System.err.println("Error: " + e.getMessage());
+            log.error("Error: " + e.toString() + " line: " + count);
+            e.printStackTrace();
         }
     }
 
