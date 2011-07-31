@@ -1,6 +1,9 @@
 package eu.amaxilatis.java.traceparser;
 
 import org.apache.log4j.Logger;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.needle.LongNeedle;
+import org.jfree.ui.IntegerDocument;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -27,6 +30,7 @@ public class TraceFile {
     private long lines;
 
 
+
     public TraceFile(String file) {
         log = TraceParserApp.log;
 
@@ -39,6 +43,7 @@ public class TraceFile {
 
         filename = file;
 
+         long max=0,min=0;
         try {
             // Open the file that is the first
             // command line parameter
@@ -54,9 +59,11 @@ public class TraceFile {
                 final TraceMessage m = new TraceMessage(strLine);
                 final long date = m.time();
                 if (date < start_time) {
+                    min=lines;
                     start_time = date;
                     duration = end_time - start_time;
                 } else if (date > end_time) {
+                    max=lines;
                     end_time = date;
                     duration = end_time - start_time;
                 }
@@ -67,10 +74,14 @@ public class TraceFile {
                 }
 
             }
+
+
+            log.info("Date Started("+min+") : "+new Date(starttime()).toString() );
+            log.info("Date Ended("+max+") : "+new Date(endtime()).toString() );
             //Close the input stream
             in.close();
         } catch (Exception e) {//Catch exception if any
-            log.error("Error: reading the file : " + filename);
+            log.error("Error: reading the file : " + filename + " line "+lines);
             e.printStackTrace();
             log.error(e.toString());
         }

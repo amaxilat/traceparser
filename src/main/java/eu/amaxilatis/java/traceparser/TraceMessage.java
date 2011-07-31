@@ -1,5 +1,9 @@
 package eu.amaxilatis.java.traceparser;
 
+import org.apache.log4j.Logger;
+import org.jfree.ui.IntegerDocument;
+import org.jfree.util.Log;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -62,14 +66,28 @@ public class TraceMessage {
 
     long extractDate(String line) {
         final int date_start = line.indexOf(dateText) + dateText.length();
-        final int date_stop = line.indexOf("+", date_start);
+
+        //final int date_stop = line.indexOf("+", date_start);
+        final int date_stop = date_start + 23;
         final String date = line.substring(date_start, date_stop);
         final SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.'S");
+        int time_offset = 0;
+        if (line.substring(date_stop).contains("+")) {
+            final int offset_start = line.indexOf("+",date_stop)  + 1;
+            time_offset = -1* Integer.parseInt(line.substring(offset_start, offset_start + 2));
+                 //TraceParserApp.log.info(time_offset);
+        } else if (line.substring(date_stop).contains("-")) {
+            final int offset_start = line.indexOf("-",date_stop) + 1;
+            time_offset = Integer.parseInt(line.substring(offset_start, offset_start + 2));
+                 //TraceParserApp.log.info(line.substring(offset_start, offset_start + 2) +" - "+time_offset);
+        }
         try {
             final Date d = f.parse(date);
-            return d.getTime();
+            return d.getTime() + time_offset * 60 * 60 * 1000;
         } catch (Exception e) {
         }
+
+
         return -1;
     }
 
