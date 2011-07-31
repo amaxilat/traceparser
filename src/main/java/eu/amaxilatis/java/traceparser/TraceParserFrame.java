@@ -11,7 +11,10 @@
 
 package eu.amaxilatis.java.traceparser;
 
-import eu.amaxilatis.java.traceparser.parsers.*;
+import eu.amaxilatis.java.traceparser.parsers.ClustersParser;
+import eu.amaxilatis.java.traceparser.parsers.EventParser;
+import eu.amaxilatis.java.traceparser.parsers.NeighborhoodParser;
+import eu.amaxilatis.java.traceparser.parsers.SendParser;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartPanel;
 
@@ -22,8 +25,7 @@ import java.awt.event.ActionListener;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
-import java.util.List;
+import java.util.Properties;
 
 /**
  * @author amaxilatis
@@ -40,6 +42,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
     private javax.swing.JButton generateFileButton;
     private javax.swing.JButton savePropertiesButton;
     private JButton openFileChooserButton;
+    private JButton refreshTraceButton;
 
     private javax.swing.JPanel fileOptionsPanel;
     private javax.swing.JPanel plotterOptionsPanel;
@@ -58,6 +61,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
     private JRadioButton clustersPlots;
     private JRadioButton eventsPlots;
     private JRadioButton neighborhoodPlots;
+
 
     private JRadioButton plotToFilePlots;
     private JTextField[] labelsMessages = new JTextField[3];
@@ -114,7 +118,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        fileOptionsPanel.setLayout(new java.awt.GridLayout(4, 2, 10, 10));
+        fileOptionsPanel.setLayout(new java.awt.GridLayout(0, 3, 10, 10));
         parserOptionsPanel.setLayout(new java.awt.GridLayout(3, 2, 10, 10));
         plotterOptionsPanel.setLayout(new java.awt.GridLayout(0, 4, 10, 10));
 
@@ -127,6 +131,8 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         savePropertiesButton = new JButton("Save Properties");
         savePropertiesButton.addActionListener(this);
 
+        fileOptionsPanel.add(new JLabel(new ImageIcon("classes/favicon.png", "")));
+
         selectedFileText = new JLabel("no file selected");
         fileOptionsPanel.add(selectedFileText);
         setSize(fileOptionsPanel, 150, 40);
@@ -136,13 +142,20 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         setSize(openFileChooserButton, 150, 40);
         fileOptionsPanel.add(openFileChooserButton);
 
+
+
         linesFileText = new JLabel("0");
         fileOptionsPanel.add(new JLabel("Trace Lines"));
         fileOptionsPanel.add(linesFileText);
 
+        refreshTraceButton = new JButton("Refresh Trace");
+        refreshTraceButton.addActionListener(this);
+        fileOptionsPanel.add(refreshTraceButton);
+
         durationFileText = new JLabel("0");
         fileOptionsPanel.add(new JLabel("Trace Duration"));
         fileOptionsPanel.add(durationFileText);
+        fileOptionsPanel.add(new JLabel("")); //for design purposes
 
         nodesFileText = new JLabel("0");
         fileOptionsPanel.add(new JLabel("Total Nodes in Trace"));
@@ -317,13 +330,19 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
                     open_trace(filename2open);
                 }
             }
+        } else if (e.equals(refreshTraceButton)) {
+            open_trace(mytracefile.filename());
 
-        } else if (e.equals(savePropertiesButton)) {
+        } else if (e.equals(savePropertiesButton))
+
+        {
             log.info("Writing properties");
+            properties.setProperty("parser.filename", mytracefile.filename());
             String parserTemplates = "";
             for (int i = 0; i < properties.getProperty("parser.templates").split(",").length; i++) {
                 parserTemplates += parserOptionsText[i].getText() + ",";
             }
+
             properties.setProperty("parser.templates", parserTemplates);
             log.info("parset.templates=" + parserTemplates.substring(0, parserTemplates.length() - 1));
 
