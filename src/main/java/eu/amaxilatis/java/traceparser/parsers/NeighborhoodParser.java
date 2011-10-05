@@ -18,22 +18,17 @@ import java.util.*;
  * User: amaxilatis
  * Date: 7/19/11
  * Time: 6:39 PM
- * To change this template use File | Settings | File Templates.
  */
 public class NeighborhoodParser implements Observer, AbstractParser {
 
-    TraceFile file;
-    private Logger log;
-    private long duration;
+    private TraceFile file;
+    private final Logger log;
     private HashMap<String, Integer> neighbors;
-    int minimum_neighbors;
-    int maximum_neighbors;
 
 
     private XYSeries[] series;
 
     private String prefix;
-    private String delimiter = ";";
 
 
     public NeighborhoodParser() {
@@ -45,12 +40,13 @@ public class NeighborhoodParser implements Observer, AbstractParser {
     public NeighborhoodParser(TraceFile f, String template) {
         log = TraceParserApp.log;
         //log.info("EventParser initialized");
-        duration = f.duration();
+        long duration = f.duration();
 
 
         file = f;
         duration = f.duration() / 1000 + 1;
 
+        String delimiter = ";";
         prefix = template.substring(0, template.indexOf(delimiter));
 
 
@@ -61,8 +57,8 @@ public class NeighborhoodParser implements Observer, AbstractParser {
         series[0] = new XYSeries("Avg Neighbors");
         series[1] = new XYSeries("Min Neighbors");
         series[2] = new XYSeries("Max Neighbors");
-        minimum_neighbors = 0;
-        maximum_neighbors = 0;
+        int minimum_neighbors = 0;
+        int maximum_neighbors = 0;
 
 
         log.info("NeighborhoodParser initialized");
@@ -70,15 +66,15 @@ public class NeighborhoodParser implements Observer, AbstractParser {
 
     public ChartPanel getPlot(boolean has_title, boolean aggregate, String title, String xlabel, String ylabel) {
         XYSeriesCollection dataset = new XYSeriesCollection();
-        XYSeries[] clustersSeries = null;
+        XYSeries[] clustersSeries;
         if (aggregate) {
             clustersSeries = getSeries_aggregate();
         } else {
             clustersSeries = getSeries();
         }
 
-        for (int i = 0; i < clustersSeries.length; i++) {
-            dataset.addSeries(clustersSeries[i]);
+        for (XYSeries clustersSery : clustersSeries) {
+            dataset.addSeries(clustersSery);
         }
 
         JFreeChart chart = ChartFactory.createXYLineChart(

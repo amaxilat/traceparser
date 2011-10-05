@@ -15,19 +15,18 @@ import java.util.Observable;
  * User: amaxilatis
  * Date: 7/2/11
  * Time: 2:06 PM
- * To change this template use File | Settings | File Templates.
  */
-public class TraceReader extends Observable implements Runnable {
+class TraceReader extends Observable implements Runnable {
 
 
-    private TraceFile file;
+    private final TraceFile file;
 
-    static String urnText = "Source [";
-    static String textText = "Text [";
-    static String dateText = "Time [";
+    private static final String urnText = "Source [";
+    private static final String textText = "Text [";
+    private static final String dateText = "Time [";
     static String levelText = "Level [";
-    static String endText = "]";
-    private Logger log;
+    private static final String endText = "]";
+    private final Logger log;
 
     public TraceReader(TraceFile file_) {
         log = TraceParserApp.log;
@@ -86,7 +85,7 @@ public class TraceReader extends Observable implements Runnable {
         try {
             final Date d = f.parse(date);
             return d.getTime();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return -1;
     }

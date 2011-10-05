@@ -13,10 +13,10 @@ import org.apache.log4j.BasicConfigurator;
  */
 public class TraceParserApp {
 
-    public static Logger log = Logger.getLogger(TraceParserApp.class);
+    public static final Logger log = Logger.getLogger(TraceParserApp.class);
 
     public static void main(String[] args) {
-        TraceParserFrame appframe = new TraceParserFrame();
+        new TraceParserFrame();
 
         BasicConfigurator.configure();
         log.info("App stared!");

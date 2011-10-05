@@ -12,20 +12,19 @@ import java.util.Date;
  * User: amaxilatis
  * Date: 7/10/11
  * Time: 5:09 PM
- * To change this template use File | Settings | File Templates.
  */
 public class TraceMessage {
-    private String text;
-    private String urn;
-    private long time;
-    private String level;
+    private final String text;
+    private final String urn;
+    private final long time;
+    private final String level;
 
 
-    static String urnText = "Source [";
-    static String textText = "Text [";
-    static String dateText = "Time [";
-    static String levelText = "Level [";
-    static String endText = "]";
+    private static final String urnText = "Source [";
+    private static final String textText = "Text [";
+    private static final String dateText = "Time [";
+    private static final String levelText = "Level [";
+    private static final String endText = "]";
 
 
     public TraceMessage(String strLine) {
@@ -84,7 +83,7 @@ public class TraceMessage {
         try {
             final Date d = f.parse(date);
             return d.getTime() + time_offset * 60 * 60 * 1000;
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
 

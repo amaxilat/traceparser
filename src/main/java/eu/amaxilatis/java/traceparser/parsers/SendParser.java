@@ -19,24 +19,21 @@ import java.util.Observer;
  * User: amaxilatis
  * Date: 7/2/11
  * Time: 1:19 PM
- * To change this template use File | Settings | File Templates.
  */
 public class SendParser implements Observer, AbstractParser {
 
-    TraceFile file;
-    private Logger log;
+    private TraceFile file;
+    private final Logger log;
     private long duration;
     private int messages[][];
-    private XYSeries[] series;
 
     private String prefix;
-    private String delimiter = ";";
-    private int sender = 1;
+    private final String delimiter = ";";
     private int type = 2;
-    private int destination = 3;
 
 
     public SendParser() {
+
         log = TraceParserApp.log;
         log.info("SendParser initialized");
 
@@ -47,7 +44,7 @@ public class SendParser implements Observer, AbstractParser {
         log = TraceParserApp.log;
 
         file = f;
-        duration = f.duration() / 1000+1;
+        duration = f.duration() / 1000 + 1;
         messages = new int[255][(int) duration];
         for (int i = 0; i < 255; i++) {
             for (int j = 0; j < (int) duration; j++) {
@@ -57,6 +54,8 @@ public class SendParser implements Observer, AbstractParser {
 
         final String[] parts = template.split(delimiter);
         prefix = parts[0];
+        int destination = 3;
+        int sender = 1;
         if (parts[1].equals("%s"))
             sender = 1;
         else if (parts[1].equals("%t"))
@@ -83,9 +82,6 @@ public class SendParser implements Observer, AbstractParser {
 
     }
 
-    public void update() {
-    }
-
     public void update(Observable observable, Object o) {
         final TraceMessage m = (TraceMessage) o;
         if (m.text().startsWith(prefix)) {
@@ -99,15 +95,15 @@ public class SendParser implements Observer, AbstractParser {
 
     public ChartPanel getPlot(boolean has_title, boolean aggregate, String title, String xlabel, String ylabel) {
         XYSeriesCollection dataset = new XYSeriesCollection();
-        XYSeries[] messageTypes = null;
+        XYSeries[] messageTypes;
         if (aggregate) {
             messageTypes = getSeries_aggregate();
         } else {
             messageTypes = getSeries();
         }
 
-        for (int i = 0; i < messageTypes.length; i++) {
-            dataset.addSeries(messageTypes[i]);
+        for (XYSeries messageType : messageTypes) {
+            dataset.addSeries(messageType);
         }
 
         JFreeChart chart = ChartFactory.createXYLineChart(

@@ -17,22 +17,20 @@ import java.util.Date;
  * User: amaxilatis
  * Date: 7/9/11
  * Time: 12:44 PM
- * To change this template use File | Settings | File Templates.
  */
 public class TraceFile {
 
-    private String filename;
+    private final String filename;
     private long duration;
     private long start_time;
     private long end_time;
-    private ArrayList<String> node_names = new ArrayList();
-    private Logger log;
+    private final ArrayList<String> node_names = new ArrayList();
     private long lines;
 
 
 
     public TraceFile(String file) {
-        log = TraceParserApp.log;
+        Logger log = TraceParserApp.log;
 
 
         duration = 0;
@@ -76,12 +74,12 @@ public class TraceFile {
             }
 
 
-            log.info("Date Started("+min+") : "+new Date(starttime()).toString() );
-            log.info("Date Ended("+max+") : "+new Date(endtime()).toString() );
+            log.info("Date Started(" + min + ") : " + new Date(starttime()).toString());
+            log.info("Date Ended(" + max + ") : " + new Date(endtime()).toString());
             //Close the input stream
             in.close();
         } catch (Exception e) {//Catch exception if any
-            log.error("Error: reading the file : " + filename + " line "+lines);
+            log.error("Error: reading the file : " + filename + " line " + lines);
             e.printStackTrace();
             log.error(e.toString());
         }
@@ -102,7 +100,7 @@ public class TraceFile {
         return start_time;
     }
 
-    public long endtime() {
+    long endtime() {
         return end_time;
     }
 

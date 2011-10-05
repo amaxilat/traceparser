@@ -13,15 +13,9 @@ import java.util.Observer;
  * User: amaxilatis
  * Date: 7/2/11
  * Time: 12:33 PM
- * To change this template use File | Settings | File Templates.
  */
 
-//TODO: initilaize AbstractParser
 public interface AbstractParser {
-
-    TraceFile file = null;
-    Logger log = null;
-    long duration = 0;
 
     public ChartPanel getPlot(boolean has_title, boolean aggregate, String title, String xlabel, String ylabel);
 

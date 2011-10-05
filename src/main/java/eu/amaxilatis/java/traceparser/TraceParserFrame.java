@@ -34,8 +34,8 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
 
-    private Logger log;
-    private static String propfilename = "classes/traceparser.properties";
+    private final Logger log;
+    private static final String propfilename = "traceparser.properties";
 
 
     private javax.swing.JButton generatePlotButton;
@@ -44,17 +44,12 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
     private JButton openFileChooserButton;
     private JButton refreshTraceButton;
 
-    private javax.swing.JPanel fileOptionsPanel;
-    private javax.swing.JPanel plotterOptionsPanel;
-    private javax.swing.JPanel parserOptionsPanel;
-
-    private javax.swing.JLabel[] parserOptionsLabel = new javax.swing.JLabel[3];
-    private javax.swing.JTextField[] parserOptionsText = new javax.swing.JTextField[3];
+    private final javax.swing.JLabel[] parserOptionsLabel = new javax.swing.JLabel[3];
+    private final javax.swing.JTextField[] parserOptionsText = new javax.swing.JTextField[3];
     private javax.swing.JLabel selectedFileText;
     private javax.swing.JLabel linesFileText;
     private javax.swing.JLabel durationFileText;
     private javax.swing.JLabel nodesFileText;
-    private javax.swing.JTabbedPane jTabbedPane1;
 
     private JRadioButton aggregatePlots;
     private JRadioButton messagesPlots;
@@ -64,18 +59,13 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
 
     private JRadioButton plotToFilePlots;
-    private JTextField[] labelsMessages = new JTextField[3];
-    private JTextField[] labelsClusters = new JTextField[3];
-    private JTextField[] labelsEvents = new JTextField[3];
-    private JTextField[] labelsNeighborhood = new JTextField[3];
+    private final JTextField[] labelsMessages = new JTextField[3];
+    private final JTextField[] labelsClusters = new JTextField[3];
+    private final JTextField[] labelsEvents = new JTextField[3];
+    private final JTextField[] labelsNeighborhood = new JTextField[3];
 
 
-    public TraceFile mytracefile;
-
-    public SendParser sendparser;
-    public ClustersParser clustersparser;
-    public EventParser eventparser;
-    public NeighborhoodParser neighborhoodparser;
+    private TraceFile mytracefile;
 
 
     private Properties properties;
@@ -89,7 +79,8 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         //log = new logger();
         //log.setLevel(logger.EXTRA);
         initComponents();
-        this.show();
+        this.setVisible(true);
+//        this.show();
     }
 
 
@@ -105,16 +96,16 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
         properties = new Properties();
         try {
-            properties.load(new FileInputStream(propfilename));
+            properties.load(this.getClass().getClassLoader().getResourceAsStream(propfilename));
         } catch (IOException e) {
             log.error("could not load property file!");
         }
 
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        JTabbedPane jTabbedPane1 = new JTabbedPane();
 
-        fileOptionsPanel = new javax.swing.JPanel();
-        parserOptionsPanel = new javax.swing.JPanel();
-        plotterOptionsPanel = new javax.swing.JPanel();
+        JPanel fileOptionsPanel = new JPanel();
+        JPanel parserOptionsPanel = new JPanel();
+        JPanel plotterOptionsPanel = new JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -131,7 +122,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         savePropertiesButton = new JButton("Save Properties");
         savePropertiesButton.addActionListener(this);
 
-        fileOptionsPanel.add(new JLabel(new ImageIcon("classes/favicon.png", "")));
+        fileOptionsPanel.add(new JLabel(new ImageIcon(this.getClass().getClassLoader().getResource("favicon.png"), "")));
 
         selectedFileText = new JLabel("no file selected");
         fileOptionsPanel.add(selectedFileText);
@@ -141,7 +132,6 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         openFileChooserButton.addActionListener(this);
         setSize(openFileChooserButton, 150, 40);
         fileOptionsPanel.add(openFileChooserButton);
-
 
 
         linesFileText = new JLabel("0");
@@ -176,10 +166,10 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         clustersPlots = new JRadioButton("enable");
         eventsPlots = new JRadioButton("enable");
         neighborhoodPlots = new JRadioButton("enable");
-        messagesPlots.setSelected(properties.getProperty("plotter.messages").equals("true") ? true : false);
-        clustersPlots.setSelected(properties.getProperty("plotter.clusters").equals("true") ? true : false);
-        eventsPlots.setSelected(properties.getProperty("plotter.events").equals("true") ? true : false);
-        neighborhoodPlots.setSelected(properties.getProperty("plotter.neighborhood").equals("true") ? true : false);
+        messagesPlots.setSelected(properties.getProperty("plotter.messages").equals("true"));
+        clustersPlots.setSelected(properties.getProperty("plotter.clusters").equals("true"));
+        eventsPlots.setSelected(properties.getProperty("plotter.events").equals("true"));
+        neighborhoodPlots.setSelected(properties.getProperty("plotter.neighborhood").equals("true"));
 
         for (int i = 0; i < 3; i++) {
 
@@ -227,7 +217,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
 
         aggregatePlots = new JRadioButton("Aggregate");
-        aggregatePlots.setSelected(properties.getProperty("plotter.aggregate").equals("true") ? true : false);
+        aggregatePlots.setSelected(properties.getProperty("plotter.aggregate").equals("true"));
         plotterOptionsPanel.add(aggregatePlots);
 
 
@@ -279,13 +269,16 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
     public void actionPerformed(ActionEvent actionEvent) {
         //To change body of implemented methods use File | Settings | File Templates.
         final Object e = actionEvent.getSource();
+        EventParser eventparser;
+        ClustersParser clustersparser;
+        SendParser sendparser;
         if (e.equals(generatePlotButton)) {
 
             TraceReader tracereader = new TraceReader(mytracefile);
             sendparser = new SendParser(mytracefile, parserOptionsText[0].getText());
             clustersparser = new ClustersParser(mytracefile, parserOptionsText[1].getText());
             eventparser = new EventParser(mytracefile, parserOptionsText[2].getText());
-            neighborhoodparser = new NeighborhoodParser(mytracefile, "NB;");
+            NeighborhoodParser neighborhoodparser = new NeighborhoodParser(mytracefile, "NB;");
             if (messagesPlots.isSelected())
                 tracereader.addObserver(sendparser);
             if (clustersPlots.isSelected())
@@ -297,13 +290,13 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
             final boolean aggPlot = aggregatePlots.isSelected();
             if (messagesPlots.isSelected())
-                presentPlot(sendparser.getPlot(false, aggPlot, labelsMessages[0].getText(), labelsMessages[1].getText(), labelsMessages[2].getText()));
+                presentPlot(sendparser.getPlot(labelsMessages[0].getText().equals(""), aggPlot, labelsMessages[0].getText(), labelsMessages[1].getText(), labelsMessages[2].getText()));
             if (clustersPlots.isSelected())
-                presentPlot(clustersparser.getPlot(false, aggPlot, labelsClusters[0].getText(), labelsClusters[1].getText(), labelsClusters[2].getText()));
+                presentPlot(clustersparser.getPlot(labelsClusters[0].getText().equals(""), aggPlot, labelsClusters[0].getText(), labelsClusters[1].getText(), labelsClusters[2].getText()));
             if (eventsPlots.isSelected())
-                presentPlot(eventparser.getPlot(false, aggPlot, labelsEvents[0].getText(), labelsEvents[1].getText(), labelsEvents[2].getText()));
+                presentPlot(eventparser.getPlot(labelsEvents[0].getText().equals(""), aggPlot, labelsEvents[0].getText(), labelsEvents[1].getText(), labelsEvents[2].getText()));
             if (neighborhoodPlots.isSelected())
-                presentPlot(neighborhoodparser.getPlot(false, aggPlot, labelsNeighborhood[0].getText(), labelsNeighborhood[1].getText(), labelsNeighborhood[2].getText()));
+                presentPlot(neighborhoodparser.getPlot(labelsNeighborhood[0].getText().equals(""), aggPlot, labelsNeighborhood[0].getText(), labelsNeighborhood[1].getText(), labelsNeighborhood[2].getText()));
 
 
         } else if (e.equals(generateFileButton)) {
