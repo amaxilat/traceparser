@@ -48,7 +48,7 @@ public class EventParser implements Observer, AbstractParser {
         eventTypes = template.split(partitioner).length;
 
         file = f;
-        duration = f.duration() / 1000+1;
+        duration = f.duration() / 1000 + 1;
         events = new int[eventTypes][(int) duration];
 
         for (int type = 0; type < eventTypes; type++) {
@@ -64,7 +64,11 @@ public class EventParser implements Observer, AbstractParser {
         for (int type = 0; type < eventTypes; type++) {
             log.info(templates[type]);
             String delimiter = ";";
-            prefixes[type] = templates[type].substring(0, templates[type].indexOf(delimiter));
+            if (templates[type].contains(delimiter)) {
+                prefixes[type] = templates[type].substring(0, templates[type].indexOf(delimiter));
+            } else {
+                prefixes[type] = templates[type];
+            }
             log.info(prefixes[type]);
         }
 
@@ -74,7 +78,7 @@ public class EventParser implements Observer, AbstractParser {
     public void update(Observable observable, Object o) {
         final TraceMessage m = (TraceMessage) o;
         for (int type = 0; type < eventTypes; type++) {
-            if (m.text().startsWith(prefixes[type])) {
+            if (m.text().contains(prefixes[type])) {
                 //log.info("Event@" + m.time() + ":" + m.urn());
                 events[type][((int) ((m.time() - file.starttime()) / 1000))]++;
             }
