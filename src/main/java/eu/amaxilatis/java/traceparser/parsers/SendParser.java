@@ -11,6 +11,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import java.awt.*;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -23,7 +24,7 @@ import java.util.Observer;
 public class SendParser implements Observer, AbstractParser {
 
     private TraceFile file;
-    private final Logger log;
+    private static final Logger log = Logger.getLogger(SendParser.class);
     private long duration;
     private int messages[][];
 
@@ -34,14 +35,11 @@ public class SendParser implements Observer, AbstractParser {
 
     public SendParser() {
 
-        log = TraceParserApp.log;
         log.info("SendParser initialized");
 
     }
 
     public SendParser(TraceFile f, String template) {
-
-        log = TraceParserApp.log;
 
         file = f;
         duration = f.duration() / 1000 + 1;
@@ -112,6 +110,7 @@ public class SendParser implements Observer, AbstractParser {
                 ylabel,
                 dataset, PlotOrientation.VERTICAL, true, true, false);
 
+        chart.setBackgroundPaint(Color.white);
 
         return new ChartPanel(chart);
     }

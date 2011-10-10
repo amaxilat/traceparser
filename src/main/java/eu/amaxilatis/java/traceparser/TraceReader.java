@@ -26,10 +26,9 @@ class TraceReader extends Observable implements Runnable {
     private static final String dateText = "Time [";
     static String levelText = "Level [";
     private static final String endText = "]";
-    private final Logger log;
+    private static final Logger log = Logger.getLogger(TraceReader.class);
 
     public TraceReader(TraceFile file_) {
-        log = TraceParserApp.log;
         file = file_;
     }
 
@@ -37,6 +36,7 @@ class TraceReader extends Observable implements Runnable {
     public void run() {
         int count = 0;
 
+        String strLine = null;
         try {
             // Open the file that is the first
             // command line parameter
@@ -44,7 +44,6 @@ class TraceReader extends Observable implements Runnable {
             // Get the object of DataInputStream
             DataInputStream in = new DataInputStream(fstream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            String strLine;
             //Read File Line By Line
             while ((strLine = br.readLine()) != null) {
                 // Print the content on the console
@@ -60,7 +59,7 @@ class TraceReader extends Observable implements Runnable {
             //Close the input stream
             in.close();
         } catch (Exception e) {//Catch exception if any
-            log.error("Error: " + e.toString() + " line: " + count);
+            log.error("Error: " + e.toString() + " line: " + count + " contents " + strLine);
             e.printStackTrace();
         }
     }

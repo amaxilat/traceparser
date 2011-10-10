@@ -2,7 +2,6 @@ package eu.amaxilatis.java.traceparser.parsers;
 
 import eu.amaxilatis.java.traceparser.TraceFile;
 import eu.amaxilatis.java.traceparser.TraceMessage;
-import eu.amaxilatis.java.traceparser.TraceParserApp;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -11,6 +10,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import java.awt.*;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -23,7 +23,7 @@ import java.util.Observer;
 public class EventParser implements Observer, AbstractParser {
 
     private TraceFile file;
-    private final Logger log;
+    private static final Logger log = Logger.getLogger(EventParser.class);
     private long duration;
     private int events[][];
     private int eventTypes;
@@ -31,7 +31,6 @@ public class EventParser implements Observer, AbstractParser {
     private String[] prefixes;
 
     public EventParser() {
-        log = TraceParserApp.log;
         log.info("EventParser initialized");
 
     }
@@ -39,7 +38,6 @@ public class EventParser implements Observer, AbstractParser {
     //TODO: add multiple Events
     public EventParser(TraceFile f, String template) {
 
-        log = TraceParserApp.log;
         //log.info("EventParser initialized");
         duration = f.duration();
 
@@ -104,7 +102,7 @@ public class EventParser implements Observer, AbstractParser {
                 ylabel,
                 dataset, PlotOrientation.VERTICAL, true, true, false);
 
-
+        chart.setBackgroundPaint(Color.white);
         return new ChartPanel(chart);
     }
 
@@ -124,7 +122,13 @@ public class EventParser implements Observer, AbstractParser {
     public XYSeries[] getSeries_aggregate() {
         XYSeries[] series = new XYSeries[eventTypes];
         for (int type = 0; type < eventTypes; type++) {
-            series[type] = new XYSeries("Events " + prefixes[type]);
+            if (prefixes[type].equals("CLL")) {
+                series[type] = new XYSeries("Semantic Entity Changes");
+            } else if (prefixes[type].equals("NB")) {
+                series[type] = new XYSeries("Neighborhood Changes");
+            } else {
+                series[type] = new XYSeries("Events " + prefixes[type]);
+            }
             for (int i = 0; i < duration; i++) {
                 series[type].add(i, count_until(type, i));
             }

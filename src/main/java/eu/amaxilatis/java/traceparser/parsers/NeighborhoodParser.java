@@ -2,7 +2,6 @@ package eu.amaxilatis.java.traceparser.parsers;
 
 import eu.amaxilatis.java.traceparser.TraceFile;
 import eu.amaxilatis.java.traceparser.TraceMessage;
-import eu.amaxilatis.java.traceparser.TraceParserApp;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -11,7 +10,10 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import java.util.*;
+import java.awt.*;
+import java.util.HashMap;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Created by IntelliJ IDEA.
@@ -22,7 +24,7 @@ import java.util.*;
 public class NeighborhoodParser implements Observer, AbstractParser {
 
     private TraceFile file;
-    private final Logger log;
+    private static final Logger log = Logger.getLogger(NeighborhoodParser.class);
     private HashMap<String, Integer> neighbors;
 
 
@@ -32,13 +34,11 @@ public class NeighborhoodParser implements Observer, AbstractParser {
 
 
     public NeighborhoodParser() {
-        log = TraceParserApp.log;
         log.info("NeighborhoodParser initialized");
 
     }
 
     public NeighborhoodParser(TraceFile f, String template) {
-        log = TraceParserApp.log;
         //log.info("EventParser initialized");
         long duration = f.duration();
 
@@ -82,7 +82,7 @@ public class NeighborhoodParser implements Observer, AbstractParser {
                 xlabel,
                 ylabel,
                 dataset, PlotOrientation.VERTICAL, true, true, false);
-
+        chart.setBackgroundPaint(Color.white);
 
         return new ChartPanel(chart);
     }

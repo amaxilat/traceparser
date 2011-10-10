@@ -1,8 +1,6 @@
 package eu.amaxilatis.java.traceparser;
 
 import org.apache.log4j.Logger;
-import org.jfree.ui.IntegerDocument;
-import org.jfree.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,10 +12,12 @@ import java.util.Date;
  * Time: 5:09 PM
  */
 public class TraceMessage {
-    private final String text;
-    private final String urn;
-    private final long time;
-    private final String level;
+    private  String text = null;
+    private  String urn = null;
+    private  long time = 0;
+    private  String level = null;
+
+    private static final Logger log = Logger.getLogger(TraceMessage.class);
 
 
     private static final String urnText = "Source [";
@@ -28,10 +28,15 @@ public class TraceMessage {
 
 
     public TraceMessage(String strLine) {
-        urn = extractNodeUrn(strLine);
-        text = extractText(strLine);
-        time = extractDate(strLine);
-        level = extractLevel(strLine);
+        try {
+            urn = extractNodeUrn(strLine);
+            text = extractText(strLine);
+            time = extractDate(strLine);
+            level = extractLevel(strLine);
+        } catch (Exception e) {
+            log.error("Error: " + e.toString());
+            e.printStackTrace();
+        }
     }
 
     public long time() {
@@ -72,13 +77,13 @@ public class TraceMessage {
         final SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.'S");
         int time_offset = 0;
         if (line.substring(date_stop).contains("+")) {
-            final int offset_start = line.indexOf("+",date_stop)  + 1;
-            time_offset = -1* Integer.parseInt(line.substring(offset_start, offset_start + 2));
-                 //TraceParserApp.log.info(time_offset);
+            final int offset_start = line.indexOf("+", date_stop) + 1;
+            time_offset = -1 * Integer.parseInt(line.substring(offset_start, offset_start + 2));
+            //TraceParserApp.log.info(time_offset);
         } else if (line.substring(date_stop).contains("-")) {
-            final int offset_start = line.indexOf("-",date_stop) + 1;
+            final int offset_start = line.indexOf("-", date_stop) + 1;
             time_offset = Integer.parseInt(line.substring(offset_start, offset_start + 2));
-                 //TraceParserApp.log.info(line.substring(offset_start, offset_start + 2) +" - "+time_offset);
+            //TraceParserApp.log.info(line.substring(offset_start, offset_start + 2) +" - "+time_offset);
         }
         try {
             final Date d = f.parse(date);

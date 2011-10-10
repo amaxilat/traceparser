@@ -11,10 +11,10 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.StringTokenizer;
 
 /**
  * Created by IntelliJ IDEA.
@@ -25,7 +25,7 @@ import java.util.StringTokenizer;
 public class ClustersParser implements Observer, AbstractParser {
 
     private TraceFile file;
-    private final Logger log;
+    private static final Logger log = Logger.getLogger(ClustersParser.class);
     private long duration;
     private HashMap<String, String>[] clusters;
 
@@ -36,13 +36,11 @@ public class ClustersParser implements Observer, AbstractParser {
 
 
     public ClustersParser() {
-        log = TraceParserApp.log;
         log.info("ClustersParser initialized");
 
     }
 
     public ClustersParser(TraceFile f, String template) {
-        log = TraceParserApp.log;
         //log.info("EventParser initialized");
         duration = f.duration();
 
@@ -107,6 +105,7 @@ public class ClustersParser implements Observer, AbstractParser {
                 ylabel,
                 dataset, PlotOrientation.VERTICAL, true, true, false);
 
+        chart.setBackgroundPaint(Color.white);
 
         return new ChartPanel(chart);
     }

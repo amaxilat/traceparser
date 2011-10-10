@@ -22,7 +22,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
@@ -34,7 +33,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
 
-    private final Logger log;
+    private static final Logger log = Logger.getLogger(TraceParserFrame.class);
     private static final String propfilename = "traceparser.properties";
 
 
@@ -75,7 +74,6 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
      * Creates new form TraceParserFrame
      */
     public TraceParserFrame() {
-        log = TraceParserApp.log;
         //log = new logger();
         //log.setLevel(logger.EXTRA);
         initComponents();
@@ -274,11 +272,14 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         SendParser sendparser;
         if (e.equals(generatePlotButton)) {
 
+
             TraceReader tracereader = new TraceReader(mytracefile);
+
             sendparser = new SendParser(mytracefile, parserOptionsText[0].getText());
             clustersparser = new ClustersParser(mytracefile, parserOptionsText[1].getText());
             eventparser = new EventParser(mytracefile, parserOptionsText[2].getText());
             NeighborhoodParser neighborhoodparser = new NeighborhoodParser(mytracefile, "NB;");
+//            SemanticsParser sp = new SemanticsParser(mytracefile, "");
             if (messagesPlots.isSelected())
                 tracereader.addObserver(sendparser);
             if (clustersPlots.isSelected())
@@ -286,6 +287,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
             if (eventsPlots.isSelected())
                 tracereader.addObserver(eventparser);
             tracereader.addObserver(neighborhoodparser);
+//            tracereader.addObserver(sp);
             tracereader.run();
 
             final boolean aggPlot = aggregatePlots.isSelected();
@@ -298,6 +300,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
             if (neighborhoodPlots.isSelected())
                 presentPlot(neighborhoodparser.getPlot(labelsNeighborhood[0].getText().equals(""), aggPlot, labelsNeighborhood[0].getText(), labelsNeighborhood[1].getText(), labelsNeighborhood[2].getText()));
 
+//            presentPlot(sp.getPlot(false, false, "Semantics", "time is seconds", "# of members"));
 
         } else if (e.equals(generateFileButton)) {
 
