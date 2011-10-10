@@ -33,7 +33,7 @@ public class SendParser implements Observer, AbstractParser {
     private int type = 2;
 
 
-    public SendParser() {
+    private SendParser() {
 
         log.info("SendParser initialized");
 

@@ -30,7 +30,7 @@ public class EventParser implements Observer, AbstractParser {
 
     private String[] prefixes;
 
-    public EventParser() {
+    private EventParser() {
         log.info("EventParser initialized");
 
     }

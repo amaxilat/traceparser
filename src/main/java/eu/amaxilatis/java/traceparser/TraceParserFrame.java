@@ -57,7 +57,6 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
     private JRadioButton neighborhoodPlots;
 
 
-    private JRadioButton plotToFilePlots;
     private final JTextField[] labelsMessages = new JTextField[3];
     private final JTextField[] labelsClusters = new JTextField[3];
     private final JTextField[] labelsEvents = new JTextField[3];

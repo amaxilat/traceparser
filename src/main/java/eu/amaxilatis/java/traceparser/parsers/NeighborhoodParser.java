@@ -33,7 +33,7 @@ public class NeighborhoodParser implements Observer, AbstractParser {
     private String prefix;
 
 
-    public NeighborhoodParser() {
+    private NeighborhoodParser() {
         log.info("NeighborhoodParser initialized");
 
     }
@@ -44,7 +44,6 @@ public class NeighborhoodParser implements Observer, AbstractParser {
 
 
         file = f;
-        duration = f.duration() / 1000 + 1;
 
         String delimiter = ";";
         prefix = template.substring(0, template.indexOf(delimiter));
@@ -57,8 +56,6 @@ public class NeighborhoodParser implements Observer, AbstractParser {
         series[0] = new XYSeries("Avg Neighbors");
         series[1] = new XYSeries("Min Neighbors");
         series[2] = new XYSeries("Max Neighbors");
-        int minimum_neighbors = 0;
-        int maximum_neighbors = 0;
 
 
         log.info("NeighborhoodParser initialized");

@@ -2,7 +2,6 @@ package eu.amaxilatis.java.traceparser.parsers;
 
 import eu.amaxilatis.java.traceparser.TraceFile;
 import eu.amaxilatis.java.traceparser.TraceMessage;
-import eu.amaxilatis.java.traceparser.TraceParserApp;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -29,13 +28,14 @@ public class ClustersParser implements Observer, AbstractParser {
     private long duration;
     private HashMap<String, String>[] clusters;
 
+
     private String prefix;
     private final String delimiter = ";";
     private int node = 1;
     private int cluster = 3;
 
 
-    public ClustersParser() {
+    private ClustersParser() {
         log.info("ClustersParser initialized");
 
     }
@@ -46,10 +46,9 @@ public class ClustersParser implements Observer, AbstractParser {
 
 
         file = f;
-        duration = f.duration() / 1000 + 1;
-
-
+        int duration = (int) (f.duration() / 1000 + 1);
         clusters = new HashMap[(int) duration];
+
         //clusters = new int[f.nodesize()][(int) duration];
 
         for (int i = 0; i < duration; i++) {
