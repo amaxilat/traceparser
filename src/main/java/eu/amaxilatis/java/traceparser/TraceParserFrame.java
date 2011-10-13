@@ -11,10 +11,9 @@
 
 package eu.amaxilatis.java.traceparser;
 
-import eu.amaxilatis.java.traceparser.parsers.ClustersParser;
-import eu.amaxilatis.java.traceparser.parsers.EventParser;
-import eu.amaxilatis.java.traceparser.parsers.NeighborhoodParser;
-import eu.amaxilatis.java.traceparser.parsers.SendParser;
+
+import eu.amaxilatis.java.traceparser.panels.*;
+import eu.amaxilatis.java.traceparser.parsers.*;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartPanel;
 
@@ -43,8 +42,8 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
     private JButton openFileChooserButton;
     private JButton refreshTraceButton;
 
-    private final javax.swing.JLabel[] parserOptionsLabel = new javax.swing.JLabel[3];
-    private final javax.swing.JTextField[] parserOptionsText = new javax.swing.JTextField[3];
+    //    private final javax.swing.JLabel[] parserOptionsLabel = new javax.swing.JLabel[3];
+//
     private javax.swing.JLabel selectedFileText;
     private javax.swing.JLabel linesFileText;
     private javax.swing.JLabel durationFileText;
@@ -67,17 +66,18 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
 
     private Properties properties;
+    private ParserControlPanel parsercontrolpanel;
+    private PlotterControlPanel plottercontrolpanel;
 
 
     /**
      * Creates new form TraceParserFrame
      */
     public TraceParserFrame() {
-        //log = new logger();
-        //log.setLevel(logger.EXTRA);
+
         initComponents();
         this.setVisible(true);
-//        this.show();
+
     }
 
 
@@ -107,7 +107,6 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         fileOptionsPanel.setLayout(new java.awt.GridLayout(0, 3, 10, 10));
-        parserOptionsPanel.setLayout(new java.awt.GridLayout(3, 2, 10, 10));
         plotterOptionsPanel.setLayout(new java.awt.GridLayout(0, 4, 10, 10));
 
         generatePlotButton = new javax.swing.JButton("Generate Plot");
@@ -147,16 +146,6 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         nodesFileText = new JLabel("0");
         fileOptionsPanel.add(new JLabel("Total Nodes in Trace"));
         fileOptionsPanel.add(nodesFileText);
-
-
-        final String[] parserOptionsTexts = properties.getProperty("parser.templates").split(",");
-        final String[] parserOptionsLabels = {"Send Text", "Cluster Text", "Event Text"};
-        for (int i = 0; i < 3; i++) {
-            parserOptionsLabel[i] = new javax.swing.JLabel(parserOptionsLabels[i]);
-            parserOptionsText[i] = new javax.swing.JTextField(parserOptionsTexts[i]);
-            parserOptionsPanel.add(parserOptionsLabel[i]);
-            parserOptionsPanel.add(parserOptionsText[i]);
-        }
 
 
         messagesPlots = new JRadioButton("enable");
@@ -218,9 +207,12 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         plotterOptionsPanel.add(aggregatePlots);
 
 
+        parsercontrolpanel = new ParserControlPanel(properties);
+        plottercontrolpanel = new PlotterControlPanel();
+
         jTabbedPane1.addTab("File Options", fileOptionsPanel);
-        jTabbedPane1.addTab("Parser Options", parserOptionsPanel);
-        jTabbedPane1.addTab("Plotter Options", plotterOptionsPanel);
+        jTabbedPane1.addTab("Parser Options", parsercontrolpanel);
+        jTabbedPane1.addTab("Plotter Options", plottercontrolpanel);
 
 
         getContentPane().setLayout(new BorderLayout());
@@ -274,30 +266,19 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
             TraceReader tracereader = new TraceReader(mytracefile);
 
-            sendparser = new SendParser(mytracefile, parserOptionsText[0].getText());
-            clustersparser = new ClustersParser(mytracefile, parserOptionsText[1].getText());
-            eventparser = new EventParser(mytracefile, parserOptionsText[2].getText());
-            NeighborhoodParser neighborhoodparser = new NeighborhoodParser(mytracefile, "NB;");
-//            SemanticsParser sp = new SemanticsParser(mytracefile, "");
-            if (messagesPlots.isSelected())
-                tracereader.addObserver(sendparser);
-            if (clustersPlots.isSelected())
-                tracereader.addObserver(clustersparser);
-            if (eventsPlots.isSelected())
-                tracereader.addObserver(eventparser);
-            tracereader.addObserver(neighborhoodparser);
-//            tracereader.addObserver(sp);
+            for (AbstractParser parser : parsercontrolpanel.getParsers()) {
+                parser.setFile(mytracefile);
+
+                tracereader.addObserver(parser);
+
+            }
+
+
             tracereader.run();
 
-            final boolean aggPlot = aggregatePlots.isSelected();
-            if (messagesPlots.isSelected())
-                presentPlot(sendparser.getPlot(labelsMessages[0].getText().equals(""), aggPlot, labelsMessages[0].getText(), labelsMessages[1].getText(), labelsMessages[2].getText()));
-            if (clustersPlots.isSelected())
-                presentPlot(clustersparser.getPlot(labelsClusters[0].getText().equals(""), aggPlot, labelsClusters[0].getText(), labelsClusters[1].getText(), labelsClusters[2].getText()));
-            if (eventsPlots.isSelected())
-                presentPlot(eventparser.getPlot(labelsEvents[0].getText().equals(""), aggPlot, labelsEvents[0].getText(), labelsEvents[1].getText(), labelsEvents[2].getText()));
-            if (neighborhoodPlots.isSelected())
-                presentPlot(neighborhoodparser.getPlot(labelsNeighborhood[0].getText().equals(""), aggPlot, labelsNeighborhood[0].getText(), labelsNeighborhood[1].getText(), labelsNeighborhood[2].getText()));
+            for (AbstractParser parser : parsercontrolpanel.getParsers()) {
+                presentPlot(parser.getPlot());
+            }
 
 //            presentPlot(sp.getPlot(false, false, "Semantics", "time is seconds", "# of members"));
 
@@ -305,13 +286,13 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
             TraceReader tracereader = new TraceReader(mytracefile);
 
-            sendparser = new SendParser(mytracefile, parserOptionsText[0].getText());
-            clustersparser = new ClustersParser(mytracefile, parserOptionsText[1].getText());
-            eventparser = new EventParser(mytracefile, parserOptionsText[2].getText());
+//            sendparser = new SendParser(mytracefile, parserOptionsText[0].getText());
+//            clustersparser = new ClustersParser(mytracefile, parserOptionsText[1].getText());
+//            eventparser = new EventParser(mytracefile, parserOptionsText[2].getText());
 
-            tracereader.addObserver(sendparser);
-            tracereader.addObserver(clustersparser);
-            tracereader.addObserver(eventparser);
+//            tracereader.addObserver(sendparser);
+//            tracereader.addObserver(clustersparser);
+//            tracereader.addObserver(eventparser);
 
             tracereader.run();
 
@@ -335,7 +316,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
             properties.setProperty("parser.filename", mytracefile.filename());
             String parserTemplates = "";
             for (int i = 0; i < properties.getProperty("parser.templates").split(",").length; i++) {
-                parserTemplates += parserOptionsText[i].getText() + ",";
+//                parserTemplates += parserOptionsText[i].getText() + ",";
             }
 
             properties.setProperty("parser.templates", parserTemplates);

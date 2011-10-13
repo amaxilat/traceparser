@@ -21,7 +21,7 @@ import java.util.Observer;
  * Date: 7/19/11
  * Time: 6:39 PM
  */
-public class NeighborhoodParser implements Observer, AbstractParser {
+public class NeighborhoodParser extends AbstractParser implements Observer {
 
     private TraceFile file;
     private static final Logger log = Logger.getLogger(NeighborhoodParser.class);
@@ -33,9 +33,32 @@ public class NeighborhoodParser implements Observer, AbstractParser {
     private String prefix;
 
 
-    private NeighborhoodParser() {
-        log.info("NeighborhoodParser initialized");
+    public NeighborhoodParser() {
+        prefix = "NB";
+        init();
 
+    }
+
+
+    public void setTemplate(String template) {
+        String delimiter = ";";
+        prefix = template.substring(0, template.indexOf(delimiter));
+
+    }
+
+
+    @Override
+    public String getTemplate() {
+        return prefix + ";";
+    }
+
+    public NeighborhoodParser(String template) {
+        setTemplate(template);
+        init();
+    }
+
+    public void setFile(TraceFile file) {
+        this.file = file;
     }
 
     public NeighborhoodParser(TraceFile f, String template) {
@@ -47,18 +70,20 @@ public class NeighborhoodParser implements Observer, AbstractParser {
 
         String delimiter = ";";
         prefix = template.substring(0, template.indexOf(delimiter));
+    }
 
 
+    public void init() {
         neighbors = new HashMap<String, Integer>();
-
-
         series = new XYSeries[3];
         series[0] = new XYSeries("Avg Neighbors");
         series[1] = new XYSeries("Min Neighbors");
         series[2] = new XYSeries("Max Neighbors");
-
-
         log.info("NeighborhoodParser initialized");
+    }
+
+    public ChartPanel getPlot() {
+        return getPlot(false, true, "", "", "");
     }
 
     public ChartPanel getPlot(boolean has_title, boolean aggregate, String title, String xlabel, String ylabel) {

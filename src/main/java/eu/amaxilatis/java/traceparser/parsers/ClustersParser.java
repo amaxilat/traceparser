@@ -21,7 +21,7 @@ import java.util.Observer;
  * Date: 7/19/11
  * Time: 6:39 PM
  */
-public class ClustersParser implements Observer, AbstractParser {
+public class ClustersParser extends AbstractParser implements Observer {
 
     private TraceFile file;
     private static final Logger log = Logger.getLogger(ClustersParser.class);
@@ -33,6 +33,7 @@ public class ClustersParser implements Observer, AbstractParser {
     private final String delimiter = ";";
     private int node = 1;
     private int cluster = 3;
+    private String[] parts;
 
 
     private ClustersParser() {
@@ -40,24 +41,18 @@ public class ClustersParser implements Observer, AbstractParser {
 
     }
 
-    public ClustersParser(TraceFile f, String template) {
-        //log.info("EventParser initialized");
-        duration = f.duration();
-
-
-        file = f;
-        int duration = (int) (f.duration() / 1000 + 1);
-        clusters = new HashMap[(int) duration];
+    public ClustersParser(String template) {
 
         //clusters = new int[f.nodesize()][(int) duration];
 
-        for (int i = 0; i < duration; i++) {
-            clusters[i] = new HashMap<String, String>();
-            clusters[i].clear();
-        }
-        double[] avgSize = new double[(int) duration];
+        parts = template.split(delimiter);
 
-        final String[] parts = template.split(delimiter);
+
+        init();
+    }
+
+    private void init() {
+
         prefix = parts[0];
         int type = 2;
         if (parts[1].equals("%s"))
@@ -85,6 +80,27 @@ public class ClustersParser implements Observer, AbstractParser {
         log.info("ClustersParser initialized");
     }
 
+    public ClustersParser(TraceFile f, String template) {
+        //log.info("EventParser initialized");
+        duration = f.duration();
+
+
+        file = f;
+        int duration = (int) (f.duration() / 1000 + 1);
+        clusters = new HashMap[(int) duration];
+
+        //clusters = new int[f.nodesize()][(int) duration];
+
+        for (int i = 0; i < duration; i++) {
+            clusters[i] = new HashMap<String, String>();
+            clusters[i].clear();
+        }
+
+        parts = template.split(delimiter);
+
+        init();
+    }
+
     public ChartPanel getPlot(boolean has_title, boolean aggregate, String title, String xlabel, String ylabel) {
         XYSeriesCollection dataset = new XYSeriesCollection();
         XYSeries[] clustersSeries;
@@ -107,6 +123,11 @@ public class ClustersParser implements Observer, AbstractParser {
         chart.setBackgroundPaint(Color.white);
 
         return new ChartPanel(chart);
+    }
+
+    @Override
+    public ChartPanel getPlot() {
+        return getPlot(false, true, "", "", "");
     }
 
     public XYSeries[] getSeries() {
@@ -149,6 +170,35 @@ public class ClustersParser implements Observer, AbstractParser {
         return getSeries();
     }
 
+    @Override
+    public void setFile(TraceFile file) {
+        this.file = file;
+
+        //log.info("EventParser initialized");
+        duration = this.file.duration();
+
+
+        int duration = (int) (this.file.duration() / 1000 + 1);
+        clusters = new HashMap[(int) duration];
+
+        //clusters = new int[f.nodesize()][(int) duration];
+
+        for (int i = 0; i < duration; i++) {
+            clusters[i] = new HashMap<String, String>();
+            clusters[i].clear();
+        }
+    }
+
+    @Override
+    public void setTemplate(String template) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public String getTemplate() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public void update(Observable observable, Object o) {
         final TraceMessage m = (TraceMessage) o;
         if (m.text().startsWith(prefix)) {
@@ -159,7 +209,7 @@ public class ClustersParser implements Observer, AbstractParser {
     }
 
     private void set_cluster(String node, String clust, int time) {
-        for (int i = time; i < duration; i++) {
+        for (int i = time; i < duration-1; i++) {
             clusters[i].put(node, clust);
         }
     }

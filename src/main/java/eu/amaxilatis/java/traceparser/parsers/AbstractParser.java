@@ -15,13 +15,20 @@ import java.util.Observer;
  * Time: 12:33 PM
  */
 
-public interface AbstractParser {
+public abstract class AbstractParser implements Observer {
 
-    public ChartPanel getPlot(boolean has_title, boolean aggregate, String title, String xlabel, String ylabel);
+    public abstract ChartPanel getPlot(boolean has_title, boolean aggregate, String title, String xlabel, String ylabel);
 
-    XYSeries[] getSeries();
+    public abstract ChartPanel getPlot();
 
-    XYSeries[] getSeries_aggregate();
+    public abstract XYSeries[] getSeries();
 
+    public abstract XYSeries[] getSeries_aggregate();
+
+    public abstract void setFile(TraceFile file);
+
+    public abstract void setTemplate(String template);
+
+    public abstract String getTemplate();
 }
 

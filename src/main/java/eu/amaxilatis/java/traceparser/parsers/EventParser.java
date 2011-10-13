@@ -20,7 +20,7 @@ import java.util.Observer;
  * Date: 7/2/11
  * Time: 2:10 PM
  */
-public class EventParser implements Observer, AbstractParser {
+public class EventParser extends AbstractParser implements Observer {
 
     private TraceFile file;
     private static final Logger log = Logger.getLogger(EventParser.class);
@@ -30,9 +30,37 @@ public class EventParser implements Observer, AbstractParser {
 
     private String[] prefixes;
 
-    private EventParser() {
+    public EventParser() {
         log.info("EventParser initialized");
 
+    }
+
+    public EventParser(String template) {
+
+
+        String partitioner = "-";
+        eventTypes = template.split(partitioner).length;
+
+        prefixes = new String[eventTypes];
+        final String[] templates = template.split(partitioner);
+
+
+        for (int type = 0; type < eventTypes; type++) {
+            log.info(templates[type]);
+            String delimiter = ";";
+            if (templates[type].contains(delimiter)) {
+                prefixes[type] = templates[type].substring(0, templates[type].indexOf(delimiter));
+            } else {
+                prefixes[type] = templates[type];
+            }
+            log.info(prefixes[type]);
+        }
+
+        init();
+    }
+
+    private void init() {
+        log.info("EventParser initialized");
     }
 
     //TODO: add multiple Events
@@ -70,7 +98,7 @@ public class EventParser implements Observer, AbstractParser {
             log.info(prefixes[type]);
         }
 
-        log.info("EventParser initialized");
+        init();
     }
 
     public void update(Observable observable, Object o) {
@@ -106,6 +134,11 @@ public class EventParser implements Observer, AbstractParser {
         return new ChartPanel(chart);
     }
 
+    @Override
+    public ChartPanel getPlot() {
+        return getPlot(false, true, "", "", "");
+    }
+
 
     public XYSeries[] getSeries() {
         XYSeries[] series = new XYSeries[eventTypes];
@@ -134,6 +167,34 @@ public class EventParser implements Observer, AbstractParser {
             }
         }
         return series;
+    }
+
+    @Override
+    public void setFile(TraceFile file) {
+        this.file = file;
+
+        //log.info("EventParser initialized");
+        duration = file.duration();
+
+
+        duration = file.duration() / 1000 + 1;
+        events = new int[eventTypes][(int) duration];
+
+        for (int type = 0; type < eventTypes; type++) {
+            for (int j = 0; j < (int) duration; j++) {
+                events[type][j] = 0;
+            }
+        }
+    }
+
+    @Override
+    public void setTemplate(String template) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public String getTemplate() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     private int count_until(int type, int time_until) {

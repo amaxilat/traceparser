@@ -21,7 +21,7 @@ import java.util.Observer;
  * Date: 7/2/11
  * Time: 1:19 PM
  */
-public class SendParser implements Observer, AbstractParser {
+public class SendParser extends AbstractParser implements Observer {
 
     private TraceFile file;
     private static final Logger log = Logger.getLogger(SendParser.class);
@@ -31,6 +31,7 @@ public class SendParser implements Observer, AbstractParser {
     private String prefix;
     private final String delimiter = ";";
     private int type = 2;
+    private String[] parts;
 
 
     private SendParser() {
@@ -39,18 +40,14 @@ public class SendParser implements Observer, AbstractParser {
 
     }
 
-    public SendParser(TraceFile f, String template) {
+    public SendParser(String template) {
 
-        file = f;
-        duration = f.duration() / 1000 + 1;
-        messages = new int[255][(int) duration];
-        for (int i = 0; i < 255; i++) {
-            for (int j = 0; j < (int) duration; j++) {
-                messages[i][j] = 0;
-            }
-        }
+        parts = template.split(delimiter);
+        init();
 
-        final String[] parts = template.split(delimiter);
+    }
+
+    private void init() {
         prefix = parts[0];
         int destination = 3;
         int sender = 1;
@@ -77,7 +74,21 @@ public class SendParser implements Observer, AbstractParser {
 
 
         log.info("SendParser initialized");
+    }
 
+    public SendParser(TraceFile f, String template) {
+
+        file = f;
+        duration = f.duration() / 1000 + 1;
+        messages = new int[255][(int) duration];
+        for (int i = 0; i < 255; i++) {
+            for (int j = 0; j < (int) duration; j++) {
+                messages[i][j] = 0;
+            }
+        }
+
+        parts = template.split(delimiter);
+        init();
     }
 
     public void update(Observable observable, Object o) {
@@ -113,6 +124,11 @@ public class SendParser implements Observer, AbstractParser {
         chart.setBackgroundPaint(Color.white);
 
         return new ChartPanel(chart);
+    }
+
+    @Override
+    public ChartPanel getPlot() {
+        return getPlot(false, true, "", "", "");
     }
 
 
@@ -172,6 +188,29 @@ public class SendParser implements Observer, AbstractParser {
         }
         return series;
 
+    }
+
+    @Override
+    public void setFile(TraceFile file) {
+        this.file = file;
+
+        duration = file.duration() / 1000 + 1;
+        messages = new int[255][(int) duration];
+        for (int i = 0; i < 255; i++) {
+            for (int j = 0; j < (int) duration; j++) {
+                messages[i][j] = 0;
+            }
+        }
+    }
+
+    @Override
+    public void setTemplate(String template) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public String getTemplate() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     private int count_until(int type, int time_until) {
