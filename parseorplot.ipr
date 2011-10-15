@@ -179,6 +179,9 @@
       </item>
     </group>
   </component>
+  <component name="ProjectDictionaryState">
+    <dictionary name="amaxilatis" />
+  </component>
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/qTraceParser.iml" filepath="$PROJECT_DIR$/qTraceParser.iml" />

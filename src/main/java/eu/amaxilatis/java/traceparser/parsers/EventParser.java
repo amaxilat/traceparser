@@ -170,7 +170,7 @@ public class EventParser extends AbstractParser implements Observer {
     }
 
     @Override
-    public void setFile(TraceFile file) {
+    public void setTraceFile(TraceFile file) {
         this.file = file;
 
         //log.info("EventParser initialized");

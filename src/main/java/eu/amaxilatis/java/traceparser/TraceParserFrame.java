@@ -21,7 +21,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -36,31 +35,17 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
     private static final String propfilename = "traceparser.properties";
 
 
-    private javax.swing.JButton generatePlotButton;
-    private javax.swing.JButton generateFileButton;
+    private javax.swing.JButton addParser;
+    private JList availableParsersList;
     private javax.swing.JButton savePropertiesButton;
     private JButton openFileChooserButton;
     private JButton refreshTraceButton;
 
-    //    private final javax.swing.JLabel[] parserOptionsLabel = new javax.swing.JLabel[3];
-//
+
     private javax.swing.JLabel selectedFileText;
     private javax.swing.JLabel linesFileText;
     private javax.swing.JLabel durationFileText;
     private javax.swing.JLabel nodesFileText;
-
-    private JRadioButton aggregatePlots;
-    private JRadioButton messagesPlots;
-    private JRadioButton clustersPlots;
-    private JRadioButton eventsPlots;
-    private JRadioButton neighborhoodPlots;
-
-
-    private final JTextField[] labelsMessages = new JTextField[3];
-    private final JTextField[] labelsClusters = new JTextField[3];
-    private final JTextField[] labelsEvents = new JTextField[3];
-    private final JTextField[] labelsNeighborhood = new JTextField[3];
-
 
     private TraceFile mytracefile;
 
@@ -68,6 +53,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
     private Properties properties;
     private ParserControlPanel parsercontrolpanel;
     private PlotterControlPanel plottercontrolpanel;
+    private JTabbedPane jTabbedPane1;
 
 
     /**
@@ -98,25 +84,27 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
             log.error("could not load property file!");
         }
 
-        JTabbedPane jTabbedPane1 = new JTabbedPane();
+        jTabbedPane1 = new JTabbedPane();
 
         JPanel fileOptionsPanel = new JPanel();
-        JPanel parserOptionsPanel = new JPanel();
-        JPanel plotterOptionsPanel = new JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         fileOptionsPanel.setLayout(new java.awt.GridLayout(0, 3, 10, 10));
-        plotterOptionsPanel.setLayout(new java.awt.GridLayout(0, 4, 10, 10));
 
-        generatePlotButton = new javax.swing.JButton("Generate Plot");
-        generatePlotButton.addActionListener(this);
+        addParser = new javax.swing.JButton("Add Parser");
+        addParser.addActionListener(this);
 
-        generateFileButton = new javax.swing.JButton("Generate File");
-        generateFileButton.addActionListener(this);
-
-        savePropertiesButton = new JButton("Save Properties");
+        savePropertiesButton = new javax.swing.JButton("Save Properties");
         savePropertiesButton.addActionListener(this);
+
+        DefaultListModel listModel = new DefaultListModel();
+        listModel.addElement("Neighborhood");
+        listModel.addElement("Clusters");
+        listModel.addElement("Events");
+        listModel.addElement("Messages");
+        availableParsersList = new JList(listModel);
+
 
         fileOptionsPanel.add(new JLabel(new ImageIcon(this.getClass().getClassLoader().getResource("favicon.png"), "")));
 
@@ -148,77 +136,13 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         fileOptionsPanel.add(nodesFileText);
 
 
-        messagesPlots = new JRadioButton("enable");
-        clustersPlots = new JRadioButton("enable");
-        eventsPlots = new JRadioButton("enable");
-        neighborhoodPlots = new JRadioButton("enable");
-        messagesPlots.setSelected(properties.getProperty("plotter.messages").equals("true"));
-        clustersPlots.setSelected(properties.getProperty("plotter.clusters").equals("true"));
-        eventsPlots.setSelected(properties.getProperty("plotter.events").equals("true"));
-        neighborhoodPlots.setSelected(properties.getProperty("plotter.neighborhood").equals("true"));
-
-        for (int i = 0; i < 3; i++) {
-
-            labelsMessages[i] = new JTextField(properties.getProperty("plotter.labels.messages").split(",")[i]);
-            labelsClusters[i] = new JTextField(properties.getProperty("plotter.labels.clusters").split(",")[i]);
-            labelsEvents[i] = new JTextField(properties.getProperty("plotter.labels.events").split(",")[i]);
-            labelsNeighborhood[i] = new JTextField(properties.getProperty("plotter.labels.neighborhood").split(",")[i]);
-        }
-
-        plotterOptionsPanel.add(new JLabel("Plot Messages"));
-        plotterOptionsPanel.add(new JLabel("Title"));
-        plotterOptionsPanel.add(new JLabel("xLabel"));
-        plotterOptionsPanel.add(new JLabel("yLabel"));
-        plotterOptionsPanel.add(messagesPlots);
-        plotterOptionsPanel.add(labelsMessages[0]);
-        plotterOptionsPanel.add(labelsMessages[1]);
-        plotterOptionsPanel.add(labelsMessages[2]);
-
-        plotterOptionsPanel.add(new JLabel("Plot Clusters"));
-        plotterOptionsPanel.add(new JLabel("Title"));
-        plotterOptionsPanel.add(new JLabel("xLabel"));
-        plotterOptionsPanel.add(new JLabel("yLabel"));
-        plotterOptionsPanel.add(clustersPlots);
-        plotterOptionsPanel.add(labelsClusters[0]);
-        plotterOptionsPanel.add(labelsClusters[1]);
-        plotterOptionsPanel.add(labelsClusters[2]);
-
-        plotterOptionsPanel.add(new JLabel("Plot Events"));
-        plotterOptionsPanel.add(new JLabel("Title"));
-        plotterOptionsPanel.add(new JLabel("xLabel"));
-        plotterOptionsPanel.add(new JLabel("yLabel"));
-        plotterOptionsPanel.add(eventsPlots);
-        plotterOptionsPanel.add(labelsEvents[0]);
-        plotterOptionsPanel.add(labelsEvents[1]);
-        plotterOptionsPanel.add(labelsEvents[2]);
-
-        plotterOptionsPanel.add(new JLabel("Plot Neigborhood"));
-        plotterOptionsPanel.add(new JLabel("Title"));
-        plotterOptionsPanel.add(new JLabel("xLabel"));
-        plotterOptionsPanel.add(new JLabel("yLabel"));
-        plotterOptionsPanel.add(neighborhoodPlots);
-        plotterOptionsPanel.add(labelsNeighborhood[0]);
-        plotterOptionsPanel.add(labelsNeighborhood[1]);
-        plotterOptionsPanel.add(labelsNeighborhood[2]);
-
-
-        aggregatePlots = new JRadioButton("Aggregate");
-        aggregatePlots.setSelected(properties.getProperty("plotter.aggregate").equals("true"));
-        plotterOptionsPanel.add(aggregatePlots);
-
-
-        parsercontrolpanel = new ParserControlPanel(properties);
-        plottercontrolpanel = new PlotterControlPanel();
-
         jTabbedPane1.addTab("File Options", fileOptionsPanel);
-        jTabbedPane1.addTab("Parser Options", parsercontrolpanel);
-        jTabbedPane1.addTab("Plotter Options", plottercontrolpanel);
 
 
         getContentPane().setLayout(new BorderLayout());
         final JPanel buttonsmain = new JPanel(new GridLayout(1, 3, 10, 10));
-        buttonsmain.add(generateFileButton);
-        buttonsmain.add(generatePlotButton);
+        buttonsmain.add(availableParsersList);
+        buttonsmain.add(addParser);
         buttonsmain.add(savePropertiesButton);
         getContentPane().add(buttonsmain, BorderLayout.PAGE_END);
         jTabbedPane1.setPreferredSize(new Dimension(1000, 500));
@@ -228,7 +152,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         open_trace(properties.getProperty("parser.filename"));
         pack();
 
-    }// </editor-fold>//GEN-END:initComponents
+    }
 
     /**
      * @param args the command line arguments
@@ -261,40 +185,19 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         EventParser eventparser;
         ClustersParser clustersparser;
         SendParser sendparser;
-        if (e.equals(generatePlotButton)) {
+        if (e.equals(addParser)) {
 
-
-            TraceReader tracereader = new TraceReader(mytracefile);
-
-            for (AbstractParser parser : parsercontrolpanel.getParsers()) {
-                parser.setFile(mytracefile);
-
-                tracereader.addObserver(parser);
-
+            AbstractParser panel2add = null;
+            final String title = availableParsersList.getSelectedValue().toString();
+            if (title.equals("Neighborhood")) {
+                panel2add = new NeighborhoodParser();
+            }
+            if (panel2add != null) {
+                panel2add.setTraceFile(mytracefile);
+                jTabbedPane1.addTab(title, panel2add);
+                jTabbedPane1.updateUI();
             }
 
-
-            tracereader.run();
-
-            for (AbstractParser parser : parsercontrolpanel.getParsers()) {
-                presentPlot(parser.getPlot());
-            }
-
-//            presentPlot(sp.getPlot(false, false, "Semantics", "time is seconds", "# of members"));
-
-        } else if (e.equals(generateFileButton)) {
-
-            TraceReader tracereader = new TraceReader(mytracefile);
-
-//            sendparser = new SendParser(mytracefile, parserOptionsText[0].getText());
-//            clustersparser = new ClustersParser(mytracefile, parserOptionsText[1].getText());
-//            eventparser = new EventParser(mytracefile, parserOptionsText[2].getText());
-
-//            tracereader.addObserver(sendparser);
-//            tracereader.addObserver(clustersparser);
-//            tracereader.addObserver(eventparser);
-
-            tracereader.run();
 
         } else if ((e.equals(openFileChooserButton)) || ((e.equals(selectedFileText)))) {
             JFileChooser chooser = new JFileChooser("~/");
@@ -309,43 +212,41 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         } else if (e.equals(refreshTraceButton)) {
             open_trace(mytracefile.filename());
 
-        } else if (e.equals(savePropertiesButton))
-
-        {
-            log.info("Writing properties");
-            properties.setProperty("parser.filename", mytracefile.filename());
-            String parserTemplates = "";
-            for (int i = 0; i < properties.getProperty("parser.templates").split(",").length; i++) {
-//                parserTemplates += parserOptionsText[i].getText() + ",";
-            }
-
-            properties.setProperty("parser.templates", parserTemplates);
-            log.info("parset.templates=" + parserTemplates.substring(0, parserTemplates.length() - 1));
-
-            log.info("plotter.aggregate=" + aggregatePlots.isSelected());
-            properties.setProperty("plotter.aggregate", aggregatePlots.isSelected() ? "true" : "false");
-            log.info("plotter.messages=" + aggregatePlots.isSelected());
-            properties.setProperty("plotter.messages", messagesPlots.isSelected() ? "true" : "false");
-            log.info("plotter.clusters=" + aggregatePlots.isSelected());
-            properties.setProperty("plotter.clusters", clustersPlots.isSelected() ? "true" : "false");
-            log.info("plotter.events=" + aggregatePlots.isSelected());
-            properties.setProperty("plotter.events", eventsPlots.isSelected() ? "true" : "false");
-            log.info("plotter.neighborhood=" + neighborhoodPlots.isSelected());
-            properties.setProperty("plotter.neighborhood", neighborhoodPlots.isSelected() ? "true" : "false");
-
-
-            properties.setProperty("plotter.labels.messages", labelsMessages[0].getText() + "," + labelsMessages[1].getText() + "," + labelsMessages[2].getText());
-            properties.setProperty("plotter.labels.clusters", labelsClusters[0].getText() + "," + labelsClusters[1].getText() + "," + labelsClusters[2].getText());
-            properties.setProperty("plotter.labels.events", labelsEvents[0].getText() + "," + labelsEvents[1].getText() + "," + labelsEvents[2].getText());
-            properties.setProperty("plotter.labels.neighborhood", labelsNeighborhood[0].getText() + "," + labelsNeighborhood[1].getText() + "," + labelsNeighborhood[2].getText());
-
-            // Write properties file.
-            try {
-                properties.store(new FileOutputStream(propfilename), null);
-            } catch (IOException a) {
-                log.warn("Could not write properties file");
-
-            }
+        } else if (e.equals(savePropertiesButton)) {
+//            log.info("Writing properties");
+//            properties.setProperty("parser.filename", mytracefile.filename());
+//            String parserTemplates = "";
+//            for (int i = 0; i < properties.getProperty("parser.templates").split(",").length; i++) {
+//
+//            }
+//
+//            properties.setProperty("parser.templates", parserTemplates);
+//            log.info("parset.templates=" + parserTemplates.substring(0, parserTemplates.length() - 1));
+//
+//            log.info("plotter.aggregate=" + aggregatePlots.isSelected());
+//            properties.setProperty("plotter.aggregate", aggregatePlots.isSelected() ? "true" : "false");
+//            log.info("plotter.messages=" + aggregatePlots.isSelected());
+//            properties.setProperty("plotter.messages", messagesPlots.isSelected() ? "true" : "false");
+//            log.info("plotter.clusters=" + aggregatePlots.isSelected());
+//            properties.setProperty("plotter.clusters", clustersPlots.isSelected() ? "true" : "false");
+//            log.info("plotter.events=" + aggregatePlots.isSelected());
+//            properties.setProperty("plotter.events", eventsPlots.isSelected() ? "true" : "false");
+//            log.info("plotter.neighborhood=" + neighborhoodPlots.isSelected());
+//            properties.setProperty("plotter.neighborhood", neighborhoodPlots.isSelected() ? "true" : "false");
+//
+//
+//            properties.setProperty("plotter.labels.messages", labelsMessages[0].getText() + "," + labelsMessages[1].getText() + "," + labelsMessages[2].getText());
+//            properties.setProperty("plotter.labels.clusters", labelsClusters[0].getText() + "," + labelsClusters[1].getText() + "," + labelsClusters[2].getText());
+//            properties.setProperty("plotter.labels.events", labelsEvents[0].getText() + "," + labelsEvents[1].getText() + "," + labelsEvents[2].getText());
+//            properties.setProperty("plotter.labels.neighborhood", labelsNeighborhood[0].getText() + "," + labelsNeighborhood[1].getText() + "," + labelsNeighborhood[2].getText());
+//
+//            // Write properties file.
+//            try {
+//                properties.store(new FileOutputStream(propfilename), null);
+//            } catch (IOException a) {
+//                log.warn("Could not write properties file");
+//
+//            }
         }
 
     }

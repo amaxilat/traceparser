@@ -16,7 +16,7 @@ import java.util.Observable;
  * Date: 7/2/11
  * Time: 2:06 PM
  */
-class TraceReader extends Observable implements Runnable {
+public class TraceReader extends Observable implements Runnable {
 
 
     private final TraceFile file;

@@ -171,7 +171,7 @@ public class ClustersParser extends AbstractParser implements Observer {
     }
 
     @Override
-    public void setFile(TraceFile file) {
+    public void setTraceFile(TraceFile file) {
         this.file = file;
 
         //log.info("EventParser initialized");
@@ -209,7 +209,7 @@ public class ClustersParser extends AbstractParser implements Observer {
     }
 
     private void set_cluster(String node, String clust, int time) {
-        for (int i = time; i < duration-1; i++) {
+        for (int i = time; i < duration - 1; i++) {
             clusters[i].put(node, clust);
         }
     }

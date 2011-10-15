@@ -191,7 +191,7 @@ public class SendParser extends AbstractParser implements Observer {
     }
 
     @Override
-    public void setFile(TraceFile file) {
+    public void setTraceFile(TraceFile file) {
         this.file = file;
 
         duration = file.duration() / 1000 + 1;
