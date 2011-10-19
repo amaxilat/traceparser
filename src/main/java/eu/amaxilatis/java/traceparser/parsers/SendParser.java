@@ -203,12 +203,10 @@ public class SendParser extends AbstractParser implements Observer {
         }
     }
 
-    @Override
     public void setTemplate(String template) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    @Override
     public String getTemplate() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }

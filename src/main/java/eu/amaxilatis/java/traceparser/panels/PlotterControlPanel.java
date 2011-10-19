@@ -1,6 +1,7 @@
 package eu.amaxilatis.java.traceparser.panels;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -9,4 +10,10 @@ import javax.swing.*;
  * Time: 8:03 PM
  */
 public class PlotterControlPanel extends JPanel {
+    public PlotterControlPanel() {
+
+        this.setLayout(new BorderLayout(30, 30));
+
+        this.add(new JLabel("Plot options"), BorderLayout.NORTH);
+    }
 }

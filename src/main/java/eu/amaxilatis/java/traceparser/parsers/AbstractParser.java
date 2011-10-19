@@ -27,26 +27,9 @@ public abstract class AbstractParser extends JPanel implements Observer {
 
     public abstract XYSeries[] getSeries_aggregate();
 
-    public abstract void setTemplate(String template);
-
-    public abstract String getTemplate();
-
-    public abstract void setTraceFile(TraceFile mytracefile);
+    public abstract void setTraceFile(TraceFile mytracefile) throws Exception;
 
 
-    public class couplePanel extends JPanel {
-        couplePanel(Component a, Component b) {
 
-            this.setLayout(new FlowLayout());
-            Dimension d = new Dimension(200, 50);
-            this.setPreferredSize(d);
-            this.setMaximumSize(d);
-            this.setMinimumSize(d);
-            a.setPreferredSize(d);
-            b.setPreferredSize(d);
-            this.add(a);
-            this.add(b);
-        }
-    }
 }
 

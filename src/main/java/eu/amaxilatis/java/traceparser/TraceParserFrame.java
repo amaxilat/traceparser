@@ -49,10 +49,6 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
     private TraceFile mytracefile;
 
-
-    private Properties properties;
-    private ParserControlPanel parsercontrolpanel;
-    private PlotterControlPanel plottercontrolpanel;
     private JTabbedPane jTabbedPane1;
 
 
@@ -77,7 +73,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        properties = new Properties();
+        Properties properties = new Properties();
         try {
             properties.load(this.getClass().getClassLoader().getResourceAsStream(propfilename));
         } catch (IOException e) {
@@ -85,6 +81,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         }
 
         jTabbedPane1 = new JTabbedPane();
+
 
         JPanel fileOptionsPanel = new JPanel();
 
@@ -110,11 +107,11 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
         selectedFileText = new JLabel("no file selected");
         fileOptionsPanel.add(selectedFileText);
-        setSize(fileOptionsPanel, 150, 40);
+        setSize(fileOptionsPanel);
 
         openFileChooserButton = new JButton("Open File...");
         openFileChooserButton.addActionListener(this);
-        setSize(openFileChooserButton, 150, 40);
+        setSize(openFileChooserButton);
         fileOptionsPanel.add(openFileChooserButton);
 
 
@@ -137,6 +134,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
 
         jTabbedPane1.addTab("File Options", fileOptionsPanel);
+        jTabbedPane1.addTab("Plot Options", new PlotterControlPanel());
 
 
         getContentPane().setLayout(new BorderLayout());
@@ -154,25 +152,25 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
     }
 
-    /**
-     * @param args the command line arguments
-     */
+//    /**
+//     * @param args the command line arguments
+//     */
+//
+//    public static void main(String args[]) {
+//
+//
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new TraceParserFrame().setVisible(true);
+//
+//            }
+//        });
+//    }
 
-    public static void main(String args[]) {
-
-
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new TraceParserFrame().setVisible(true);
-
-            }
-        });
-    }
-
-    private void setSize(Component obj, int x, int y) {
-        obj.setPreferredSize(new Dimension(x, y));
-        obj.setMaximumSize(new Dimension(x, y));
-        obj.setMinimumSize(new Dimension(x, y));
+    private void setSize(Component obj) {
+        obj.setPreferredSize(new Dimension(150, 40));
+        obj.setMaximumSize(new Dimension(150, 40));
+        obj.setMinimumSize(new Dimension(150, 40));
 
     }
 
@@ -182,22 +180,29 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
     public void actionPerformed(ActionEvent actionEvent) {
         //To change body of implemented methods use File | Settings | File Templates.
         final Object e = actionEvent.getSource();
-        EventParser eventparser;
-        ClustersParser clustersparser;
-        SendParser sendparser;
         if (e.equals(addParser)) {
 
-            AbstractParser panel2add = null;
-            final String title = availableParsersList.getSelectedValue().toString();
-            if (title.equals("Neighborhood")) {
-                panel2add = new NeighborhoodParser();
-            }
-            if (panel2add != null) {
-                panel2add.setTraceFile(mytracefile);
-                jTabbedPane1.addTab(title, panel2add);
-                jTabbedPane1.updateUI();
-            }
+            try {
+                AbstractParser panel2add = null;
 
+                final String title = availableParsersList.getSelectedValue().toString();
+
+                if (title.equals("Neighborhood")) {
+                    panel2add = new NeighborhoodParser();
+                }
+                if (title.equals("Clusters")) {
+                    panel2add = new ClustersParser();
+                }
+                if (panel2add != null) {
+                    panel2add.setTraceFile(mytracefile);
+
+                    jTabbedPane1.addTab(title, panel2add);
+                    jTabbedPane1.updateUI();
+                }
+            } catch (NullPointerException ignore) {
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
 
         } else if ((e.equals(openFileChooserButton)) || ((e.equals(selectedFileText)))) {
             JFileChooser chooser = new JFileChooser("~/");
@@ -260,15 +265,5 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         nodesFileText.setText(mytracefile.nodesize() + " nodes");
         linesFileText.setText(mytracefile.lines() + " lines");
     }
-
-
-    private void presentPlot(ChartPanel plot) {
-        JFrame jf = new JFrame("Plot");
-        jf.setVisible(true);
-        jf.add(plot);
-        jf.pack();
-
-    }
-
 }
 
