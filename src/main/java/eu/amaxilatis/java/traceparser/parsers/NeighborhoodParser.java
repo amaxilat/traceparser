@@ -1,5 +1,6 @@
 package eu.amaxilatis.java.traceparser.parsers;
 
+import eu.amaxilatis.java.traceparser.ChartFormater;
 import eu.amaxilatis.java.traceparser.TraceFile;
 import eu.amaxilatis.java.traceparser.TraceMessage;
 import eu.amaxilatis.java.traceparser.TraceReader;
@@ -48,6 +49,9 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
     private JTextField losttextfield;
     private JTextField biditextfield;
     private JTextField droptextfield;
+    private TextField plotTitle;
+    private TextField yLabel;
+    private TextField xLabel;
 
 
     public NeighborhoodParser() {
@@ -81,22 +85,15 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
         leftmainpanel.add(new couplePanel(new JLabel("Drop prefix"), droptextfield));
         leftmainpanel.add(new couplePanel(new JLabel("Lost prefix"), losttextfield));
 
-        JPanel plotbuttonpanel = new JPanel(new FlowLayout());
-        plotbuttonpanel.add(plotbutton);
-        Dimension d = new Dimension(100, 50);
-        plotbuttonpanel.setPreferredSize(d);
-        plotbuttonpanel.setMinimumSize(d);
-        plotbuttonpanel.setMaximumSize(d);
 
-        JPanel updatebuttonpanel = new JPanel(new FlowLayout());
-        updatebuttonpanel.add(updatebutton);
-        updatebuttonpanel.setPreferredSize(d);
-        updatebuttonpanel.setMinimumSize(d);
-        updatebuttonpanel.setMaximumSize(d);
+        rightmainpanel.add(new couplePanel(plotbutton, updatebutton));
 
-        rightmainpanel.add(plotbuttonpanel);
-        rightmainpanel.add(updatebuttonpanel);
-
+        plotTitle = new TextField("Neighborhood Statistics");
+        rightmainpanel.add(new couplePanel(new JLabel("Plot title:"), plotTitle));
+        xLabel = new TextField("time in sec");
+        rightmainpanel.add(new couplePanel(new JLabel("X axis Label:"), xLabel));
+        yLabel = new TextField("# of Nodes");
+        rightmainpanel.add(new couplePanel(new JLabel("Y axis Label:"), yLabel));
 
     }
 
@@ -120,7 +117,7 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
     }
 
     public ChartPanel getPlot() {
-        return getPlot(false, true, "", "", "");
+        return getPlot(false, true, plotTitle.getText(), xLabel.getText(), yLabel.getText());
     }
 
     public ChartPanel getPlot(boolean has_title, boolean aggregate, String title, String xlabel, String ylabel) {
@@ -141,9 +138,8 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
                 xlabel,
                 ylabel,
                 dataset, PlotOrientation.VERTICAL, true, true, false);
-        chart.setBackgroundPaint(Color.white);
-
-        return new ChartPanel(chart);
+        JFreeChart chartTransformed = ChartFormater.transformChart(chart);
+        return new ChartPanel(chartTransformed);
     }
 
     public XYSeries[] getSeries() {

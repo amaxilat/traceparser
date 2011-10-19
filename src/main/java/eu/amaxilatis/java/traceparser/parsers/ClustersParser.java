@@ -1,5 +1,6 @@
 package eu.amaxilatis.java.traceparser.parsers;
 
+import eu.amaxilatis.java.traceparser.ChartFormater;
 import eu.amaxilatis.java.traceparser.TraceFile;
 import eu.amaxilatis.java.traceparser.TraceMessage;
 import eu.amaxilatis.java.traceparser.TraceReader;
@@ -161,15 +162,16 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
             dataset.addSeries(clustersSery);
         }
 
+
         JFreeChart chart = ChartFactory.createXYLineChart(
                 title,
                 xlabel,
                 ylabel,
                 dataset, PlotOrientation.VERTICAL, true, true, false);
 
-        chart.setBackgroundPaint(Color.white);
 
-        return new ChartPanel(chart);
+        JFreeChart chartTransformed = ChartFormater.transformChart(chart);
+        return new ChartPanel(chartTransformed);
     }
 
     @Override
