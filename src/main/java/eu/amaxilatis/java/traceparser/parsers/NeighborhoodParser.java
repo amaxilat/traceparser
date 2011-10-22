@@ -52,6 +52,7 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
     private TextField plotTitle;
     private TextField yLabel;
     private TextField xLabel;
+    public static String Name = "Neighborhood Parser";
 
 
     public NeighborhoodParser() {
@@ -65,7 +66,7 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
         mainpanel.add(leftmainpanel);
         mainpanel.add(rightmainpanel);
 
-        this.add(new JLabel("NeighborhoodParser"), BorderLayout.NORTH);
+        this.add(new JLabel(Name), BorderLayout.NORTH);
         this.add(mainpanel, BorderLayout.CENTER);
 
         plotbutton = new JButton("plot");

@@ -10,7 +10,10 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -20,7 +23,9 @@ import java.util.Observer;
  * Date: 7/2/11
  * Time: 2:10 PM
  */
-public class EventParser extends AbstractParser implements Observer {
+public class EventParser extends AbstractParser implements Observer, ActionListener {
+
+    public static final String Name = "Events Parser";
 
     private TraceFile file;
     private static final Logger log = Logger.getLogger(EventParser.class);
@@ -29,8 +34,28 @@ public class EventParser extends AbstractParser implements Observer {
     private int eventTypes;
 
     private String[] prefixes;
+    private JButton plotbutton;
+    private JButton updatebutton;
 
     public EventParser() {
+
+
+        this.setLayout(new BorderLayout());
+
+        JPanel mainpanel = new JPanel(new GridLayout(0, 2, 30, 30));
+        JPanel leftmainpanel = new JPanel(new GridLayout(0, 1));
+        JPanel rightmainpanel = new JPanel(new GridLayout(0, 1));
+        mainpanel.add(leftmainpanel);
+        mainpanel.add(rightmainpanel);
+
+        this.add(new JLabel(Name), BorderLayout.NORTH);
+        this.add(mainpanel, BorderLayout.CENTER);
+
+        plotbutton = new JButton("plot");
+        plotbutton.addActionListener(this);
+        updatebutton = new JButton("reload configuration");
+        updatebutton.addActionListener(this);
+
         log.info("EventParser initialized");
 
     }
@@ -201,5 +226,9 @@ public class EventParser extends AbstractParser implements Observer {
             sum += events[type][i];
         }
         return sum;
+    }
+
+    public void actionPerformed(ActionEvent actionEvent) {
+
     }
 }

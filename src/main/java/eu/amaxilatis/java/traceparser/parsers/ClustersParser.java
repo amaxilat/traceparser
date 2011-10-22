@@ -47,6 +47,7 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
     private int pcluster;
     private int pid;
     private int ptype;
+    public static String Name = "Clusters Parser";
 
 
     public ClustersParser() {
@@ -61,7 +62,7 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
         mainpanel.add(leftmainpanel);
         mainpanel.add(rightmainpanel);
 
-        this.add(new JLabel("ClustersParser"), BorderLayout.NORTH);
+        this.add(new JLabel(Name), BorderLayout.NORTH);
         this.add(mainpanel, BorderLayout.CENTER);
 
         plotbutton = new JButton("plot");

@@ -32,6 +32,7 @@ public class SendParser extends AbstractParser implements Observer {
     private final String delimiter = ";";
     private int type = 2;
     private String[] parts;
+    public static String Name = "Send Parser";
 
 
     private SendParser() {
