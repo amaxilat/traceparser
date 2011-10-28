@@ -23,7 +23,17 @@ public class TraceFile {
     private final String filename;
     private long duration;
     private long start_time;
+
+    public long getEnd_time() {
+        return end_time;
+    }
+
     private long end_time;
+
+    public ArrayList<String> getNode_names() {
+        return node_names;
+    }
+
     private final ArrayList<String> node_names = new ArrayList();
     private long lines;
 
