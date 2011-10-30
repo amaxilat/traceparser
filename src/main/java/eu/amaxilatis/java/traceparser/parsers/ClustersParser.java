@@ -175,7 +175,7 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
         return new ChartPanel(chartTransformed);
     }
 
-    @Override
+//    @Override
     public ChartPanel getPlot() {
         return getPlot(false, false, "", "", "");
     }
@@ -221,7 +221,7 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
         return getSeries();
     }
 
-    @Override
+//    @Override
     public void setTraceFile(TraceFile file) {
         this.file = file;
 

@@ -127,7 +127,7 @@ public class SendParser extends AbstractParser implements Observer {
         return new ChartPanel(chart);
     }
 
-    @Override
+//    @Override
     public ChartPanel getPlot() {
         return getPlot(false, true, "", "", "");
     }
@@ -191,7 +191,7 @@ public class SendParser extends AbstractParser implements Observer {
 
     }
 
-    @Override
+//    @Override
     public void setTraceFile(TraceFile file) {
         this.file = file;
 

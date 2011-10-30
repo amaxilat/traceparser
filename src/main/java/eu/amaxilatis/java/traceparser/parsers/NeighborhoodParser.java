@@ -21,18 +21,11 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
-/**
- * Created by IntelliJ IDEA.
- * User: amaxilatis
- * Date: 7/19/11
- * Time: 6:39 PM
- */
 public class NeighborhoodParser extends AbstractParser implements Observer, ActionListener {
 
     private TraceFile file;
     private static final Logger log = Logger.getLogger(NeighborhoodParser.class);
-    private HashMap<String, Integer> neighbors;
-
+    private HashMap<String, HashMap<String, Integer>> neighborsBidi = new HashMap();
 
     private XYSeries[] series;
 
@@ -42,17 +35,17 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
     private String prefix_drop;
 
     private String delimiter;
-    private JButton plotbutton;
-    private JButton updatebutton;
-    private JTextField delimitertextfield;
-    private JTextField nbtextfield;
-    private JTextField losttextfield;
-    private JTextField biditextfield;
-    private JTextField droptextfield;
-    private TextField plotTitle;
-    private TextField yLabel;
-    private TextField xLabel;
-    public static String Name = "Neighborhood Parser";
+    private final JButton plotbutton;
+    private final JButton updatebutton;
+    private final JTextField delimitertextfield;
+    private final JTextField nbtextfield;
+    private final JTextField losttextfield;
+    private final JTextField biditextfield;
+    private final JTextField droptextfield;
+    private final TextField plotTitle;
+    private final TextField yLabel;
+    private final TextField xLabel;
+    public static final String Name = "Neighborhood Parser";
 
 
     public NeighborhoodParser() {
@@ -99,7 +92,7 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
     }
 
 
-    public void setTemplates(String prefix_uni, String prefix_lost, String prefix_bidi, String prefix_drop) {
+    void setTemplates(String prefix_uni, String prefix_lost, String prefix_bidi, String prefix_drop) {
         this.prefix_uni = prefix_uni;
         this.prefix_lost = prefix_lost;
         this.prefix_drop = prefix_drop;
@@ -111,24 +104,20 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
         this.file = file;
     }
 
-    public void init() {
+    void init() {
         setDelimiter(";");
         setTemplates("NB", "NBL", "NBB", "NBD");
         reset();
     }
 
-    public ChartPanel getPlot() {
-        return getPlot(false, true, plotTitle.getText(), xLabel.getText(), yLabel.getText());
+    ChartPanel getPlot() {
+        return getPlot(plotTitle.getText(), xLabel.getText(), yLabel.getText());
     }
 
-    public ChartPanel getPlot(boolean has_title, boolean aggregate, String title, String xlabel, String ylabel) {
+    ChartPanel getPlot(String title, String xlabel, String ylabel) {
         XYSeriesCollection dataset = new XYSeriesCollection();
         XYSeries[] clustersSeries;
-        if (aggregate) {
-            clustersSeries = getSeries_aggregate();
-        } else {
-            clustersSeries = getSeries();
-        }
+        clustersSeries = getSeries_aggregate();
 
         for (XYSeries clustersSery : clustersSeries) {
             dataset.addSeries(clustersSery);
@@ -143,46 +132,58 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
         return new ChartPanel(chartTransformed);
     }
 
-    public XYSeries[] getSeries() {
-
-
+    XYSeries[] getSeries() {
         return series;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public XYSeries[] getSeries_aggregate() {
+    XYSeries[] getSeries_aggregate() {
         return getSeries();
     }
 
     public void update(Observable observable, Object o) {
         final TraceMessage m = (TraceMessage) o;
         if (m.text().startsWith(prefix_uni)) {
-            log.info("Neighbor@" + m.time() + ":" + m.urn());
-            int nb_change = 0;
-//            if ((m.text().contains(prefix + ";")) | (m.text().contains(prefix + "B;"))) {
+//            log.info("Neighbor@" + m.time() + ":" + m.urn());
+            final String target = m.text().split(delimiter)[1];
             if ((m.text().contains(prefix_bidi))) {
-                //add neighbor
-                nb_change = +1;
-            } else if ((m.text().contains(prefix_drop))) {
-                nb_change = -1;
+
+                if (neighborsBidi.containsKey(m.urn())) {
+                    HashMap<String, Integer> tmp = neighborsBidi.get(m.urn());
+                    tmp.put(target, 1);
+                    neighborsBidi.put(m.urn(), tmp);
+                    log.debug(m.text());
+                    log.debug(m.urn() + " nb size: " + tmp.size());
+                } else {
+                    HashMap tmp = new HashMap<String, Integer>();
+                    tmp.put(target, 1);
+                    neighborsBidi.put(m.urn(), tmp);
+                    log.debug(m.text());
+                    log.debug(m.urn() + " nb size: " + tmp.size());
+                }
+            } else if ((m.text().contains(prefix_drop)) || (m.text().contains(prefix_lost))) {
+                if (neighborsBidi.containsKey(m.urn())) {
+                    HashMap<String, Integer> tmp = neighborsBidi.get(m.urn());
+                    tmp.remove(target);
+                    neighborsBidi.put(m.urn(), tmp);
+                    log.debug(m.text());
+                    log.debug(m.urn() + " nb size: " + tmp.size());
+                }
+
             }
-            if (neighbors.containsKey(m.urn())) {
-                neighbors.put(m.urn(), neighbors.get(m.urn()) + nb_change);
-            } else {
-                neighbors.put(m.urn(), 1);
-            }
-            //log.info(m.text()+ ":: "+nb_change);
-            //log.info(get_avg_neighbors());
+
             series[0].addOrUpdate(((int) ((m.time() - file.starttime()) / 1000)), get_avg_neighbors());
             series[1].addOrUpdate(((int) ((m.time() - file.starttime()) / 1000)), get_min_neighbors());
             series[2].addOrUpdate(((int) ((m.time() - file.starttime()) / 1000)), get_max_neighbors());
+
         }
     }
 
     private double get_avg_neighbors() {
         int count = 0;
         int sum = 0;
-        for (int val : neighbors.values()) {
-            sum += val;
+
+        for (String urn : neighborsBidi.keySet()) {
+            sum += neighborsBidi.get(urn).size();
             count++;
         }
         if (count > 0)
@@ -194,19 +195,23 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
 
     private double get_max_neighbors() {
         int max = 0;
-        for (int val : neighbors.values()) {
-            if (max < val) {
-                max = val;
+        for (String urn : neighborsBidi.keySet()) {
+            if (max < neighborsBidi.get(urn).size()) {
+                max = neighborsBidi.get(urn).size();
             }
         }
         return max;
     }
 
     private double get_min_neighbors() {
-        int min = 10000;
-        for (int val : neighbors.values()) {
-            if (min > val) {
-                min = val;
+        int min = 0;
+        for (String urn : neighborsBidi.keySet()) {
+
+            if (min > neighborsBidi.get(urn).size()) {
+                min = neighborsBidi.get(urn).size();
+            }
+            if (min == 0) {
+                min = neighborsBidi.get(urn).size();
             }
         }
         return min;
@@ -234,7 +239,7 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
     }
 
     private void reset() {
-        neighbors = new HashMap<String, Integer>();
+        neighborsBidi = new HashMap();
         series = new XYSeries[3];
         series[0] = new XYSeries("Avg Neighbors");
         series[1] = new XYSeries("Min Neighbors");
@@ -245,5 +250,6 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
     private void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
     }
+
 }
 

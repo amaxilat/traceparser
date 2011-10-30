@@ -19,15 +19,17 @@ import java.util.Observer;
 
 public abstract class AbstractParser extends JPanel implements Observer {
 
-    public abstract ChartPanel getPlot(boolean has_title, boolean aggregate, String title, String xlabel, String ylabel);
-
-    public abstract ChartPanel getPlot();
-
-    public abstract XYSeries[] getSeries();
-
-    public abstract XYSeries[] getSeries_aggregate();
-
+//    public abstract ChartPanel getPlot(boolean has_title, boolean aggregate, String title, String xlabel, String ylabel);
+//
+//    public abstract ChartPanel getPlot();
+//
+//    public abstract XYSeries[] getSeries();
+//
+//    public abstract XYSeries[] getSeries_aggregate();
+//
     public abstract void setTraceFile(TraceFile mytracefile) throws Exception;
+
+
 
 
 

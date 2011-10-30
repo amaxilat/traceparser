@@ -159,7 +159,7 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
         return new ChartPanel(chart);
     }
 
-    @Override
+//    @Override
     public ChartPanel getPlot() {
         return getPlot(false, true, "", "", "");
     }
@@ -194,7 +194,7 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
         return series;
     }
 
-    @Override
+//    @Override
     public void setTraceFile(TraceFile file) {
         this.file = file;
 
