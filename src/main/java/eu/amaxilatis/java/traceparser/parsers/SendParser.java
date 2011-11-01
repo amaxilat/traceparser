@@ -2,7 +2,8 @@ package eu.amaxilatis.java.traceparser.parsers;
 
 import eu.amaxilatis.java.traceparser.TraceFile;
 import eu.amaxilatis.java.traceparser.TraceMessage;
-import eu.amaxilatis.java.traceparser.TraceParserApp;
+import eu.amaxilatis.java.traceparser.TraceReader;
+import eu.amaxilatis.java.traceparser.panels.couplePanel;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -11,7 +12,10 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -21,32 +25,65 @@ import java.util.Observer;
  * Date: 7/2/11
  * Time: 1:19 PM
  */
-public class SendParser extends AbstractParser implements Observer {
+public class SendParser extends AbstractParser implements Observer, ActionListener {
 
     private TraceFile file;
     private static final Logger log = Logger.getLogger(SendParser.class);
     private long duration;
     private int messages[][];
 
-    private String prefix;
+
     private final String delimiter = ";";
     private int type = 2;
     private String[] parts;
     public static String Name = "Send Parser";
+    private JButton plotbutton;
+    private JButton updatebutton;
+    private String template = "CLS;%s;%t;%d";
+    private JTextField templateTextField;
+    private JLabel prefixTextField;
+    private JCheckBox aggregateCheckbox;
+    private boolean aggregate = false;
+    private JTextField hiddenTextField;
+    private String hidden = "";
+    private String prefix;
 
 
-    private SendParser() {
+    public SendParser() {
+
+        this.setLayout(new BorderLayout());
+
+        JPanel mainpanel = new JPanel(new GridLayout(0, 2, 30, 30));
+        JPanel leftmainpanel = new JPanel(new GridLayout(0, 1));
+        JPanel rightmainpanel = new JPanel(new GridLayout(0, 1));
+        mainpanel.add(leftmainpanel);
+        mainpanel.add(rightmainpanel);
+
+        this.add(new JLabel(Name), BorderLayout.NORTH);
+        this.add(mainpanel, BorderLayout.CENTER);
+
+        plotbutton = new JButton("plot");
+        plotbutton.addActionListener(this);
+        updatebutton = new JButton("reload configuration");
+        updatebutton.addActionListener(this);
+
+        rightmainpanel.add(new couplePanel(plotbutton, updatebutton));
+
+        templateTextField = new JTextField(template);
+        leftmainpanel.add(new couplePanel(new JLabel("Message Sent Template"), templateTextField));
+        prefixTextField = new JLabel(prefix);
+
+        leftmainpanel.add(new couplePanel(new JLabel("Message Sent Prefix"), prefixTextField));
+        hiddenTextField = new JTextField(hidden);
+        leftmainpanel.add(new couplePanel(new JLabel("Hidden Message ids"), hiddenTextField));
+        aggregateCheckbox = new JCheckBox();
+        aggregateCheckbox.setSelected(aggregate);
+        leftmainpanel.add(new couplePanel(new JLabel("Aggregate plot"), aggregateCheckbox));
 
         log.info("SendParser initialized");
 
     }
 
-    public SendParser(String template) {
-
-        parts = template.split(delimiter);
-        init();
-
-    }
 
     private void init() {
         prefix = parts[0];
@@ -95,7 +132,7 @@ public class SendParser extends AbstractParser implements Observer {
     public void update(Observable observable, Object o) {
         final TraceMessage m = (TraceMessage) o;
         if (m.text().startsWith(prefix)) {
-            //log.info("Send@" + m.time() + ":" + m.urn());
+            log.info("Send@" + m.time() + ":" + m.urn());
             final String[] mess = m.text().split(delimiter);
             //log.info(((int) ((m.time() - file.starttime()) / 1000)));
             messages[Integer.parseInt(mess[type])][((int) ((m.time() - file.starttime()) / 1000))]++;
@@ -127,9 +164,9 @@ public class SendParser extends AbstractParser implements Observer {
         return new ChartPanel(chart);
     }
 
-//    @Override
+    //    @Override
     public ChartPanel getPlot() {
-        return getPlot(false, true, "", "", "");
+        return getPlot(false, aggregate, "", "", "");
     }
 
 
@@ -145,63 +182,70 @@ public class SendParser extends AbstractParser implements Observer {
 
     public XYSeries[] getSeries() {
 
-        int total = 0;
-        for (int i = 0; i < 255; i++) {
-            if (exists(i)) {
-                total++;
+
+        XYSeriesCollection seriesCollection = new XYSeriesCollection();
+
+        for (int types = 0; types < 255; types++) {
+            XYSeries series;
+            if (exists(types)) {
+                if (!hidden.contains(Integer.toString(types))) {
+                    series = new XYSeries("Mes. " + types);
+                    for (int i = 0; i < duration; i++) {
+                        if (count_until(types, i) > 0) {
+                            series.add(i, messages[types][i]);
+                        }
+                    }
+                    seriesCollection.addSeries(series);
+                }
             }
         }
 
-        XYSeries[] series = new XYSeries[total];
-        int ctype = 0;
-        for (int types = 0; types < 255; types++) {
-            if (exists(types)) {
-                series[ctype] = new XYSeries("Mes. " + types);
-                for (int i = 0; i < duration; i++) {
-                    series[ctype].add(i, messages[types][i]);
-                }
-                ctype++;
-            }
+        XYSeries[] series = new XYSeries[seriesCollection.getSeriesCount()];
+        for (int i = 0; i < seriesCollection.getSeriesCount(); i++) {
+            series[i] = seriesCollection.getSeries(i);
         }
+
         return series;
     }
 
 
     public XYSeries[] getSeries_aggregate() {
 
-        int total = 0;
-        for (int i = 0; i < 255; i++) {
-            if (exists(i)) {
-                total++;
-            }
-        }
-        //TODO: add aggregate plots
-        XYSeries[] series = new XYSeries[total];
-        int ctype = 0;
+        XYSeriesCollection seriesCollection = new XYSeriesCollection();
+
+
         for (int types = 0; types < 255; types++) {
+
+
             if (exists(types)) {
-                series[ctype] = new XYSeries("Mes. " + types);
-                for (int i = 0; i < duration; i++) {
-                    series[ctype].add(i, count_until(types, i));
+                log.debug("class conatins : " + hidden.contains(Integer.toString(types)) + " type " + Integer.toString(types));
+                if (!hidden.contains(Integer.toString(types))) {
+                    XYSeries series;
+                    series = new XYSeries("Mes. " + types);
+                    for (int i = 0; i < duration; i++) {
+                        if (count_until(types, i) > 0) {
+                            series.add(i, count_until(types, i));
+                        }
+                    }
+                    seriesCollection.addSeries(series);
                 }
-                ctype++;
             }
+
         }
+        XYSeries[] series = new XYSeries[seriesCollection.getSeriesCount()];
+        for (int i = 0; i < seriesCollection.getSeriesCount(); i++) {
+            series[i] = seriesCollection.getSeries(i);
+        }
+
         return series;
 
     }
 
-//    @Override
+    //    @Override
     public void setTraceFile(TraceFile file) {
         this.file = file;
 
-        duration = file.duration() / 1000 + 1;
-        messages = new int[255][(int) duration];
-        for (int i = 0; i < 255; i++) {
-            for (int j = 0; j < (int) duration; j++) {
-                messages[i][j] = 0;
-            }
-        }
+        reset();
     }
 
     public void setTemplate(String template) {
@@ -218,5 +262,42 @@ public class SendParser extends AbstractParser implements Observer {
             sum += messages[type][i];
         }
         return sum;
+    }
+
+    public void actionPerformed(ActionEvent actionEvent) {
+        if (actionEvent.getSource().equals(plotbutton)) {
+            reset();
+            log.info("|=== parsing tracefile: " + file.filename() + "...");
+            TraceReader a = new TraceReader(file);
+            a.addObserver(this);
+            a.run();
+            log.info("|--- done parsing!");
+            log.info("|=== generating plot...");
+            JFrame jnew = new JFrame();
+            jnew.add(getPlot());
+            jnew.pack();
+            jnew.setVisible(true);
+            log.info("|--- presenting plot...");
+        } else if (actionEvent.getSource().equals(updatebutton)) {
+
+        }
+    }
+
+    private void reset() {
+        duration = file.duration() / 1000 + 1;
+        messages = new int[255][(int) duration];
+        for (int i = 0; i < 255; i++) {
+            for (int j = 0; j < (int) duration; j++) {
+                messages[i][j] = 0;
+            }
+        }
+        aggregate = aggregateCheckbox.isSelected();
+        hidden = hiddenTextField.getText();
+
+        template = templateTextField.getText();
+        parts = template.split(delimiter);
+        init();
+        prefixTextField.setText(prefix);
+
     }
 }

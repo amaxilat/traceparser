@@ -194,7 +194,7 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
             series[i] = seriesCollection.getSeries(i);
         }
 
-        return series;  //To change body of implemented methods use File | Settings | File Templates.
+        return series;
     }
 
 

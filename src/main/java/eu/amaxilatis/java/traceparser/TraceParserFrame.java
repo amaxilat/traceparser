@@ -12,10 +12,9 @@
 package eu.amaxilatis.java.traceparser;
 
 
-import eu.amaxilatis.java.traceparser.panels.*;
+import eu.amaxilatis.java.traceparser.panels.PlotterControlPanel;
 import eu.amaxilatis.java.traceparser.parsers.*;
 import org.apache.log4j.Logger;
-import org.jfree.chart.ChartPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -196,6 +195,8 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
                     panel2add = new EventParser();
                 } else if (title.equals(SensorAggregationParser.Name)) {
                     panel2add = new SensorAggregationParser();
+                } else if (title.equals(SendParser.Name)) {
+                    panel2add = new SendParser();
                 }
                 if (panel2add != null) {
                     panel2add.setTraceFile(mytracefile);
