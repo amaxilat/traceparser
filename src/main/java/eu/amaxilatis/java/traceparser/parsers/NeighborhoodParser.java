@@ -4,6 +4,7 @@ import eu.amaxilatis.java.traceparser.ChartFormater;
 import eu.amaxilatis.java.traceparser.TraceFile;
 import eu.amaxilatis.java.traceparser.TraceMessage;
 import eu.amaxilatis.java.traceparser.TraceReader;
+import eu.amaxilatis.java.traceparser.panels.NodeSelectorPanel;
 import eu.amaxilatis.java.traceparser.panels.couplePanel;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
@@ -148,6 +149,8 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
 
     public void update(Observable observable, Object o) {
         final TraceMessage m = (TraceMessage) o;
+        if (!NodeSelectorPanel.isSelected(m.urn())) return;
+
         if (m.text().startsWith(prefix_uni)) {
 //            log.info("Neighbor@" + m.time() + ":" + m.urn());
             final String target = m.text().split(delimiter)[1];

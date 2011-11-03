@@ -28,7 +28,6 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
 
     private String delimiter = ":";
     private final JButton plotbutton;
-    private final JButton updatebutton;
     private final JTextField delimitertextfield;
     public static final String Name = "SensorAggregation Parser";
 
@@ -42,10 +41,18 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
     private Hashtable<String, Integer> sensors = new Hashtable<String, Integer>();
     private Hashtable<String, Integer> sensorClusters = new Hashtable<String, Integer>();
     private final JPanel rightmainpanel;
+    private TextField plotTitle;
+    private TextField xLabel;
+    private TextField yLabel;
+    private JButton removeButton;
+    private JTabbedPane tabbedPane;
+
+
+    private HashMap<String, String> semantics = new HashMap<String, String>();
 
 
     public SensorAggregationParser(JTabbedPane jTabbedPane1) {
-
+        this.tabbedPane = jTabbedPane1;
         init();
         this.setLayout(new BorderLayout());
 
@@ -58,10 +65,12 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
         this.add(new JLabel(Name), BorderLayout.NORTH);
         this.add(mainpanel, BorderLayout.CENTER);
 
-        plotbutton = new JButton("plot");
+
+        plotbutton = new JButton(super.PLOT);
         plotbutton.addActionListener(this);
-        updatebutton = new JButton("reload configuration");
-        updatebutton.addActionListener(this);
+        removeButton = new JButton(super.REMOVE);
+        removeButton.addActionListener(this);
+        rightmainpanel.add(new couplePanel(plotbutton, removeButton));
 
         delimitertextfield = new JTextField(delimiter);
         JTextField meantextfield = new JTextField(sensorPrefix);
@@ -73,25 +82,28 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
         leftmainpanel.add(new couplePanel(new JLabel("Aggregated Value"), aggregatedtextfield));
         leftmainpanel.add(new couplePanel(new JLabel("Startup Time"), startUptextfield));
 
-        JPanel plotbuttonpanel = new JPanel(new FlowLayout());
-        plotbuttonpanel.add(plotbutton);
-        Dimension d = new Dimension(100, 50);
-        plotbuttonpanel.setPreferredSize(d);
-        plotbuttonpanel.setMinimumSize(d);
-        plotbuttonpanel.setMaximumSize(d);
 
-        JPanel updatebuttonpanel = new JPanel(new FlowLayout());
-        updatebuttonpanel.add(updatebutton);
-        updatebuttonpanel.setPreferredSize(d);
-        updatebuttonpanel.setMinimumSize(d);
-        updatebuttonpanel.setMaximumSize(d);
+        plotTitle = new TextField("Semantics Statistics");
+        rightmainpanel.add(new couplePanel(new JLabel("Plot title:"), plotTitle));
+        xLabel = new TextField("time in sec");
+        rightmainpanel.add(new couplePanel(new JLabel("X axis Label:"), xLabel));
+        yLabel = new TextField("Sensor Value");
+        rightmainpanel.add(new couplePanel(new JLabel("Y axis Label:"), yLabel));
 
-        rightmainpanel.add(plotbuttonpanel);
-        rightmainpanel.add(updatebuttonpanel);
 
     }
 
     private void init() {
+        semantics.put("212", "PIR");
+        semantics.put("211", "TEMP");
+        semantics.put("210", "LIGHT");
+        semantics.put("10", "SCREEN");
+        semantics.put("5", "SIDE");
+        semantics.put("4", "INROOM");
+        semantics.put("3", "SECTOR");
+        semantics.put("2", "FLOOR");
+        semantics.put("1", "BUILDING");
+
 
         log.info("SensorAggregationParser initialized");
     }
@@ -114,9 +126,9 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
 
 
         JFreeChart chart = ChartFactory.createXYLineChart(
-                "",
-                "time in seconds",
-                "sensor value",
+                plotTitle.getText(),
+                xLabel.getText(),
+                yLabel.getText(),
                 dataset, PlotOrientation.VERTICAL, true, true, false);
 
 
@@ -142,7 +154,11 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
 
         for (final String cursensor : sensors.keySet()) {
             if (!cursensor.equals(sensor)) continue;
-            XYSeries newseries = new XYSeries("Sensor " + sensor + " Value");
+            String s2 = "Sensor  " + sensor + "  Value";
+            for (String key : semantics.keySet()) {
+                s2 = s2.replaceFirst(" " + key + " ", semantics.get(key));
+            }
+            XYSeries newseries = new XYSeries(s2);
             HashMap<String, Double> SensorReadingMap = new HashMap<String, Double>();
 
             double avgReading = 0;
@@ -163,10 +179,10 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
 
                     log.debug("avg: " + avgReading);
 
-                    newseries.add((int) (sensorReading.getTime() - file.starttime())/1000, avgReading);
+                    newseries.add((int) (sensorReading.getTime() - file.starttime()) / 1000, avgReading);
                 }
             }
-            newseries.add((int) (file.getEnd_time() - file.starttime())/1000, avgReading);
+            newseries.add((int) (file.getEnd_time() - file.starttime()) / 1000, avgReading);
             seriesCollection.addSeries(newseries);
         }
 
@@ -174,7 +190,15 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
         Collections.sort(aggregatedReadings);
         for (String sensorCluster : sensorClusters.keySet()) {
             if (!sensorCluster.contains(sensor)) continue;
-            XYSeries newseries = new XYSeries("Aggregated " + sensorCluster + " Value");
+
+
+            String s2 = "Aggregated " + sensorCluster + " Value";
+            for (String key : semantics.keySet()) {
+                s2 = s2.replaceFirst("-" + key + " ", "-" + semantics.get(key)+" ");
+            }
+
+
+            XYSeries newseries = new XYSeries(s2);
 
             final String sensorSeCluster = sensorCluster.substring(0, sensorCluster.indexOf("-"));
             final String sensorName = sensorCluster.substring(sensorCluster.indexOf("-"));
@@ -183,7 +207,7 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
             for (final AggregatedSensorReading aggregatedSensorReading : aggregatedReadings) {
                 if ((aggregatedSensorReading.getSeClusterID().equals(sensorSeCluster))
                         && (aggregatedSensorReading.getSensorName().equals(sensorName))) {
-                    newseries.add((int) (aggregatedSensorReading.getTime() - file.starttime())/1000, aggregatedSensorReading.getSensorValue());
+                    newseries.add((int) (aggregatedSensorReading.getTime() - file.starttime()) / 1000, aggregatedSensorReading.getSensorValue());
                 }
             }
 
@@ -276,8 +300,8 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
             log.info("|=== generating plot...");
             plot();
             log.info("|--- presenting plot...");
-        } else if (actionEvent.getSource().equals(updatebutton)) {
-            setDelimiter(delimitertextfield.getText());
+        } else if (actionEvent.getSource().equals(removeButton)) {
+            tabbedPane.remove(this);
         }
     }
 

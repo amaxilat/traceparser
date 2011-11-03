@@ -3,6 +3,7 @@ package eu.amaxilatis.java.traceparser.parsers;
 import eu.amaxilatis.java.traceparser.TraceFile;
 import eu.amaxilatis.java.traceparser.TraceMessage;
 import eu.amaxilatis.java.traceparser.TraceReader;
+import eu.amaxilatis.java.traceparser.panels.NodeSelectorPanel;
 import eu.amaxilatis.java.traceparser.panels.couplePanel;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
@@ -42,6 +43,10 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
     private JTextField partitionerTextField;
     private JTextField templatesTextField;
     private JTabbedPane tabbedPane;
+    private TextField plotTitle;
+    private TextField xLabel;
+    private TextField yLabel;
+    private JButton removeButton;
 
     public EventParser(JTabbedPane jTabbedPane1) {
         this.tabbedPane = jTabbedPane1;
@@ -57,10 +62,11 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
         this.add(new JLabel(Name), BorderLayout.NORTH);
         this.add(mainpanel, BorderLayout.CENTER);
 
-        plotbutton = new JButton("plot");
+        plotbutton = new JButton(super.PLOT);
         plotbutton.addActionListener(this);
-
-        rightmainpanel.add(new couplePanel(new JLabel("generate Plots:"), plotbutton));
+        removeButton = new JButton(super.REMOVE);
+        removeButton.addActionListener(this);
+        rightmainpanel.add(new couplePanel(plotbutton, removeButton));
 
 
         partitionerTextField = new JTextField(partitioner);
@@ -68,6 +74,13 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
         leftmainpanel.add(new couplePanel(new JLabel("partitioner"), partitionerTextField));
         leftmainpanel.add(new couplePanel(new JLabel("templates"), templatesTextField));
 
+
+        plotTitle = new TextField("Event Statistics");
+        rightmainpanel.add(new couplePanel(new JLabel("Plot title:"), plotTitle));
+        xLabel = new TextField("time in sec");
+        rightmainpanel.add(new couplePanel(new JLabel("X axis Label:"), xLabel));
+        yLabel = new TextField("# of Events");
+        rightmainpanel.add(new couplePanel(new JLabel("Y axis Label:"), yLabel));
 
         init();
 
@@ -118,6 +131,8 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
 
     public void update(Observable observable, Object o) {
         final TraceMessage m = (TraceMessage) o;
+        if (!NodeSelectorPanel.isSelected(m.urn())) return;
+
         for (int type = 0; type < eventTypes; type++) {
             if (m.text().contains(prefixes[type])) {
                 //log.info("Event@" + m.time() + ":" + m.urn());
@@ -126,7 +141,7 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
         }
     }
 
-    public ChartPanel getPlot(boolean has_title, boolean aggregate, String title, String xlabel, String ylabel) {
+    public ChartPanel getPlot(boolean has_title, boolean aggregate) {
 
         XYSeriesCollection dataset = new XYSeriesCollection();
         XYSeries[] messageTypes;
@@ -140,9 +155,9 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
         }
 
         JFreeChart chart = ChartFactory.createXYLineChart(
-                title,
-                xlabel,
-                ylabel,
+                plotTitle.getText(),
+                xLabel.getText(),
+                yLabel.getText(),
                 dataset, PlotOrientation.VERTICAL, true, true, false);
 
         chart.setBackgroundPaint(Color.white);
@@ -151,7 +166,7 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
 
     //    @Override
     public ChartPanel getPlot() {
-        return getPlot(false, true, "", "", "");
+        return getPlot(false, true);
     }
 
 
@@ -220,6 +235,8 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
             jnew.pack();
             jnew.setVisible(true);
             log.info("|--- presenting plot...");
+        } else if (actionEvent.getSource().equals(removeButton)) {
+            tabbedPane.remove(this);
         }
     }
 

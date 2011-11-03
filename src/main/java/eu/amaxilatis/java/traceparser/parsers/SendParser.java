@@ -3,6 +3,7 @@ package eu.amaxilatis.java.traceparser.parsers;
 import eu.amaxilatis.java.traceparser.TraceFile;
 import eu.amaxilatis.java.traceparser.TraceMessage;
 import eu.amaxilatis.java.traceparser.TraceReader;
+import eu.amaxilatis.java.traceparser.panels.NodeSelectorPanel;
 import eu.amaxilatis.java.traceparser.panels.couplePanel;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
@@ -48,6 +49,9 @@ public class SendParser extends AbstractParser implements Observer, ActionListen
     private String hidden = "";
     private String prefix;
     private JTabbedPane tabbedPane = null;
+    private TextField plotTitle;
+    private TextField xLabel;
+    private TextField yLabel;
 
     public SendParser(JTabbedPane jTabbedPane1) {
         this.tabbedPane = jTabbedPane1;
@@ -80,7 +84,16 @@ public class SendParser extends AbstractParser implements Observer, ActionListen
         aggregateCheckbox.setSelected(aggregate);
         leftmainpanel.add(new couplePanel(new JLabel("Aggregate plot"), aggregateCheckbox));
 
+        plotTitle = new TextField("Message Statistics");
+        rightmainpanel.add(new couplePanel(new JLabel("Plot title:"), plotTitle));
+        xLabel = new TextField("time in sec");
+        rightmainpanel.add(new couplePanel(new JLabel("X axis Label:"), xLabel));
+        yLabel = new TextField("# of Messages");
+        rightmainpanel.add(new couplePanel(new JLabel("Y axis Label:"), yLabel));
+
+
         log.info("SendParser initialized");
+
 
     }
 
@@ -131,6 +144,8 @@ public class SendParser extends AbstractParser implements Observer, ActionListen
 
     public void update(Observable observable, Object o) {
         final TraceMessage m = (TraceMessage) o;
+        if (!NodeSelectorPanel.isSelected(m.urn())) return;
+
         try {
             if (m.text().startsWith(prefix)) {
 
@@ -170,7 +185,7 @@ public class SendParser extends AbstractParser implements Observer, ActionListen
 
     //    @Override
     public ChartPanel getPlot() {
-        return getPlot(false, aggregate, "", "", "");
+        return getPlot(false, aggregate, plotTitle.getText(), xLabel.getText(), yLabel.getText());
     }
 
 
