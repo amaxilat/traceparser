@@ -1,15 +1,14 @@
 package eu.amaxilatis.java.traceparser.panels;
 
-import eu.amaxilatis.java.traceparser.parsers.*;
+import eu.amaxilatis.java.traceparser.parsers.AbstractParser;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Created by IntelliJ IDEA.
@@ -42,10 +41,6 @@ public class ParserControlPanel extends JPanel implements ActionListener {
             this.add(new javax.swing.JLabel(parserOptionsLabels[i]));
             this.add(parserOptionsText[i]);
         }
-        parserList.add(new NeighborhoodParser());
-        parserList.add(new SendParser(parserOptionsText[0].getText()));
-        parserList.add(new ClustersParser(parserOptionsText[1].getText()));
-        parserList.add(new EventParser(parserOptionsText[2].getText()));
     }
 
     public List<AbstractParser> getParsers() {

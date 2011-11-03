@@ -12,6 +12,7 @@
 package eu.amaxilatis.java.traceparser;
 
 
+import eu.amaxilatis.java.traceparser.panels.NodeSelectorPanel;
 import eu.amaxilatis.java.traceparser.panels.PlotterControlPanel;
 import eu.amaxilatis.java.traceparser.parsers.*;
 import org.apache.log4j.Logger;
@@ -135,6 +136,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
         jTabbedPane1.addTab("File Options", fileOptionsPanel);
         jTabbedPane1.addTab("Plot Options", new PlotterControlPanel());
+        jTabbedPane1.addTab("Node Selection", new NodeSelectorPanel());
 
 
         getContentPane().setLayout(new BorderLayout());
@@ -188,15 +190,15 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
                 final String title = availableParsersList.getSelectedValue().toString();
 
                 if (title.equals(NeighborhoodParser.Name)) {
-                    panel2add = new NeighborhoodParser();
+                    panel2add = new NeighborhoodParser(jTabbedPane1);
                 } else if (title.equals(ClustersParser.Name)) {
-                    panel2add = new ClustersParser();
+                    panel2add = new ClustersParser(jTabbedPane1);
                 } else if (title.equals(EventParser.Name)) {
-                    panel2add = new EventParser();
+                    panel2add = new EventParser(jTabbedPane1);
                 } else if (title.equals(SensorAggregationParser.Name)) {
-                    panel2add = new SensorAggregationParser();
+                    panel2add = new SensorAggregationParser(jTabbedPane1);
                 } else if (title.equals(SendParser.Name)) {
-                    panel2add = new SendParser();
+                    panel2add = new SendParser(jTabbedPane1);
                 }
                 if (panel2add != null) {
                     panel2add.setTraceFile(mytracefile);
@@ -266,9 +268,10 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         durationFileText.setText("calculating");
         selectedFileText.setText(filename);
         mytracefile = new TraceFile(filename);
-        durationFileText.setText(mytracefile.duration() / 60000 + " min");
+        durationFileText.setText(mytracefile.duration() / 60000 + " min= "+mytracefile.duration()/1000 + " sec");
         nodesFileText.setText(mytracefile.nodesize() + " nodes");
         linesFileText.setText(mytracefile.lines() + " lines");
+        NodeSelectorPanel.setFile(mytracefile);
     }
 }
 

@@ -4,6 +4,7 @@ import eu.amaxilatis.java.traceparser.ChartFormater;
 import eu.amaxilatis.java.traceparser.TraceFile;
 import eu.amaxilatis.java.traceparser.TraceMessage;
 import eu.amaxilatis.java.traceparser.TraceReader;
+import eu.amaxilatis.java.traceparser.panels.NodeSelectorPanel;
 import eu.amaxilatis.java.traceparser.panels.couplePanel;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
@@ -43,7 +44,7 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
     private final JPanel rightmainpanel;
 
 
-    public SensorAggregationParser() {
+    public SensorAggregationParser(JTabbedPane jTabbedPane1) {
 
         init();
         this.setLayout(new BorderLayout());
@@ -210,9 +211,8 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
             listModel.addElement(node);
 
         }
-        JList nodeslist = new JList(listModel);
-        rightmainpanel.add(new JLabel("Hidden Nodes:"));
-        rightmainpanel.add(nodeslist);
+
+
         reset();
     }
 
@@ -224,6 +224,7 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
 
     public void update(Observable observable, Object o) {
         final TraceMessage m = (TraceMessage) o;
+        if (!NodeSelectorPanel.isSelected(m.urn())) return;
         if (m.time() < file.starttime() + startuptime * 1000) return;
         if (m.text().contains(sensorPrefix)) {
             final String text = m.text();

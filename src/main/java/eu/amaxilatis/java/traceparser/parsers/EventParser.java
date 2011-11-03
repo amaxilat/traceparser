@@ -2,6 +2,8 @@ package eu.amaxilatis.java.traceparser.parsers;
 
 import eu.amaxilatis.java.traceparser.TraceFile;
 import eu.amaxilatis.java.traceparser.TraceMessage;
+import eu.amaxilatis.java.traceparser.TraceReader;
+import eu.amaxilatis.java.traceparser.panels.couplePanel;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -35,10 +37,14 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
 
     private String[] prefixes;
     private JButton plotbutton;
-    private JButton updatebutton;
+    String partitioner = ",";
+    String templates = "NB,CLL";
+    private JTextField partitionerTextField;
+    private JTextField templatesTextField;
+    private JTabbedPane tabbedPane;
 
-    public EventParser() {
-
+    public EventParser(JTabbedPane jTabbedPane1) {
+        this.tabbedPane = jTabbedPane1;
 
         this.setLayout(new BorderLayout());
 
@@ -53,36 +59,20 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
 
         plotbutton = new JButton("plot");
         plotbutton.addActionListener(this);
-        updatebutton = new JButton("reload configuration");
-        updatebutton.addActionListener(this);
 
-        log.info("EventParser initialized");
-
-    }
-
-    public EventParser(String template) {
+        rightmainpanel.add(new couplePanel(new JLabel("generate Plots:"), plotbutton));
 
 
-        String partitioner = "-";
-        eventTypes = template.split(partitioner).length;
+        partitionerTextField = new JTextField(partitioner);
+        templatesTextField = new JTextField(templates);
+        leftmainpanel.add(new couplePanel(new JLabel("partitioner"), partitionerTextField));
+        leftmainpanel.add(new couplePanel(new JLabel("templates"), templatesTextField));
 
-        prefixes = new String[eventTypes];
-        final String[] templates = template.split(partitioner);
-
-
-        for (int type = 0; type < eventTypes; type++) {
-            log.info(templates[type]);
-            String delimiter = ";";
-            if (templates[type].contains(delimiter)) {
-                prefixes[type] = templates[type].substring(0, templates[type].indexOf(delimiter));
-            } else {
-                prefixes[type] = templates[type];
-            }
-            log.info(prefixes[type]);
-        }
 
         init();
+
     }
+
 
     private void init() {
         log.info("EventParser initialized");
@@ -159,7 +149,7 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
         return new ChartPanel(chart);
     }
 
-//    @Override
+    //    @Override
     public ChartPanel getPlot() {
         return getPlot(false, true, "", "", "");
     }
@@ -194,22 +184,10 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
         return series;
     }
 
-//    @Override
+    //    @Override
     public void setTraceFile(TraceFile file) {
         this.file = file;
-
-        //log.info("EventParser initialized");
-        duration = file.duration();
-
-
-        duration = file.duration() / 1000 + 1;
-        events = new int[eventTypes][(int) duration];
-
-        for (int type = 0; type < eventTypes; type++) {
-            for (int j = 0; j < (int) duration; j++) {
-                events[type][j] = 0;
-            }
-        }
+        reset();
     }
 
     public void setTemplate(String template) {
@@ -229,6 +207,36 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
     }
 
     public void actionPerformed(ActionEvent actionEvent) {
+        if (actionEvent.getSource().equals(plotbutton)) {
+            reset();
+            log.info("|=== parsing tracefile: " + file.filename() + "...");
+            TraceReader a = new TraceReader(file);
+            a.addObserver(this);
+            a.run();
+            log.info("|--- done parsing!");
+            log.info("|=== generating plot...");
+            JFrame jnew = new JFrame();
+            jnew.add(getPlot());
+            jnew.pack();
+            jnew.setVisible(true);
+            log.info("|--- presenting plot...");
+        }
+    }
 
+    private void reset() {
+        partitioner = partitionerTextField.getText();
+        templates = templatesTextField.getText();
+
+        prefixes = templates.split(partitioner);
+        eventTypes = prefixes.length;
+
+        duration = file.duration() / 1000 + 1;
+        events = new int[eventTypes][(int) duration];
+
+        for (int type = 0; type < eventTypes; type++) {
+            for (int j = 0; j < (int) duration; j++) {
+                events[type][j] = 0;
+            }
+        }
     }
 }

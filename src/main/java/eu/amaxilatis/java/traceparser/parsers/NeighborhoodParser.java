@@ -36,7 +36,7 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
 
     private String delimiter;
     private final JButton plotbutton;
-    private final JButton updatebutton;
+
     private final JTextField delimitertextfield;
     private final JTextField nbtextfield;
     private final JTextField losttextfield;
@@ -46,9 +46,12 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
     private final TextField yLabel;
     private final TextField xLabel;
     public static final String Name = "Neighborhood Parser";
+    private JTabbedPane tabbedPane;
+    private JButton removeButton;
 
 
-    public NeighborhoodParser() {
+    public NeighborhoodParser(JTabbedPane jTabbedPane1) {
+        this.tabbedPane = jTabbedPane1;
         init();
 
         this.setLayout(new BorderLayout());
@@ -62,10 +65,11 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
         this.add(new JLabel(Name), BorderLayout.NORTH);
         this.add(mainpanel, BorderLayout.CENTER);
 
-        plotbutton = new JButton("plot");
+        plotbutton = new JButton(super.PLOT);
         plotbutton.addActionListener(this);
-        updatebutton = new JButton("reload configuration");
-        updatebutton.addActionListener(this);
+        removeButton = new JButton(super.REMOVE);
+        removeButton.addActionListener(this);
+
 
         delimitertextfield = new JTextField(delimiter);
         nbtextfield = new JTextField(prefix_uni);
@@ -80,7 +84,7 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
         leftmainpanel.add(new couplePanel(new JLabel("Lost prefix"), losttextfield));
 
 
-        rightmainpanel.add(new couplePanel(plotbutton, updatebutton));
+        rightmainpanel.add(new couplePanel(plotbutton, removeButton));
 
         plotTitle = new TextField("Neighborhood Statistics");
         rightmainpanel.add(new couplePanel(new JLabel("Plot title:"), plotTitle));
@@ -88,6 +92,9 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
         rightmainpanel.add(new couplePanel(new JLabel("X axis Label:"), xLabel));
         yLabel = new TextField("# of Nodes");
         rightmainpanel.add(new couplePanel(new JLabel("Y axis Label:"), yLabel));
+
+        reset();
+
 
     }
 
@@ -107,7 +114,6 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
     void init() {
         setDelimiter(";");
         setTemplates("NB", "NBL", "NBB", "NBD");
-        reset();
     }
 
     ChartPanel getPlot() {
@@ -231,14 +237,15 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
             jnew.pack();
             jnew.setVisible(true);
             log.info("|--- presenting plot...");
-        } else if (actionEvent.getSource().equals(updatebutton)) {
-            setDelimiter(delimitertextfield.getText());
-            setTemplates(nbtextfield.getText(), losttextfield.getText(), biditextfield.getText(), droptextfield.getText());
-
+        } else if (actionEvent.getSource().equals(removeButton)) {
+            tabbedPane.remove(this);
         }
     }
 
     private void reset() {
+        setDelimiter(delimitertextfield.getText());
+        setTemplates(nbtextfield.getText(), losttextfield.getText(), biditextfield.getText(), droptextfield.getText());
+
         neighborsBidi = new HashMap();
         series = new XYSeries[3];
         series[0] = new XYSeries("Avg Neighbors");

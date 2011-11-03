@@ -47,10 +47,10 @@ public class SendParser extends AbstractParser implements Observer, ActionListen
     private JTextField hiddenTextField;
     private String hidden = "";
     private String prefix;
+    private JTabbedPane tabbedPane = null;
 
-
-    public SendParser() {
-
+    public SendParser(JTabbedPane jTabbedPane1) {
+        this.tabbedPane = jTabbedPane1;
         this.setLayout(new BorderLayout());
 
         JPanel mainpanel = new JPanel(new GridLayout(0, 2, 30, 30));
@@ -62,9 +62,9 @@ public class SendParser extends AbstractParser implements Observer, ActionListen
         this.add(new JLabel(Name), BorderLayout.NORTH);
         this.add(mainpanel, BorderLayout.CENTER);
 
-        plotbutton = new JButton("plot");
+        plotbutton = new JButton(super.PLOT);
         plotbutton.addActionListener(this);
-        updatebutton = new JButton("reload configuration");
+        updatebutton = new JButton(super.REMOVE);
         updatebutton.addActionListener(this);
 
         rightmainpanel.add(new couplePanel(plotbutton, updatebutton));
@@ -131,11 +131,15 @@ public class SendParser extends AbstractParser implements Observer, ActionListen
 
     public void update(Observable observable, Object o) {
         final TraceMessage m = (TraceMessage) o;
-        if (m.text().startsWith(prefix)) {
-            log.info("Send@" + m.time() + ":" + m.urn());
-            final String[] mess = m.text().split(delimiter);
-            //log.info(((int) ((m.time() - file.starttime()) / 1000)));
-            messages[Integer.parseInt(mess[type])][((int) ((m.time() - file.starttime()) / 1000))]++;
+        try {
+            if (m.text().startsWith(prefix)) {
+
+                final String[] mess = m.text().split(delimiter);
+                log.info("Send@" + ":" + m.urn() + " type:" + mess[type]);
+                messages[Integer.parseInt(mess[type])][((int) ((m.time() - file.starttime()) / 1000))]++;
+            }
+        } catch (Exception e) {
+            log.error(e.toString() + " Message : " + m.text());
         }
     }
 
@@ -279,6 +283,7 @@ public class SendParser extends AbstractParser implements Observer, ActionListen
             jnew.setVisible(true);
             log.info("|--- presenting plot...");
         } else if (actionEvent.getSource().equals(updatebutton)) {
+            tabbedPane.remove(this);
 
         }
     }

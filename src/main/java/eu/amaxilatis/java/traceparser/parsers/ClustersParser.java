@@ -12,7 +12,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.omg.PortableServer.POAPackage.WrongAdapter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -41,17 +40,18 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
     private String delimiter = ";";
     private String[] parts;
     private JButton plotbutton;
-    private JButton updatebutton;
+    private JButton removeButton;
     private JTextField delimitertextfield;
     private JTextField templatetextfield;
     private int pcluster;
     private int pid;
     private int ptype;
     public static String Name = "Clusters Parser";
+    private JTabbedPane tabbedPane;
 
 
-    public ClustersParser() {
-
+    public ClustersParser(JTabbedPane jTabbedPane1) {
+        this.tabbedPane = jTabbedPane1;
         init();
 
         this.setLayout(new BorderLayout());
@@ -65,10 +65,10 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
         this.add(new JLabel(Name), BorderLayout.NORTH);
         this.add(mainpanel, BorderLayout.CENTER);
 
-        plotbutton = new JButton("plot");
+        plotbutton = new JButton(super.PLOT);
         plotbutton.addActionListener(this);
-        updatebutton = new JButton("reload configuration");
-        updatebutton.addActionListener(this);
+        removeButton = new JButton(super.REMOVE);
+        removeButton.addActionListener(this);
 
         delimitertextfield = new JTextField(delimiter);
         templatetextfield = new JTextField(template);
@@ -76,32 +76,20 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
         leftmainpanel.add(new couplePanel(new JLabel("delimiter"), delimitertextfield));
         leftmainpanel.add(new couplePanel(new JLabel("Template"), templatetextfield));
 
-        JPanel plotbuttonpanel = new JPanel(new FlowLayout());
-        plotbuttonpanel.add(plotbutton);
-        Dimension d = new Dimension(100, 50);
-        plotbuttonpanel.setPreferredSize(d);
-        plotbuttonpanel.setMinimumSize(d);
-        plotbuttonpanel.setMaximumSize(d);
 
-        JPanel updatebuttonpanel = new JPanel(new FlowLayout());
-        updatebuttonpanel.add(updatebutton);
-        updatebuttonpanel.setPreferredSize(d);
-        updatebuttonpanel.setMinimumSize(d);
-        updatebuttonpanel.setMaximumSize(d);
+        rightmainpanel.add(new couplePanel(plotbutton, removeButton));
 
-        rightmainpanel.add(plotbuttonpanel);
-        rightmainpanel.add(updatebuttonpanel);
     }
 
-    public ClustersParser(String template) {
-
-        //clusters = new int[f.nodesize()][(int) duration];
-
-        parts = template.split(delimiter);
-
-
-        init();
-    }
+//    public ClustersParser(JTabbedPane template) {
+//
+//        //clusters = new int[f.nodesize()][(int) duration];
+//
+//        parts = template.split(delimiter);
+//
+//
+//        init();
+//    }
 
     private void init() {
 
@@ -175,7 +163,7 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
         return new ChartPanel(chartTransformed);
     }
 
-//    @Override
+    //    @Override
     public ChartPanel getPlot() {
         return getPlot(false, false, "", "", "");
     }
@@ -221,7 +209,7 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
         return getSeries();
     }
 
-//    @Override
+    //    @Override
     public void setTraceFile(TraceFile file) {
         this.file = file;
 
@@ -265,9 +253,8 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
             jnew.pack();
             jnew.setVisible(true);
             log.info("|--- presenting plot...");
-        } else if (actionEvent.getSource().equals(updatebutton)) {
-            setDelimiter(delimitertextfield.getText());
-            setTemplate(templatetextfield.getText());
+        } else if (actionEvent.getSource().equals(removeButton)) {
+            tabbedPane.remove(this);
         }
     }
 

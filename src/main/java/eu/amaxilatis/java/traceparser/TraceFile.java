@@ -1,15 +1,13 @@
 package eu.amaxilatis.java.traceparser;
 
 import org.apache.log4j.Logger;
-import org.jfree.chart.axis.DateAxis;
-import org.jfree.chart.needle.LongNeedle;
-import org.jfree.ui.IntegerDocument;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -31,12 +29,12 @@ public class TraceFile {
     private long end_time;
 
     public ArrayList<String> getNode_names() {
+        Collections.sort(node_names);
         return node_names;
     }
 
     private final ArrayList<String> node_names = new ArrayList();
     private long lines;
-
 
 
     public TraceFile(String file) {
@@ -46,12 +44,12 @@ public class TraceFile {
         duration = 0;
         start_time = (new Date()).getTime();
         end_time = 0;
-        lines=0;
+        lines = 0;
         node_names.clear();
 
         filename = file;
 
-         long max=0,min=0;
+        long max = 0, min = 0;
         try {
             // Open the file that is the first
             // command line parameter
@@ -67,11 +65,11 @@ public class TraceFile {
                 final TraceMessage m = new TraceMessage(strLine);
                 final long date = m.time();
                 if (date < start_time) {
-                    min=lines;
+                    min = lines;
                     start_time = date;
                     duration = end_time - start_time;
                 } else if (date > end_time) {
-                    max=lines;
+                    max = lines;
                     end_time = date;
                     duration = end_time - start_time;
                 }
@@ -118,7 +116,7 @@ public class TraceFile {
         return node_names.size();
     }
 
-    public long lines(){
+    public long lines() {
         return lines;
     }
 
