@@ -130,7 +130,7 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
     }
 
 //    public ClustersParser(TraceFile f, String template) {
-//        //log.info("EventParser initialized");
+//        //LOGGER.info("EventParser initialized");
 //        getDuration = f.getDuration();
 //
 //
@@ -205,10 +205,10 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
 
             series[0].add(i, cluster_count);
             if (cluster_count > 0) {
-                //log.info("Clusters : " + cluster_count + " clSize : " + (simple_count + cluster_count) / cluster_count);
+                //LOGGER.info("Clusters : " + cluster_count + " clSize : " + (simple_count + cluster_count) / cluster_count);
                 series[1].add(i, (simple_count + cluster_count) / cluster_count);
             } else {
-                //log.info("Clusters : " + cluster_count + " clSize : 0");
+                //LOGGER.info("Clusters : " + cluster_count + " clSize : 0");
                 series[1].add(i, 0);
             }
             log.debug("setting " + i);

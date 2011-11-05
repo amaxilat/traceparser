@@ -47,8 +47,8 @@ public class TraceReader extends Observable implements Runnable {
             //Read File Line By Line
             while ((strLine = br.readLine()) != null) {
                 // Print the content on the console
-                //log.debug(strLine);
-                //log.debug(extractNodeUrn(strLine) + "@" + extractDate(strLine) + ":" + extractText(strLine));
+                //LOGGER.debug(strLine);
+                //LOGGER.debug(extractNodeUrn(strLine) + "@" + extractDate(strLine) + ":" + extractText(strLine));
                 notifyObservers(new TraceMessage(strLine));
                 notifyObservers();
                 this.setChanged();

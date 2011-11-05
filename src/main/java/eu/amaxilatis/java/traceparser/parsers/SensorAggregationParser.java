@@ -252,7 +252,7 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
         if (m.getTime() < file.starttime() + startuptime * 1000) return;
         if (m.getText().contains(sensorPrefix)) {
             final String text = m.getText();
-//            log.info("Sensor@" + m.getTime() + ":" + m.getUrn() + "\"" + text + "\"");
+//            LOGGER.info("Sensor@" + m.getTime() + ":" + m.getUrn() + "\"" + text + "\"");
             final String[] parts = text.split(delimiter);
 
             final String sensorName = parts[1];
@@ -267,7 +267,7 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
             final String cluster = parts[1].substring(0, parts[1].indexOf("-"));
             final String sensorName = parts[1].substring(parts[1].indexOf("-"));
             final String sensorValue = parts[2];
-//            log.info("AggregatedSensor@" + m.getTime() + ":" + cluster + "\"" + sensorName + "\"");
+//            LOGGER.info("AggregatedSensor@" + m.getTime() + ":" + cluster + "\"" + sensorName + "\"");
             aggregatedReadings.add(new AggregatedSensorReading(m.getTime(), sensorName, cluster, Double.parseDouble(sensorValue)));
             sensorClusters.put(cluster + sensorName, 1);
 

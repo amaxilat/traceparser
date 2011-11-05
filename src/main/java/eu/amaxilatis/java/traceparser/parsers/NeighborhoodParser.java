@@ -152,7 +152,7 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
         if (!NodeSelectorPanel.isSelected(m.getUrn())) return;
 
         if (m.getText().startsWith(prefix_uni)) {
-//            log.info("Neighbor@" + m.getTime() + ":" + m.getUrn());
+//            LOGGER.info("Neighbor@" + m.getTime() + ":" + m.getUrn());
             final String target = m.getText().split(delimiter)[1];
             if ((m.getText().contains(prefix_bidi))) {
 

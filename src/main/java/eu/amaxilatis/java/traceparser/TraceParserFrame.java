@@ -225,7 +225,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
             open_trace(mytracefile.getFilename());
 
         } else if (e.equals(savePropertiesButton)) {
-//            log.info("Writing properties");
+//            LOGGER.info("Writing properties");
 //            properties.setProperty("parser.filename", mytracefile.filename());
 //            String parserTemplates = "";
 //            for (int i = 0; i < properties.getProperty("parser.templates").split(",").length; i++) {
@@ -233,17 +233,17 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 //            }
 //
 //            properties.setProperty("parser.templates", parserTemplates);
-//            log.info("parset.templates=" + parserTemplates.substring(0, parserTemplates.length() - 1));
+//            LOGGER.info("parset.templates=" + parserTemplates.substring(0, parserTemplates.length() - 1));
 //
-//            log.info("plotter.aggregate=" + aggregatePlots.isSelected());
+//            LOGGER.info("plotter.aggregate=" + aggregatePlots.isSelected());
 //            properties.setProperty("plotter.aggregate", aggregatePlots.isSelected() ? "true" : "false");
-//            log.info("plotter.messages=" + aggregatePlots.isSelected());
+//            LOGGER.info("plotter.messages=" + aggregatePlots.isSelected());
 //            properties.setProperty("plotter.messages", messagesPlots.isSelected() ? "true" : "false");
-//            log.info("plotter.clusters=" + aggregatePlots.isSelected());
+//            LOGGER.info("plotter.clusters=" + aggregatePlots.isSelected());
 //            properties.setProperty("plotter.clusters", clustersPlots.isSelected() ? "true" : "false");
-//            log.info("plotter.events=" + aggregatePlots.isSelected());
+//            LOGGER.info("plotter.events=" + aggregatePlots.isSelected());
 //            properties.setProperty("plotter.events", eventsPlots.isSelected() ? "true" : "false");
-//            log.info("plotter.neighborhood=" + neighborhoodPlots.isSelected());
+//            LOGGER.info("plotter.neighborhood=" + neighborhoodPlots.isSelected());
 //            properties.setProperty("plotter.neighborhood", neighborhoodPlots.isSelected() ? "true" : "false");
 //
 //
@@ -256,7 +256,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 //            try {
 //                properties.store(new FileOutputStream(propfilename), null);
 //            } catch (IOException a) {
-//                log.warn("Could not write properties file");
+//                LOGGER.warn("Could not write properties file");
 //
 //            }
         }

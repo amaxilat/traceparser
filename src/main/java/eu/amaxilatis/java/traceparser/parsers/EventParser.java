@@ -94,7 +94,7 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
     //TODO: add multiple Events
     public EventParser(TraceFile f, String template) {
 
-        //log.info("EventParser initialized");
+        //LOGGER.info("EventParser initialized");
         duration = f.getDuration();
 
 
@@ -135,7 +135,7 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
 
         for (int type = 0; type < eventTypes; type++) {
             if (m.getText().contains(prefixes[type])) {
-                //log.info("Event@" + m.getTime() + ":" + m.getUrn());
+                //LOGGER.info("Event@" + m.getTime() + ":" + m.getUrn());
                 events[type][((int) ((m.getTime() - file.starttime()) / 1000))]++;
             }
         }
