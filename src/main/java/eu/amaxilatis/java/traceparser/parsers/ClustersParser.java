@@ -95,7 +95,7 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
 
 //    public ClustersParser(JTabbedPane template) {
 //
-//        //clusters = new int[f.nodesize()][(int) duration];
+//        //clusters = new int[f.getNodeSize()][(int) duration];
 //
 //        parts = template.split(delimiter);
 //
@@ -138,7 +138,7 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
 //        int getDuration = (int) (f.getDuration() / 1000 + 1);
 //        clusters = new HashMap[(int) getDuration];
 //
-//        //clusters = new int[f.nodesize()][(int) getDuration];
+//        //clusters = new int[f.getNodeSize()][(int) getDuration];
 //
 //        for (int i = 0; i < getDuration; i++) {
 //            clusters[i] = new HashMap<String, String>();
@@ -242,7 +242,7 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
         if (m.getText().startsWith(prefix)) {
             log.info("Cluster@" + m.getTime() + ":" + m.getUrn());
             final String[] mess = m.getText().split(delimiter);
-            set_cluster(mess[pid], mess[pcluster], ((int) ((m.getTime() - file.starttime()) / 1000)));
+            set_cluster(mess[pid], mess[pcluster], ((int) ((m.getTime() - file.getStartTime()) / 1000)));
         }
     }
 
@@ -280,7 +280,7 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
         duration = (int) (file.getDuration() / 1000 + 1);
         clusters = new HashMap[(int) duration];
 
-        //clusters = new int[f.nodesize()][(int) duration];
+        //clusters = new int[f.getNodeSize()][(int) duration];
 
         for (int i = 0; i < duration; i++) {
             clusters[i] = new HashMap<String, String>();

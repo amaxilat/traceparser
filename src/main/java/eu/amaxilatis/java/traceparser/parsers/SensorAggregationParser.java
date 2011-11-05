@@ -174,15 +174,15 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
                     avgReading /= SensorReadingMap.keySet().size();
 
 //                    avgReading = (int) ((((avgReading * readingsCount) + sensorReading.getSensorValue())) / (readingsCount + 1));
-//                    avgReading = (int) ((((avgReading * (file.nodesize() - 1)) + sensorReading.getSensorValue())) / file.nodesize());
+//                    avgReading = (int) ((((avgReading * (file.getNodeSize() - 1)) + sensorReading.getSensorValue())) / file.getNodeSize());
 //                    avgReading = (int) ((avgReading + sensorReading.getSensorValue()) / 2);
 
                     log.debug("avg: " + avgReading);
 
-                    newseries.add((int) (sensorReading.getTime() - file.starttime()) / 1000, avgReading);
+                    newseries.add((int) (sensorReading.getTime() - file.getStartTime()) / 1000, avgReading);
                 }
             }
-            newseries.add((int) (file.getEndTime() - file.starttime()) / 1000, avgReading);
+            newseries.add((int) (file.getEndTime() - file.getStartTime()) / 1000, avgReading);
             seriesCollection.addSeries(newseries);
         }
 
@@ -207,7 +207,7 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
             for (final AggregatedSensorReading aggregatedSensorReading : aggregatedReadings) {
                 if ((aggregatedSensorReading.getSeClusterID().equals(sensorSeCluster))
                         && (aggregatedSensorReading.getSensorName().equals(sensorName))) {
-                    newseries.add((int) (aggregatedSensorReading.getTime() - file.starttime()) / 1000, aggregatedSensorReading.getSensorValue());
+                    newseries.add((int) (aggregatedSensorReading.getTime() - file.getStartTime()) / 1000, aggregatedSensorReading.getSensorValue());
                 }
             }
 
@@ -249,7 +249,7 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
     public void update(Observable observable, Object o) {
         final TraceMessage m = (TraceMessage) o;
         if (!NodeSelectorPanel.isSelected(m.getUrn())) return;
-        if (m.getTime() < file.starttime() + startuptime * 1000) return;
+        if (m.getTime() < file.getStartTime() + startuptime * 1000) return;
         if (m.getText().contains(sensorPrefix)) {
             final String text = m.getText();
 //            LOGGER.info("Sensor@" + m.getTime() + ":" + m.getUrn() + "\"" + text + "\"");

@@ -136,7 +136,7 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
         for (int type = 0; type < eventTypes; type++) {
             if (m.getText().contains(prefixes[type])) {
                 //LOGGER.info("Event@" + m.getTime() + ":" + m.getUrn());
-                events[type][((int) ((m.getTime() - file.starttime()) / 1000))]++;
+                events[type][((int) ((m.getTime() - file.getStartTime()) / 1000))]++;
             }
         }
     }

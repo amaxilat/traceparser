@@ -37,7 +37,7 @@ public class TraceFile {
 
     public TraceFile(final String file) {
 
-        duration = 0;
+
         startTime = (new Date()).getTime();
         endTime = 0;
         lines = 0;
@@ -54,6 +54,7 @@ public class TraceFile {
             final DataInputStream in = new DataInputStream(fstream);
             final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
             String strLine;
+            long tempDuration = 0;
             //Read File Line By Line
             while ((strLine = bufferedReader.readLine()) != null) {
                 lines++;
@@ -63,11 +64,11 @@ public class TraceFile {
                 if (date < startTime) {
                     min = lines;
                     startTime = date;
-                    duration = endTime - startTime;
+                    tempDuration = endTime - startTime;
                 } else if (date > endTime) {
                     max = lines;
                     endTime = date;
-                    duration = endTime - startTime;
+                    tempDuration = endTime - startTime;
                 }
 
                 final String nodeurn = m.getUrn();
@@ -76,10 +77,11 @@ public class TraceFile {
                 }
 
             }
+            duration = tempDuration;
 
 
-            LOGGER.info("Date Started(" + min + ") : " + new Date(starttime()).toString());
-            LOGGER.info("Date Ended(" + max + ") : " + new Date(endtime()).toString());
+            LOGGER.info("Date Started(" + min + ") : " + new Date(startTime).toString());
+            LOGGER.info("Date Ended(" + max + ") : " + new Date(endTime).toString());
             //Close the input stream
             in.close();
         } catch (Exception e) {//Catch exception if any
@@ -99,15 +101,11 @@ public class TraceFile {
         return filename;
     }
 
-    public long starttime() {
+    public long getStartTime() {
         return startTime;
     }
 
-    long endtime() {
-        return endTime;
-    }
-
-    public int nodesize() {
+    public int getNodeSize() {
         return nodeNames.size();
     }
 

@@ -269,7 +269,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         selectedFileText.setText(filename);
         mytracefile = new TraceFile(filename);
         durationFileText.setText(mytracefile.getDuration() / 60000 + " min= "+mytracefile.getDuration()/1000 + " sec");
-        nodesFileText.setText(mytracefile.nodesize() + " nodes");
+        nodesFileText.setText(mytracefile.getNodeSize() + " nodes");
         linesFileText.setText(mytracefile.getLines() + " getLines");
         NodeSelectorPanel.setFile(mytracefile);
     }

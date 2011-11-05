@@ -180,9 +180,9 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
 
             }
 
-            series[0].addOrUpdate(((int) ((m.getTime() - file.starttime()) / 1000)), get_avg_neighbors());
-            series[1].addOrUpdate(((int) ((m.getTime() - file.starttime()) / 1000)), get_min_neighbors());
-            series[2].addOrUpdate(((int) ((m.getTime() - file.starttime()) / 1000)), get_max_neighbors());
+            series[0].addOrUpdate(((int) ((m.getTime() - file.getStartTime()) / 1000)), get_avg_neighbors());
+            series[1].addOrUpdate(((int) ((m.getTime() - file.getStartTime()) / 1000)), get_min_neighbors());
+            series[2].addOrUpdate(((int) ((m.getTime() - file.getStartTime()) / 1000)), get_max_neighbors());
 
         }
     }
