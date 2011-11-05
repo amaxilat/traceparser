@@ -236,13 +236,13 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
 
     public void update(Observable observable, Object o) {
         final TraceMessage m = (TraceMessage) o;
-        if (!NodeSelectorPanel.isSelected(m.urn())) return;
+        if (!NodeSelectorPanel.isSelected(m.getUrn())) return;
 
-        log.debug(m.text());
-        if (m.text().startsWith(prefix)) {
-            log.info("Cluster@" + m.time() + ":" + m.urn());
-            final String[] mess = m.text().split(delimiter);
-            set_cluster(mess[pid], mess[pcluster], ((int) ((m.time() - file.starttime()) / 1000)));
+        log.debug(m.getText());
+        if (m.getText().startsWith(prefix)) {
+            log.info("Cluster@" + m.getTime() + ":" + m.getUrn());
+            final String[] mess = m.getText().split(delimiter);
+            set_cluster(mess[pid], mess[pcluster], ((int) ((m.getTime() - file.starttime()) / 1000)));
         }
     }
 

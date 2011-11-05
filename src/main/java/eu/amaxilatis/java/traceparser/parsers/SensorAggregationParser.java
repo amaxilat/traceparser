@@ -85,7 +85,7 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
 
         plotTitle = new TextField("Semantics Statistics");
         rightmainpanel.add(new couplePanel(new JLabel("Plot title:"), plotTitle));
-        xLabel = new TextField("time in sec");
+        xLabel = new TextField("getTime in sec");
         rightmainpanel.add(new couplePanel(new JLabel("X axis Label:"), xLabel));
         yLabel = new TextField("Sensor Value");
         rightmainpanel.add(new couplePanel(new JLabel("Y axis Label:"), yLabel));
@@ -248,27 +248,27 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
 
     public void update(Observable observable, Object o) {
         final TraceMessage m = (TraceMessage) o;
-        if (!NodeSelectorPanel.isSelected(m.urn())) return;
-        if (m.time() < file.starttime() + startuptime * 1000) return;
-        if (m.text().contains(sensorPrefix)) {
-            final String text = m.text();
-//            log.info("Sensor@" + m.time() + ":" + m.urn() + "\"" + text + "\"");
+        if (!NodeSelectorPanel.isSelected(m.getUrn())) return;
+        if (m.getTime() < file.starttime() + startuptime * 1000) return;
+        if (m.getText().contains(sensorPrefix)) {
+            final String text = m.getText();
+//            log.info("Sensor@" + m.getTime() + ":" + m.getUrn() + "\"" + text + "\"");
             final String[] parts = text.split(delimiter);
 
             final String sensorName = parts[1];
             final String sensorValue = parts[2];
-            sensorReadings.add(new SensorReading(m.time(), sensorName, Double.parseDouble(sensorValue), m.urn()));
+            sensorReadings.add(new SensorReading(m.getTime(), sensorName, Double.parseDouble(sensorValue), m.getUrn()));
             sensors.put(sensorName, 1);
-        } else if (m.text().contains(aggregatedPrefix)) {
-            final String text = m.text();
+        } else if (m.getText().contains(aggregatedPrefix)) {
+            final String text = m.getText();
 
             final String[] parts = text.split(delimiter);
 
             final String cluster = parts[1].substring(0, parts[1].indexOf("-"));
             final String sensorName = parts[1].substring(parts[1].indexOf("-"));
             final String sensorValue = parts[2];
-//            log.info("AggregatedSensor@" + m.time() + ":" + cluster + "\"" + sensorName + "\"");
-            aggregatedReadings.add(new AggregatedSensorReading(m.time(), sensorName, cluster, Double.parseDouble(sensorValue)));
+//            log.info("AggregatedSensor@" + m.getTime() + ":" + cluster + "\"" + sensorName + "\"");
+            aggregatedReadings.add(new AggregatedSensorReading(m.getTime(), sensorName, cluster, Double.parseDouble(sensorValue)));
             sensorClusters.put(cluster + sensorName, 1);
 
         }

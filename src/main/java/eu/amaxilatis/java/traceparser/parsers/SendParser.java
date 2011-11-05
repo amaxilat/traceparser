@@ -86,7 +86,7 @@ public class SendParser extends AbstractParser implements Observer, ActionListen
 
         plotTitle = new TextField("Message Statistics");
         rightmainpanel.add(new couplePanel(new JLabel("Plot title:"), plotTitle));
-        xLabel = new TextField("time in sec");
+        xLabel = new TextField("getTime in sec");
         rightmainpanel.add(new couplePanel(new JLabel("X axis Label:"), xLabel));
         yLabel = new TextField("# of Messages");
         rightmainpanel.add(new couplePanel(new JLabel("Y axis Label:"), yLabel));
@@ -144,17 +144,17 @@ public class SendParser extends AbstractParser implements Observer, ActionListen
 
     public void update(Observable observable, Object o) {
         final TraceMessage m = (TraceMessage) o;
-        if (!NodeSelectorPanel.isSelected(m.urn())) return;
+        if (!NodeSelectorPanel.isSelected(m.getUrn())) return;
 
         try {
-            if (m.text().startsWith(prefix)) {
+            if (m.getText().startsWith(prefix)) {
 
-                final String[] mess = m.text().split(delimiter);
-                log.info("Send@" + ":" + m.urn() + " type:" + mess[type]);
-                messages[Integer.parseInt(mess[type])][((int) ((m.time() - file.starttime()) / 1000))]++;
+                final String[] mess = m.getText().split(delimiter);
+                log.info("Send@" + ":" + m.getUrn() + " type:" + mess[type]);
+                messages[Integer.parseInt(mess[type])][((int) ((m.getTime() - file.starttime()) / 1000))]++;
             }
         } catch (Exception e) {
-            log.error(e.toString() + " Message : " + m.text());
+            log.error(e.toString() + " Message : " + m.getText());
         }
     }
 

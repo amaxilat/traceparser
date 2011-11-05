@@ -77,7 +77,7 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
 
         plotTitle = new TextField("Event Statistics");
         rightmainpanel.add(new couplePanel(new JLabel("Plot title:"), plotTitle));
-        xLabel = new TextField("time in sec");
+        xLabel = new TextField("getTime in sec");
         rightmainpanel.add(new couplePanel(new JLabel("X axis Label:"), xLabel));
         yLabel = new TextField("# of Events");
         rightmainpanel.add(new couplePanel(new JLabel("Y axis Label:"), yLabel));
@@ -131,12 +131,12 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
 
     public void update(Observable observable, Object o) {
         final TraceMessage m = (TraceMessage) o;
-        if (!NodeSelectorPanel.isSelected(m.urn())) return;
+        if (!NodeSelectorPanel.isSelected(m.getUrn())) return;
 
         for (int type = 0; type < eventTypes; type++) {
-            if (m.text().contains(prefixes[type])) {
-                //log.info("Event@" + m.time() + ":" + m.urn());
-                events[type][((int) ((m.time() - file.starttime()) / 1000))]++;
+            if (m.getText().contains(prefixes[type])) {
+                //log.info("Event@" + m.getTime() + ":" + m.getUrn());
+                events[type][((int) ((m.getTime() - file.starttime()) / 1000))]++;
             }
         }
     }

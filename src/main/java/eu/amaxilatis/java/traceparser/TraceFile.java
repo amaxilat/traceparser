@@ -59,7 +59,7 @@ public class TraceFile {
                 lines++;
                 // Print the content on the console
                 final TraceMessage m = new TraceMessage(strLine);
-                final long date = m.time();
+                final long date = m.getTime();
                 if (date < startTime) {
                     min = lines;
                     startTime = date;
@@ -70,7 +70,7 @@ public class TraceFile {
                     duration = endTime - startTime;
                 }
 
-                final String nodeurn = m.urn();
+                final String nodeurn = m.getUrn();
                 if (!nodeNames.contains(nodeurn)) {
                     nodeNames.add(nodeurn);
                 }

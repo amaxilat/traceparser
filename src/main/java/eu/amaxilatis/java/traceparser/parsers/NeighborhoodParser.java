@@ -89,7 +89,7 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
 
         plotTitle = new TextField("Neighborhood Statistics");
         rightmainpanel.add(new couplePanel(new JLabel("Plot title:"), plotTitle));
-        xLabel = new TextField("time in sec");
+        xLabel = new TextField("getTime in sec");
         rightmainpanel.add(new couplePanel(new JLabel("X axis Label:"), xLabel));
         yLabel = new TextField("# of Nodes");
         rightmainpanel.add(new couplePanel(new JLabel("Y axis Label:"), yLabel));
@@ -149,40 +149,40 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
 
     public void update(Observable observable, Object o) {
         final TraceMessage m = (TraceMessage) o;
-        if (!NodeSelectorPanel.isSelected(m.urn())) return;
+        if (!NodeSelectorPanel.isSelected(m.getUrn())) return;
 
-        if (m.text().startsWith(prefix_uni)) {
-//            log.info("Neighbor@" + m.time() + ":" + m.urn());
-            final String target = m.text().split(delimiter)[1];
-            if ((m.text().contains(prefix_bidi))) {
+        if (m.getText().startsWith(prefix_uni)) {
+//            log.info("Neighbor@" + m.getTime() + ":" + m.getUrn());
+            final String target = m.getText().split(delimiter)[1];
+            if ((m.getText().contains(prefix_bidi))) {
 
-                if (neighborsBidi.containsKey(m.urn())) {
-                    HashMap<String, Integer> tmp = neighborsBidi.get(m.urn());
+                if (neighborsBidi.containsKey(m.getUrn())) {
+                    HashMap<String, Integer> tmp = neighborsBidi.get(m.getUrn());
                     tmp.put(target, 1);
-                    neighborsBidi.put(m.urn(), tmp);
-                    log.debug(m.text());
-                    log.debug(m.urn() + " nb size: " + tmp.size());
+                    neighborsBidi.put(m.getUrn(), tmp);
+                    log.debug(m.getText());
+                    log.debug(m.getUrn() + " nb size: " + tmp.size());
                 } else {
                     HashMap tmp = new HashMap<String, Integer>();
                     tmp.put(target, 1);
-                    neighborsBidi.put(m.urn(), tmp);
-                    log.debug(m.text());
-                    log.debug(m.urn() + " nb size: " + tmp.size());
+                    neighborsBidi.put(m.getUrn(), tmp);
+                    log.debug(m.getText());
+                    log.debug(m.getUrn() + " nb size: " + tmp.size());
                 }
-            } else if ((m.text().contains(prefix_drop)) || (m.text().contains(prefix_lost))) {
-                if (neighborsBidi.containsKey(m.urn())) {
-                    HashMap<String, Integer> tmp = neighborsBidi.get(m.urn());
+            } else if ((m.getText().contains(prefix_drop)) || (m.getText().contains(prefix_lost))) {
+                if (neighborsBidi.containsKey(m.getUrn())) {
+                    HashMap<String, Integer> tmp = neighborsBidi.get(m.getUrn());
                     tmp.remove(target);
-                    neighborsBidi.put(m.urn(), tmp);
-                    log.debug(m.text());
-                    log.debug(m.urn() + " nb size: " + tmp.size());
+                    neighborsBidi.put(m.getUrn(), tmp);
+                    log.debug(m.getText());
+                    log.debug(m.getUrn() + " nb size: " + tmp.size());
                 }
 
             }
 
-            series[0].addOrUpdate(((int) ((m.time() - file.starttime()) / 1000)), get_avg_neighbors());
-            series[1].addOrUpdate(((int) ((m.time() - file.starttime()) / 1000)), get_min_neighbors());
-            series[2].addOrUpdate(((int) ((m.time() - file.starttime()) / 1000)), get_max_neighbors());
+            series[0].addOrUpdate(((int) ((m.getTime() - file.starttime()) / 1000)), get_avg_neighbors());
+            series[1].addOrUpdate(((int) ((m.getTime() - file.starttime()) / 1000)), get_min_neighbors());
+            series[2].addOrUpdate(((int) ((m.getTime() - file.starttime()) / 1000)), get_max_neighbors());
 
         }
     }
