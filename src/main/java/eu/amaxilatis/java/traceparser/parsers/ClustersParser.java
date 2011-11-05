@@ -131,16 +131,16 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
 
 //    public ClustersParser(TraceFile f, String template) {
 //        //log.info("EventParser initialized");
-//        duration = f.duration();
+//        getDuration = f.getDuration();
 //
 //
 //        file = f;
-//        int duration = (int) (f.duration() / 1000 + 1);
-//        clusters = new HashMap[(int) duration];
+//        int getDuration = (int) (f.getDuration() / 1000 + 1);
+//        clusters = new HashMap[(int) getDuration];
 //
-//        //clusters = new int[f.nodesize()][(int) duration];
+//        //clusters = new int[f.nodesize()][(int) getDuration];
 //
-//        for (int i = 0; i < duration; i++) {
+//        for (int i = 0; i < getDuration; i++) {
 //            clusters[i] = new HashMap<String, String>();
 //            clusters[i].clear();
 //        }
@@ -256,7 +256,7 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(plotbutton)) {
             reset();
-            log.info("|=== parsing tracefile: " + file.filename() + "...");
+            log.info("|=== parsing tracefile: " + file.getFilename() + "...");
             TraceReader a = new TraceReader(file);
             a.addObserver(this);
             a.run();
@@ -277,7 +277,7 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
     }
 
     private void reset() {
-        duration = (int) (file.duration() / 1000 + 1);
+        duration = (int) (file.getDuration() / 1000 + 1);
         clusters = new HashMap[(int) duration];
 
         //clusters = new int[f.nodesize()][(int) duration];

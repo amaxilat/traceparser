@@ -95,14 +95,14 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
     public EventParser(TraceFile f, String template) {
 
         //log.info("EventParser initialized");
-        duration = f.duration();
+        duration = f.getDuration();
 
 
         String partitioner = "-";
         eventTypes = template.split(partitioner).length;
 
         file = f;
-        duration = f.duration() / 1000 + 1;
+        duration = f.getDuration() / 1000 + 1;
         events = new int[eventTypes][(int) duration];
 
         for (int type = 0; type < eventTypes; type++) {
@@ -224,7 +224,7 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(plotbutton)) {
             reset();
-            log.info("|=== parsing tracefile: " + file.filename() + "...");
+            log.info("|=== parsing tracefile: " + file.getFilename() + "...");
             TraceReader a = new TraceReader(file);
             a.addObserver(this);
             a.run();
@@ -247,7 +247,7 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
         prefixes = templates.split(partitioner);
         eventTypes = prefixes.length;
 
-        duration = file.duration() / 1000 + 1;
+        duration = file.getDuration() / 1000 + 1;
         events = new int[eventTypes][(int) duration];
 
         for (int type = 0; type < eventTypes; type++) {

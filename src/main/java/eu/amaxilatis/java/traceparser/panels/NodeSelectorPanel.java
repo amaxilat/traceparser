@@ -64,7 +64,7 @@ public class NodeSelectorPanel extends JPanel implements ActionListener {
 
         int selected[] = new int[file.nodesize()];
         int i = 0;
-        for (String node : file.getNode_names()) {
+        for (String node : file.getNodeNames()) {
             listModel.addElement(node);
             selected[i] = i++;
         }

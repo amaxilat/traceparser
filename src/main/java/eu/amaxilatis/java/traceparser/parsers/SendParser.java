@@ -130,7 +130,7 @@ public class SendParser extends AbstractParser implements Observer, ActionListen
     public SendParser(TraceFile f, String template) {
 
         file = f;
-        duration = f.duration() / 1000 + 1;
+        duration = f.getDuration() / 1000 + 1;
         messages = new int[255][(int) duration];
         for (int i = 0; i < 255; i++) {
             for (int j = 0; j < (int) duration; j++) {
@@ -286,7 +286,7 @@ public class SendParser extends AbstractParser implements Observer, ActionListen
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(plotbutton)) {
             reset();
-            log.info("|=== parsing tracefile: " + file.filename() + "...");
+            log.info("|=== parsing tracefile: " + file.getFilename() + "...");
             TraceReader a = new TraceReader(file);
             a.addObserver(this);
             a.run();
@@ -304,7 +304,7 @@ public class SendParser extends AbstractParser implements Observer, ActionListen
     }
 
     private void reset() {
-        duration = file.duration() / 1000 + 1;
+        duration = file.getDuration() / 1000 + 1;
         messages = new int[255][(int) duration];
         for (int i = 0; i < 255; i++) {
             for (int j = 0; j < (int) duration; j++) {

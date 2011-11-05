@@ -229,7 +229,7 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(plotbutton)) {
             reset();
-            log.info("|=== parsing tracefile: " + file.filename() + "...");
+            log.info("|=== parsing tracefile: " + file.getFilename() + "...");
             TraceReader a = new TraceReader(file);
             a.addObserver(this);
             a.run();

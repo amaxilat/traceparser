@@ -9,43 +9,39 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
-/**
- * Created by IntelliJ IDEA.
- * User: amaxilatis
- * Date: 7/9/11
- * Time: 12:44 PM
- */
+
 public class TraceFile {
+
+    private final static Logger LOGGER = Logger.getLogger(TraceFile.class);
 
     private final String filename;
     private long duration;
-    private long start_time;
+    private long startTime;
 
-    public long getEnd_time() {
-        return end_time;
+    public long getEndTime() {
+        return endTime;
     }
 
-    private long end_time;
+    private long endTime;
 
-    public ArrayList<String> getNode_names() {
-        Collections.sort(node_names);
-        return node_names;
+    public List<String> getNodeNames() {
+        Collections.sort(nodeNames);
+        return nodeNames;
     }
 
-    private final ArrayList<String> node_names = new ArrayList();
+    private final List nodeNames = new ArrayList();
     private long lines;
 
 
-    public TraceFile(String file) {
-        Logger log = TraceParserApp.log;
-
+    public TraceFile(final String file) {
 
         duration = 0;
-        start_time = (new Date()).getTime();
-        end_time = 0;
+        startTime = (new Date()).getTime();
+        endTime = 0;
         lines = 0;
-        node_names.clear();
+        nodeNames.clear();
 
         filename = file;
 
@@ -53,70 +49,69 @@ public class TraceFile {
         try {
             // Open the file that is the first
             // command line parameter
-            FileInputStream fstream = new FileInputStream(filename);
+            final FileInputStream fstream = new FileInputStream(filename);
             // Get the object of DataInputStream
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            final DataInputStream in = new DataInputStream(fstream);
+            final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
             String strLine;
             //Read File Line By Line
-            while ((strLine = br.readLine()) != null) {
+            while ((strLine = bufferedReader.readLine()) != null) {
                 lines++;
                 // Print the content on the console
                 final TraceMessage m = new TraceMessage(strLine);
                 final long date = m.time();
-                if (date < start_time) {
+                if (date < startTime) {
                     min = lines;
-                    start_time = date;
-                    duration = end_time - start_time;
-                } else if (date > end_time) {
+                    startTime = date;
+                    duration = endTime - startTime;
+                } else if (date > endTime) {
                     max = lines;
-                    end_time = date;
-                    duration = end_time - start_time;
+                    endTime = date;
+                    duration = endTime - startTime;
                 }
 
                 final String nodeurn = m.urn();
-                if (!node_names.contains(nodeurn)) {
-                    node_names.add(nodeurn);
+                if (!nodeNames.contains(nodeurn)) {
+                    nodeNames.add(nodeurn);
                 }
 
             }
 
 
-            log.info("Date Started(" + min + ") : " + new Date(starttime()).toString());
-            log.info("Date Ended(" + max + ") : " + new Date(endtime()).toString());
+            LOGGER.info("Date Started(" + min + ") : " + new Date(starttime()).toString());
+            LOGGER.info("Date Ended(" + max + ") : " + new Date(endtime()).toString());
             //Close the input stream
             in.close();
         } catch (Exception e) {//Catch exception if any
-            log.error("Error: reading the file : " + filename + " line " + lines);
-            e.printStackTrace();
-            log.error(e.toString());
+            LOGGER.error("Error: reading the file : " + filename + " line " + lines);
+            LOGGER.error(e);
         }
 
 
     }
 
 
-    public long duration() {
+    public long getDuration() {
         return duration;
     }
 
-    public String filename() {
+    public String getFilename() {
         return filename;
     }
 
     public long starttime() {
-        return start_time;
+        return startTime;
     }
 
     long endtime() {
-        return end_time;
+        return endTime;
     }
 
     public int nodesize() {
-        return node_names.size();
+        return nodeNames.size();
     }
 
-    public long lines() {
+    public long getLines() {
         return lines;
     }
 

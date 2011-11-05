@@ -40,7 +40,7 @@ public class TraceReader extends Observable implements Runnable {
         try {
             // Open the file that is the first
             // command line parameter
-            FileInputStream fstream = new FileInputStream(file.filename());
+            FileInputStream fstream = new FileInputStream(file.getFilename());
             // Get the object of DataInputStream
             DataInputStream in = new DataInputStream(fstream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));

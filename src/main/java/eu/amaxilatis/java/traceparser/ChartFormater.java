@@ -4,33 +4,41 @@ import org.jfree.chart.JFreeChart;
 
 import java.awt.*;
 
-/**
- * Created by IntelliJ IDEA.
- * User: amaxilatis
- * Date: 10/19/11
- * Time: 5:57 PM
- * To change this template use File | Settings | File Templates.
- */
+
 public class ChartFormater {
 
-    public static Color BackgroundColor = Color.white;
-    public static Color BorderColor = Color.black;
-    public static boolean HasBorder = false;
-    public static boolean HideLegend = false;
-    public static float BorderSize = 1;
-    public static boolean HideTitle;
+    private static ChartFormater instance = null;
 
-    public static JFreeChart transformChart(JFreeChart chart) {
-        chart.setBackgroundPaint(ChartFormater.BackgroundColor);
-        chart.setBorderPaint(ChartFormater.BorderColor);
-        chart.setBorderVisible(ChartFormater.HasBorder);
-        if (ChartFormater.HideLegend) {
+    protected ChartFormater() {
+        // Exists only to defeat instantiation.
+    }
+
+    public static ChartFormater getInstance() {
+        if (instance == null) {
+            instance = new ChartFormater();
+        }
+        return instance;
+    }
+
+
+    public static Color backgroundColor = Color.white;
+    public static Color borderColor = Color.black;
+    public static boolean hasBorder = false;
+    public static boolean hideLegend = false;
+    public static float borderSize = 1;
+    public static boolean hideTitle;
+
+    public static JFreeChart transformChart(final JFreeChart chart) {
+        chart.setBackgroundPaint(ChartFormater.backgroundColor);
+        chart.setBorderPaint(ChartFormater.borderColor);
+        chart.setBorderVisible(ChartFormater.hasBorder);
+        if (ChartFormater.hideLegend) {
             chart.removeLegend();
         }
-        if ((ChartFormater.HideTitle)) {
+        if ((ChartFormater.hideTitle)) {
             chart.setTitle("");
         }
-        chart.setBorderStroke(new BasicStroke(ChartFormater.BorderSize));
+        chart.setBorderStroke(new BasicStroke(ChartFormater.borderSize));
 
         return chart;
 

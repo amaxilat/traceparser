@@ -222,7 +222,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
                 }
             }
         } else if (e.equals(refreshTraceButton)) {
-            open_trace(mytracefile.filename());
+            open_trace(mytracefile.getFilename());
 
         } else if (e.equals(savePropertiesButton)) {
 //            log.info("Writing properties");
@@ -268,9 +268,9 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         durationFileText.setText("calculating");
         selectedFileText.setText(filename);
         mytracefile = new TraceFile(filename);
-        durationFileText.setText(mytracefile.duration() / 60000 + " min= "+mytracefile.duration()/1000 + " sec");
+        durationFileText.setText(mytracefile.getDuration() / 60000 + " min= "+mytracefile.getDuration()/1000 + " sec");
         nodesFileText.setText(mytracefile.nodesize() + " nodes");
-        linesFileText.setText(mytracefile.lines() + " lines");
+        linesFileText.setText(mytracefile.getLines() + " getLines");
         NodeSelectorPanel.setFile(mytracefile);
     }
 }

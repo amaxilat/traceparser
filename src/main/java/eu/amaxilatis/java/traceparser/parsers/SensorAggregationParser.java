@@ -182,7 +182,7 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
                     newseries.add((int) (sensorReading.getTime() - file.starttime()) / 1000, avgReading);
                 }
             }
-            newseries.add((int) (file.getEnd_time() - file.starttime()) / 1000, avgReading);
+            newseries.add((int) (file.getEndTime() - file.starttime()) / 1000, avgReading);
             seriesCollection.addSeries(newseries);
         }
 
@@ -231,7 +231,7 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
 
         DefaultListModel listModel = new DefaultListModel();
 
-        for (String node : file.getNode_names()) {
+        for (String node : file.getNodeNames()) {
             listModel.addElement(node);
 
         }
@@ -294,7 +294,7 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
         if (actionEvent.getSource().equals(plotbutton)) {
             reset();
 
-            log.info("|=== parsing tracefile: " + file.filename() + "...");
+            log.info("|=== parsing tracefile: " + file.getFilename() + "...");
             parse();
             log.info("|--- done parsing!");
             log.info("|=== generating plot...");
