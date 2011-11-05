@@ -5,7 +5,7 @@ import eu.amaxilatis.java.traceparser.TraceFile;
 import eu.amaxilatis.java.traceparser.TraceMessage;
 import eu.amaxilatis.java.traceparser.TraceReader;
 import eu.amaxilatis.java.traceparser.panels.NodeSelectorPanel;
-import eu.amaxilatis.java.traceparser.panels.couplePanel;
+import eu.amaxilatis.java.traceparser.panels.CouplePanel;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -78,21 +78,21 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
         droptextfield = new JTextField(prefix_drop);
         losttextfield = new JTextField(prefix_lost);
 
-        leftmainpanel.add(new couplePanel(new JLabel("delimiter"), delimitertextfield));
-        leftmainpanel.add(new couplePanel(new JLabel("Uni prefix"), nbtextfield));
-        leftmainpanel.add(new couplePanel(new JLabel("Bidi prefix"), biditextfield));
-        leftmainpanel.add(new couplePanel(new JLabel("Drop prefix"), droptextfield));
-        leftmainpanel.add(new couplePanel(new JLabel("Lost prefix"), losttextfield));
+        leftmainpanel.add(new CouplePanel(new JLabel("delimiter"), delimitertextfield));
+        leftmainpanel.add(new CouplePanel(new JLabel("Uni prefix"), nbtextfield));
+        leftmainpanel.add(new CouplePanel(new JLabel("Bidi prefix"), biditextfield));
+        leftmainpanel.add(new CouplePanel(new JLabel("Drop prefix"), droptextfield));
+        leftmainpanel.add(new CouplePanel(new JLabel("Lost prefix"), losttextfield));
 
 
-        rightmainpanel.add(new couplePanel(plotbutton, removeButton));
+        rightmainpanel.add(new CouplePanel(plotbutton, removeButton));
 
         plotTitle = new TextField("Neighborhood Statistics");
-        rightmainpanel.add(new couplePanel(new JLabel("Plot title:"), plotTitle));
+        rightmainpanel.add(new CouplePanel(new JLabel("Plot title:"), plotTitle));
         xLabel = new TextField("getTime in sec");
-        rightmainpanel.add(new couplePanel(new JLabel("X axis Label:"), xLabel));
+        rightmainpanel.add(new CouplePanel(new JLabel("X axis Label:"), xLabel));
         yLabel = new TextField("# of Nodes");
-        rightmainpanel.add(new couplePanel(new JLabel("Y axis Label:"), yLabel));
+        rightmainpanel.add(new CouplePanel(new JLabel("Y axis Label:"), yLabel));
 
         reset();
 

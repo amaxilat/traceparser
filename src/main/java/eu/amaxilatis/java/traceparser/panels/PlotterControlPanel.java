@@ -14,22 +14,22 @@ import java.awt.event.ActionListener;
  * Time: 8:03 PM
  */
 public class PlotterControlPanel extends JPanel implements ActionListener {
-    private JButton updateButton;
-    private JTextField chartBGColor;
-    private JButton resetButton;
-    private JTextField chartBorderColor;
-    private JCheckBox chartHasBorder;
-    private JCheckBox chartHideLegend;
-    private JSpinner chartBorderSize;
-    private JCheckBox chartHideTitle;
+    final private JButton updateButton;
+    final private JTextField chartBGColor;
+    final private JButton resetButton;
+    final private JTextField chartBorderColor;
+    final private JCheckBox chartHasBorder;
+    final private JCheckBox chartHideLegend;
+    final private JSpinner chartBorderSize;
+    final private JCheckBox chartHideTitle;
 
     public PlotterControlPanel() {
 
         this.setLayout(new BorderLayout());
 
-        JPanel mainpanel = new JPanel(new GridLayout(0, 2, 30, 30));
-        JPanel leftmainpanel = new JPanel(new GridLayout(0, 1));
-        JPanel rightmainpanel = new JPanel(new GridLayout(0, 1));
+        final JPanel mainpanel = new JPanel(new GridLayout(0, 2, 30, 30));
+        final JPanel leftmainpanel = new JPanel(new GridLayout(0, 1));
+        final JPanel rightmainpanel = new JPanel(new GridLayout(0, 1));
         mainpanel.add(leftmainpanel);
         mainpanel.add(rightmainpanel);
 
@@ -41,7 +41,7 @@ public class PlotterControlPanel extends JPanel implements ActionListener {
 
         resetButton = new JButton("Reset");
         resetButton.addActionListener(this);
-        rightmainpanel.add(new couplePanel(updateButton, resetButton));
+        rightmainpanel.add(new CouplePanel(updateButton, resetButton));
 
         leftmainpanel.add(new JLabel("Setting for the graphics of all generated plots."));
         leftmainpanel.add(new JLabel("All color settings are in RGB format. (0-255) separate with ,"));
@@ -50,31 +50,31 @@ public class PlotterControlPanel extends JPanel implements ActionListener {
 //bgcolor
         chartBGColor = new JTextField(color2string(ChartFormater.backgroundColor));
         chartBGColor.setBorder(BorderFactory.createLineBorder(ChartFormater.backgroundColor, 5));
-        leftmainpanel.add(new couplePanel(new JLabel("Bg color"), chartBGColor));
+        leftmainpanel.add(new CouplePanel(new JLabel("Bg color"), chartBGColor));
 //bordeColor
         chartBorderColor = new JTextField(color2string(ChartFormater.borderColor));
         chartBorderColor.setBorder(BorderFactory.createLineBorder(ChartFormater.borderColor, 5));
-        leftmainpanel.add(new couplePanel(new JLabel("Border color"), chartBorderColor));
+        leftmainpanel.add(new CouplePanel(new JLabel("Border color"), chartBorderColor));
 //bordeColor
         chartBorderSize = new JSpinner();
         chartBorderSize.setValue(ChartFormater.borderSize);
-        leftmainpanel.add(new couplePanel(new JLabel("Border size"), chartBorderSize));
+        leftmainpanel.add(new CouplePanel(new JLabel("Border size"), chartBorderSize));
 
 //use border
         chartHasBorder = new JCheckBox("", ChartFormater.hasBorder);
-        rightmainpanel.add(new couplePanel(new JLabel("Use Border"), chartHasBorder));
+        rightmainpanel.add(new CouplePanel(new JLabel("Use Border"), chartHasBorder));
 //use border
         chartHideLegend = new JCheckBox("", ChartFormater.hideLegend);
-        rightmainpanel.add(new couplePanel(new JLabel("Hide Legend"), chartHideLegend));
+        rightmainpanel.add(new CouplePanel(new JLabel("Hide Legend"), chartHideLegend));
 
         //use border
         chartHideTitle = new JCheckBox("", ChartFormater.hideTitle);
-        rightmainpanel.add(new couplePanel(new JLabel("Hide Title"), chartHideTitle));
+        rightmainpanel.add(new CouplePanel(new JLabel("Hide Title"), chartHideTitle));
 
 
     }
 
-    public void actionPerformed(ActionEvent actionEvent) {
+    public void actionPerformed(final ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(updateButton)) {
 
             final Color newBGColor = new Color(getRed(chartBGColor.getText()), getGreen(chartBGColor.getText()), getBlue(chartBGColor.getText()));
@@ -93,23 +93,23 @@ public class PlotterControlPanel extends JPanel implements ActionListener {
         }
     }
 
-    private int getRed(String text) {
+    private int getRed(final String text) {
         return Integer.parseInt(text.split(",")[0]);
     }
 
-    private int getGreen(String text) {
+    private int getGreen(final String text) {
         return Integer.parseInt(text.split(",")[1]);
     }
 
-    private int getBlue(String text) {
+    private int getBlue(final String text) {
         return Integer.parseInt(text.split(",")[2]);
     }
 
-    private String color2string(Color c) {
+    private String color2string(final Color color) {
         final String red, green, blue;
-        red = Integer.toString(c.getRed());
-        green = Integer.toString(c.getGreen());
-        blue = Integer.toString(c.getBlue());
+        red = Integer.toString(color.getRed());
+        green = Integer.toString(color.getGreen());
+        blue = Integer.toString(color.getBlue());
         return red + "," + green + "," + blue;
     }
 }

@@ -4,7 +4,7 @@ import eu.amaxilatis.java.traceparser.TraceFile;
 import eu.amaxilatis.java.traceparser.TraceMessage;
 import eu.amaxilatis.java.traceparser.TraceReader;
 import eu.amaxilatis.java.traceparser.panels.NodeSelectorPanel;
-import eu.amaxilatis.java.traceparser.panels.couplePanel;
+import eu.amaxilatis.java.traceparser.panels.CouplePanel;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -71,25 +71,25 @@ public class SendParser extends AbstractParser implements Observer, ActionListen
         updatebutton = new JButton(super.REMOVE);
         updatebutton.addActionListener(this);
 
-        rightmainpanel.add(new couplePanel(plotbutton, updatebutton));
+        rightmainpanel.add(new CouplePanel(plotbutton, updatebutton));
 
         templateTextField = new JTextField(template);
-        leftmainpanel.add(new couplePanel(new JLabel("Message Sent Template"), templateTextField));
+        leftmainpanel.add(new CouplePanel(new JLabel("Message Sent Template"), templateTextField));
         prefixTextField = new JLabel(prefix);
 
-        leftmainpanel.add(new couplePanel(new JLabel("Message Sent Prefix"), prefixTextField));
+        leftmainpanel.add(new CouplePanel(new JLabel("Message Sent Prefix"), prefixTextField));
         hiddenTextField = new JTextField(hidden);
-        leftmainpanel.add(new couplePanel(new JLabel("Hidden Message ids"), hiddenTextField));
+        leftmainpanel.add(new CouplePanel(new JLabel("Hidden Message ids"), hiddenTextField));
         aggregateCheckbox = new JCheckBox();
         aggregateCheckbox.setSelected(aggregate);
-        leftmainpanel.add(new couplePanel(new JLabel("Aggregate plot"), aggregateCheckbox));
+        leftmainpanel.add(new CouplePanel(new JLabel("Aggregate plot"), aggregateCheckbox));
 
         plotTitle = new TextField("Message Statistics");
-        rightmainpanel.add(new couplePanel(new JLabel("Plot title:"), plotTitle));
+        rightmainpanel.add(new CouplePanel(new JLabel("Plot title:"), plotTitle));
         xLabel = new TextField("getTime in sec");
-        rightmainpanel.add(new couplePanel(new JLabel("X axis Label:"), xLabel));
+        rightmainpanel.add(new CouplePanel(new JLabel("X axis Label:"), xLabel));
         yLabel = new TextField("# of Messages");
-        rightmainpanel.add(new couplePanel(new JLabel("Y axis Label:"), yLabel));
+        rightmainpanel.add(new CouplePanel(new JLabel("Y axis Label:"), yLabel));
 
 
         log.info("SendParser initialized");

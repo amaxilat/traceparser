@@ -5,7 +5,7 @@ import eu.amaxilatis.java.traceparser.TraceFile;
 import eu.amaxilatis.java.traceparser.TraceMessage;
 import eu.amaxilatis.java.traceparser.TraceReader;
 import eu.amaxilatis.java.traceparser.panels.NodeSelectorPanel;
-import eu.amaxilatis.java.traceparser.panels.couplePanel;
+import eu.amaxilatis.java.traceparser.panels.CouplePanel;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -70,25 +70,25 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
         plotbutton.addActionListener(this);
         removeButton = new JButton(super.REMOVE);
         removeButton.addActionListener(this);
-        rightmainpanel.add(new couplePanel(plotbutton, removeButton));
+        rightmainpanel.add(new CouplePanel(plotbutton, removeButton));
 
         delimitertextfield = new JTextField(delimiter);
         JTextField meantextfield = new JTextField(sensorPrefix);
         JTextField aggregatedtextfield = new JTextField(aggregatedPrefix);
         JTextField startUptextfield = new JTextField("" + startuptime);
 
-        leftmainpanel.add(new couplePanel(new JLabel("delimiter"), delimitertextfield));
-        leftmainpanel.add(new couplePanel(new JLabel("Mean Value"), meantextfield));
-        leftmainpanel.add(new couplePanel(new JLabel("Aggregated Value"), aggregatedtextfield));
-        leftmainpanel.add(new couplePanel(new JLabel("Startup Time"), startUptextfield));
+        leftmainpanel.add(new CouplePanel(new JLabel("delimiter"), delimitertextfield));
+        leftmainpanel.add(new CouplePanel(new JLabel("Mean Value"), meantextfield));
+        leftmainpanel.add(new CouplePanel(new JLabel("Aggregated Value"), aggregatedtextfield));
+        leftmainpanel.add(new CouplePanel(new JLabel("Startup Time"), startUptextfield));
 
 
         plotTitle = new TextField("Semantics Statistics");
-        rightmainpanel.add(new couplePanel(new JLabel("Plot title:"), plotTitle));
+        rightmainpanel.add(new CouplePanel(new JLabel("Plot title:"), plotTitle));
         xLabel = new TextField("getTime in sec");
-        rightmainpanel.add(new couplePanel(new JLabel("X axis Label:"), xLabel));
+        rightmainpanel.add(new CouplePanel(new JLabel("X axis Label:"), xLabel));
         yLabel = new TextField("Sensor Value");
-        rightmainpanel.add(new couplePanel(new JLabel("Y axis Label:"), yLabel));
+        rightmainpanel.add(new CouplePanel(new JLabel("Y axis Label:"), yLabel));
 
 
     }

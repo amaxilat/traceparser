@@ -8,71 +8,71 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.Map;
 
 public class NodeSelectorPanel extends JPanel implements ActionListener {
 
-    public static String NAME = "Node Selection";
+    public final static String NAME = "Node Selection";
     public static TraceFile file = null;
-    private JButton updateButton;
-    private JLabel enabledCountLabel;
-    private static JList NodesList;
+    private final JButton updateButton;
+    private final JLabel enabledCountLabel;
+    private static JList nodesList;
 
-    private static HashMap<String, Integer> selectedNodesHashMap = new HashMap<String, Integer>();
+    private static Map<String, Integer> selectNodesMap = new HashMap<String, Integer>();
 
-    private static final Logger log = Logger.getLogger(NodeSelectorPanel.class);
-    private JScrollPane nodeScrollPane;
+    private static final Logger LOGGER = Logger.getLogger(NodeSelectorPanel.class);
 
     public NodeSelectorPanel() {
 
         this.setLayout(new BorderLayout());
 
-        JPanel mainpanel = new JPanel(new BorderLayout());
+        final JPanel mainpanel = new JPanel(new BorderLayout());
         mainpanel.add(new JLabel(NAME), BorderLayout.NORTH);
         updateButton = new JButton("Reload Selections");
         updateButton.addActionListener(this);
 
         enabledCountLabel = new JLabel("all");
-        mainpanel.add(new couplePanel(updateButton, enabledCountLabel), BorderLayout.SOUTH);
+        mainpanel.add(new CouplePanel(updateButton, enabledCountLabel), BorderLayout.SOUTH);
 
-        ListModel nodesListModel = new DefaultListModel();
-        NodesList = new JList(nodesListModel);
-        nodeScrollPane = new JScrollPane(NodesList);
+        final ListModel nodesListModel = new DefaultListModel();
+        nodesList = new JList(nodesListModel);
+        JScrollPane nodeScrollPane = new JScrollPane(nodesList);
 
         mainpanel.add(nodeScrollPane);
-        log.info(NAME + " initialized");
+        LOGGER.info(NAME + " initialized");
 
 
         this.add(mainpanel);
     }
 
 
-    public void actionPerformed(ActionEvent actionEvent) {
+    public void actionPerformed(final ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(updateButton)) {
-            enabledCountLabel.setText(String.valueOf(NodesList.getSelectedIndices().length));
-            selectedNodesHashMap = new HashMap<String, Integer>();
-            for (Object selectedNode : NodesList.getSelectedValues()) {
-                selectedNodesHashMap.put((String) selectedNode, 1);
+            enabledCountLabel.setText(String.valueOf(nodesList.getSelectedIndices().length));
+            selectNodesMap = new HashMap<String, Integer>();
+            for (Object selectedNode : nodesList.getSelectedValues()) {
+                selectNodesMap.put((String) selectedNode, 1);
             }
         }
 
     }
 
-    public static void setFile(TraceFile file) {
+    public static void setFile(final TraceFile file) {
         NodeSelectorPanel.file = file;
-        DefaultListModel listModel = (DefaultListModel) NodesList.getModel();
+        final DefaultListModel listModel = (DefaultListModel) nodesList.getModel();
         listModel.clear();
 
         int selected[] = new int[file.getNodeSize()];
-        int i = 0;
+        int count = 0;
         for (String node : file.getNodeNames()) {
             listModel.addElement(node);
-            selected[i] = i++;
+            selected[count] = count++;
         }
-        NodesList.setSelectedIndices(selected);
+        nodesList.setSelectedIndices(selected);
 
     }
 
-    public static boolean isSelected(String urn) {
-        return selectedNodesHashMap.containsKey(urn);
+    public static boolean isSelected(final String urn) {
+        return selectNodesMap.containsKey(urn);
     }
 }

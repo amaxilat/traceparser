@@ -10,26 +10,20 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Observable;
 
-/**
- * Created by IntelliJ IDEA.
- * User: amaxilatis
- * Date: 7/2/11
- * Time: 2:06 PM
- */
 public class TraceReader extends Observable implements Runnable {
 
 
     private final TraceFile file;
 
-    private static final String urnText = "Source [";
-    private static final String textText = "Text [";
-    private static final String dateText = "Time [";
+    private static final String URN = "Source [";
+    private static final String TEXT = "Text [";
+    private static final String DATE = "Time [";
     static String levelText = "Level [";
-    private static final String endText = "]";
-    private static final Logger log = Logger.getLogger(TraceReader.class);
+    private static final String END = "]";
+    private static final Logger LOGGER = Logger.getLogger(TraceReader.class);
 
-    public TraceReader(TraceFile file_) {
-        file = file_;
+    public TraceReader(final TraceFile file) {
+        this.file = file;
     }
 
 
@@ -40,10 +34,10 @@ public class TraceReader extends Observable implements Runnable {
         try {
             // Open the file that is the first
             // command line parameter
-            FileInputStream fstream = new FileInputStream(file.getFilename());
+            final FileInputStream fstream = new FileInputStream(file.getFilename());
             // Get the object of DataInputStream
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            final DataInputStream dataInputStream = new DataInputStream(fstream);
+            final BufferedReader br = new BufferedReader(new InputStreamReader(dataInputStream));
             //Read File Line By Line
             while ((strLine = br.readLine()) != null) {
                 // Print the content on the console
@@ -57,34 +51,34 @@ public class TraceReader extends Observable implements Runnable {
                 //Thread.sleep(100);
             }
             //Close the input stream
-            in.close();
+            dataInputStream.close();
         } catch (Exception e) {//Catch exception if any
-            log.error("Error: " + e.toString() + " line: " + count + " contents " + strLine);
-            e.printStackTrace();
+            LOGGER.error("Error: " + e.toString() + " line: " + count + " contents " + strLine);
         }
     }
 
-    String extractNodeUrn(String line) {
-        final int nodeurn_start = line.indexOf(urnText) + urnText.length();
-        final int nodeurn_stop = line.indexOf(endText, nodeurn_start);
+    String extractNodeUrn(final String line) {
+        final int nodeurn_start = line.indexOf(URN) + URN.length();
+        final int nodeurn_stop = line.indexOf(END, nodeurn_start);
         return line.substring(nodeurn_start, nodeurn_stop);
     }
 
-    String extractText(String line) {
-        final int text_start = line.indexOf(textText) + textText.length();
-        final int text_stop = line.indexOf(endText, text_start);
+    String extractText(final String line) {
+        final int text_start = line.indexOf(TEXT) + TEXT.length();
+        final int text_stop = line.indexOf(END, text_start);
         return line.substring(text_start, text_stop);
     }
 
-    long extractDate(String line) {
-        final int date_start = line.indexOf(dateText) + dateText.length();
-        final int date_stop = line.indexOf("+02:00" + endText, date_start);
+    long extractDate(final String line) {
+        final int date_start = line.indexOf(DATE) + DATE.length();
+        final int date_stop = line.indexOf("+02:00" + END, date_start);
         final String date = line.substring(date_start, date_stop);
-        final SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.'S");
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.'S");
         try {
-            final Date d = f.parse(date);
-            return d.getTime();
-        } catch (Exception ignored) {
+            final Date parseDate = dateFormat.parse(date);
+            return parseDate.getTime();
+        } catch (Exception e) {
+            LOGGER.error(e);
         }
         return -1;
     }
