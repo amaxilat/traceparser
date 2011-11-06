@@ -19,39 +19,36 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-/**
- * Created by IntelliJ IDEA.
- * User: amaxilatis
- * Date: 7/19/11
- * Time: 6:39 PM
- */
 public class ClustersParser extends AbstractParser implements Observer, ActionListener {
 
-    private TraceFile file;
-    private static final Logger log = Logger.getLogger(ClustersParser.class);
-    private long duration;
-    private HashMap<String, String>[] clusters;
-
+    private static final Logger LOGGER = Logger.getLogger(ClustersParser.class);
+    public static final String NAME = "Clusters Parser";
+    private static final String PLOT_TITLE = "Cluster Statistics";
+    private static final String X_LABEL = "time in sec";
+    private static final String Y_LABEL = "# of Clusters";
 
     private String template;
     private String prefix;
     private String delimiter = ";";
     private String[] parts;
-    private JButton plotbutton;
-    private JButton removeButton;
-    private JTextField delimitertextfield;
-    private JTextField templatetextfield;
+    private final JButton plotbutton;
+    private final JButton removeButton;
+    private final JTextField delimiterTf;
+    private final JTextField templateTf;
+    private final JTabbedPane tabbedPane;
+    private final TextField plotTitleTf;
+    private final TextField xLabelTf;
+    private final TextField yLabelTf;
+
+    private long duration;
+    private Map<String, String>[] clusters;
     private int pcluster;
     private int pid;
-    private int ptype;
-    public static String Name = "Clusters Parser";
-    private JTabbedPane tabbedPane;
-    private TextField plotTitle;
-    private TextField xLabel;
-    private TextField yLabel;
+    private TraceFile file;
 
 
     public ClustersParser(JTabbedPane jTabbedPane1) {
@@ -66,15 +63,15 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
         mainpanel.add(leftmainpanel);
         mainpanel.add(rightmainpanel);
 
-        this.add(new JLabel(Name), BorderLayout.NORTH);
+        this.add(new JLabel(NAME), BorderLayout.NORTH);
         this.add(mainpanel, BorderLayout.CENTER);
 
 
-        delimitertextfield = new JTextField(delimiter);
-        templatetextfield = new JTextField(template);
+        delimiterTf = new JTextField(delimiter);
+        templateTf = new JTextField(template);
 
-        leftmainpanel.add(new CouplePanel(new JLabel("delimiter"), delimitertextfield));
-        leftmainpanel.add(new CouplePanel(new JLabel("Template"), templatetextfield));
+        leftmainpanel.add(new CouplePanel(new JLabel("delimiter"), delimiterTf));
+        leftmainpanel.add(new CouplePanel(new JLabel("Template"), templateTf));
 
 
         plotbutton = new JButton(super.PLOT);
@@ -84,24 +81,14 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
         rightmainpanel.add(new CouplePanel(plotbutton, removeButton));
 
 
-        plotTitle = new TextField("Cluster Statistics");
-        rightmainpanel.add(new CouplePanel(new JLabel("Plot title:"), plotTitle));
-        xLabel = new TextField("time in sec");
-        rightmainpanel.add(new CouplePanel(new JLabel("X axis Label:"), xLabel));
-        yLabel = new TextField("# of Clusters");
-        rightmainpanel.add(new CouplePanel(new JLabel("Y axis Label:"), yLabel));
+        plotTitleTf = new TextField(PLOT_TITLE);
+        rightmainpanel.add(new CouplePanel(new JLabel("Plot title:"), plotTitleTf));
+        xLabelTf = new TextField(X_LABEL);
+        rightmainpanel.add(new CouplePanel(new JLabel("X axis Label:"), xLabelTf));
+        yLabelTf = new TextField(Y_LABEL);
+        rightmainpanel.add(new CouplePanel(new JLabel("Y axis Label:"), yLabelTf));
 
     }
-
-//    public ClustersParser(JTabbedPane template) {
-//
-//        //clusters = new int[f.getNodeSize()][(int) duration];
-//
-//        parts = template.split(delimiter);
-//
-//
-//        init();
-//    }
 
     private void init() {
 
@@ -109,10 +96,10 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
 
         pcluster = 0;
         pid = 0;
-        ptype = 0;
+
 
         if (parts.length < 4) {
-            log.error("invalid argument!!!");
+            LOGGER.error("invalid argument!!!");
         } else {
             for (int i = 0; i < parts.length; i++) {
                 if (parts[i].equals("ID")) {
@@ -120,35 +107,14 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
                 } else if (parts[i].equals("CLUSTER")) {
                     pcluster = i;
                 } else if (parts[i].equals("TYPE")) {
-                    ptype = i;
+
                 }
             }
         }
 
 
-        log.info("ClustersParser initialized");
+        LOGGER.info("ClustersParser initialized");
     }
-
-//    public ClustersParser(TraceFile f, String template) {
-//        //LOGGER.info("EventParser initialized");
-//        getDuration = f.getDuration();
-//
-//
-//        file = f;
-//        int getDuration = (int) (f.getDuration() / 1000 + 1);
-//        clusters = new HashMap[(int) getDuration];
-//
-//        //clusters = new int[f.getNodeSize()][(int) getDuration];
-//
-//        for (int i = 0; i < getDuration; i++) {
-//            clusters[i] = new HashMap<String, String>();
-//            clusters[i].clear();
-//        }
-//
-//        parts = template.split(delimiter);
-//
-//        init();
-//    }
 
     public ChartPanel getPlot(boolean has_title, boolean aggregate, String title, String xlabel, String ylabel) {
         XYSeriesCollection dataset = new XYSeriesCollection();
@@ -186,18 +152,18 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
         series[0] = new XYSeries("Clusters");
         series[1] = new XYSeries("Avg. Size of Cluster");
 
-        log.debug(duration);
+        LOGGER.debug(duration);
         for (int i = 0; i < duration; i++) {
             int cluster_count = 0;
             int simple_count = 0;
-            log.info(clusters[i].keySet().size());
+            LOGGER.info(clusters[i].keySet().size());
             for (String key : clusters[i].keySet()) {
 
                 if (clusters[i].get(key).equals(key)) {
-                    log.info(key + " - " + clusters[i].get(key) + " N");
+                    LOGGER.info(key + " - " + clusters[i].get(key) + " N");
                     cluster_count++;
                 } else {
-                    log.info(key + " - " + clusters[i].get(key));
+                    LOGGER.info(key + " - " + clusters[i].get(key));
                     simple_count++;
                 }
             }
@@ -211,7 +177,7 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
                 //LOGGER.info("Clusters : " + cluster_count + " clSize : 0");
                 series[1].add(i, 0);
             }
-            log.debug("setting " + i);
+            LOGGER.debug("setting " + i);
         }
 
         return series;  //To change body of implemented methods use File | Settings | File Templates.
@@ -238,16 +204,16 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
         final TraceMessage m = (TraceMessage) o;
         if (!NodeSelectorPanel.isSelected(m.getUrn())) return;
 
-        log.debug(m.getText());
+        LOGGER.debug(m.getText());
         if (m.getText().startsWith(prefix)) {
-            log.info("Cluster@" + m.getTime() + ":" + m.getUrn());
+            LOGGER.info("Cluster@" + m.getTime() + ":" + m.getUrn());
             final String[] mess = m.getText().split(delimiter);
             set_cluster(mess[pid], mess[pcluster], ((int) ((m.getTime() - file.getStartTime()) / 1000)));
         }
     }
 
     private void set_cluster(String node, String clust, int time) {
-        log.debug(node + "-" + clust + "@" + time);
+        LOGGER.debug(node + "-" + clust + "@" + time);
         for (int i = time; i < duration - 1; i++) {
             clusters[i].put(node, clust);
         }
@@ -256,31 +222,28 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(plotbutton)) {
             reset();
-            log.info("|=== parsing tracefile: " + file.getFilename() + "...");
+            LOGGER.info("|=== parsing tracefile: " + file.getFilename() + "...");
             TraceReader a = new TraceReader(file);
             a.addObserver(this);
             a.run();
-            log.info("|--- done parsing!");
-            log.info("|=== generating plot...");
+            LOGGER.info("|--- done parsing!");
+            LOGGER.info("|=== generating plot...");
             JFrame jnew = new JFrame();
             jnew.add(getPlot());
             jnew.pack();
             jnew.setVisible(true);
-            log.info("|--- presenting plot...");
+            LOGGER.info("|--- presenting plot...");
         } else if (actionEvent.getSource().equals(removeButton)) {
             tabbedPane.remove(this);
         }
     }
 
-    private void setDelimiter(String text) {
-        delimiter = text;
-    }
-
     private void reset() {
+        delimiter = delimiterTf.getText();
+        template = templateTf.getText();
+
         duration = (int) (file.getDuration() / 1000 + 1);
         clusters = new HashMap[(int) duration];
-
-        //clusters = new int[f.getNodeSize()][(int) duration];
 
         for (int i = 0; i < duration; i++) {
             clusters[i] = new HashMap<String, String>();

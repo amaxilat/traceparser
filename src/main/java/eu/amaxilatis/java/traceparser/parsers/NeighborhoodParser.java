@@ -19,40 +19,40 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
 public class NeighborhoodParser extends AbstractParser implements Observer, ActionListener {
 
+    private static final Logger LOGGER = Logger.getLogger(NeighborhoodParser.class);
+    public static final String NAME = "Neighborhood Parser";
+
+    private final JTabbedPane tabbedPane;
+    private final JButton plotbutton;
+    private final JButton removeButton;
+    private final JTextField delimiterTf;
+    private final JTextField nbTf;
+    private final JTextField lostTf;
+    private final JTextField bidiTf;
+    private final JTextField dropTf;
+    private final JTextField plotTitle;
+    private final JTextField yLabel;
+    private final JTextField xLabel;
+
     private TraceFile file;
-    private static final Logger log = Logger.getLogger(NeighborhoodParser.class);
-    private HashMap<String, HashMap<String, Integer>> neighborsBidi = new HashMap();
+    private String delimiter;
+    private Map<String, HashMap<String, Integer>> neighborsBidi;
+    private String prefixUni;
+    private String prefixLost;
+    private String prefixBidi;
+    private String prefixDrop;
 
     private XYSeries[] series;
 
-    private String prefix_uni;
-    private String prefix_lost;
-    private String prefix_bidi;
-    private String prefix_drop;
 
-    private String delimiter;
-    private final JButton plotbutton;
-
-    private final JTextField delimitertextfield;
-    private final JTextField nbtextfield;
-    private final JTextField losttextfield;
-    private final JTextField biditextfield;
-    private final JTextField droptextfield;
-    private final TextField plotTitle;
-    private final TextField yLabel;
-    private final TextField xLabel;
-    public static final String Name = "Neighborhood Parser";
-    private JTabbedPane tabbedPane;
-    private JButton removeButton;
-
-
-    public NeighborhoodParser(JTabbedPane jTabbedPane1) {
-        this.tabbedPane = jTabbedPane1;
+    public NeighborhoodParser(final JTabbedPane jTabbedPane1) {
+        tabbedPane = jTabbedPane1;
         init();
 
         this.setLayout(new BorderLayout());
@@ -63,7 +63,7 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
         mainpanel.add(leftmainpanel);
         mainpanel.add(rightmainpanel);
 
-        this.add(new JLabel(Name), BorderLayout.NORTH);
+        this.add(new JLabel(NAME), BorderLayout.NORTH);
         this.add(mainpanel, BorderLayout.CENTER);
 
         plotbutton = new JButton(super.PLOT);
@@ -72,26 +72,26 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
         removeButton.addActionListener(this);
 
 
-        delimitertextfield = new JTextField(delimiter);
-        nbtextfield = new JTextField(prefix_uni);
-        biditextfield = new JTextField(prefix_bidi);
-        droptextfield = new JTextField(prefix_drop);
-        losttextfield = new JTextField(prefix_lost);
+        delimiterTf = new JTextField(delimiter);
+        nbTf = new JTextField(prefixUni);
+        bidiTf = new JTextField(prefixBidi);
+        dropTf = new JTextField(prefixDrop);
+        lostTf = new JTextField(prefixLost);
 
-        leftmainpanel.add(new CouplePanel(new JLabel("delimiter"), delimitertextfield));
-        leftmainpanel.add(new CouplePanel(new JLabel("Uni prefix"), nbtextfield));
-        leftmainpanel.add(new CouplePanel(new JLabel("Bidi prefix"), biditextfield));
-        leftmainpanel.add(new CouplePanel(new JLabel("Drop prefix"), droptextfield));
-        leftmainpanel.add(new CouplePanel(new JLabel("Lost prefix"), losttextfield));
+        leftmainpanel.add(new CouplePanel(new JLabel("delimiter"), delimiterTf));
+        leftmainpanel.add(new CouplePanel(new JLabel("Uni prefix"), nbTf));
+        leftmainpanel.add(new CouplePanel(new JLabel("Bidi prefix"), bidiTf));
+        leftmainpanel.add(new CouplePanel(new JLabel("Drop prefix"), dropTf));
+        leftmainpanel.add(new CouplePanel(new JLabel("Lost prefix"), lostTf));
 
 
         rightmainpanel.add(new CouplePanel(plotbutton, removeButton));
 
-        plotTitle = new TextField("Neighborhood Statistics");
+        plotTitle = new JTextField("Neighborhood Statistics");
         rightmainpanel.add(new CouplePanel(new JLabel("Plot title:"), plotTitle));
-        xLabel = new TextField("getTime in sec");
+        xLabel = new JTextField("getTime in sec");
         rightmainpanel.add(new CouplePanel(new JLabel("X axis Label:"), xLabel));
-        yLabel = new TextField("# of Nodes");
+        yLabel = new JTextField("# of Nodes");
         rightmainpanel.add(new CouplePanel(new JLabel("Y axis Label:"), yLabel));
 
         reset();
@@ -100,31 +100,31 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
     }
 
 
-    void setTemplates(String prefix_uni, String prefix_lost, String prefix_bidi, String prefix_drop) {
-        this.prefix_uni = prefix_uni;
-        this.prefix_lost = prefix_lost;
-        this.prefix_drop = prefix_drop;
-        this.prefix_bidi = prefix_bidi;
+    void setTemplates(final String prefix_uni, final String prefix_lost, final String prefix_bidi, final String prefix_drop) {
+        this.prefixUni = prefix_uni;
+        this.prefixLost = prefix_lost;
+        this.prefixDrop = prefix_drop;
+        this.prefixBidi = prefix_bidi;
     }
 
 
-    public void setTraceFile(TraceFile file) {
+    public void setTraceFile(final TraceFile file) {
         this.file = file;
     }
 
-    void init() {
+    private void init() {
         setDelimiter(";");
         setTemplates("NB", "NBL", "NBB", "NBD");
     }
 
-    ChartPanel getPlot() {
+    private ChartPanel getPlot() {
         return getPlot(plotTitle.getText(), xLabel.getText(), yLabel.getText());
     }
 
-    ChartPanel getPlot(String title, String xlabel, String ylabel) {
+    private ChartPanel getPlot(final String title, final String xlabel, final String ylabel) {
         XYSeriesCollection dataset = new XYSeriesCollection();
         XYSeries[] clustersSeries;
-        clustersSeries = getSeries_aggregate();
+        clustersSeries = getAggregatedSeries();
 
         for (XYSeries clustersSery : clustersSeries) {
             dataset.addSeries(clustersSery);
@@ -139,55 +139,57 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
         return new ChartPanel(chartTransformed);
     }
 
-    XYSeries[] getSeries() {
+    private XYSeries[] getSeries() {
         return series;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    XYSeries[] getSeries_aggregate() {
+    private XYSeries[] getAggregatedSeries() {
         return getSeries();
     }
 
-    public void update(Observable observable, Object o) {
-        final TraceMessage m = (TraceMessage) o;
-        if (!NodeSelectorPanel.isSelected(m.getUrn())) return;
+    public void update(final Observable observable, final Object object) {
+        final TraceMessage message = (TraceMessage) object;
+        if (NodeSelectorPanel.isSelected(message.getUrn())) {
 
-        if (m.getText().startsWith(prefix_uni)) {
-//            LOGGER.info("Neighbor@" + m.getTime() + ":" + m.getUrn());
-            final String target = m.getText().split(delimiter)[1];
-            if ((m.getText().contains(prefix_bidi))) {
 
-                if (neighborsBidi.containsKey(m.getUrn())) {
-                    HashMap<String, Integer> tmp = neighborsBidi.get(m.getUrn());
-                    tmp.put(target, 1);
-                    neighborsBidi.put(m.getUrn(), tmp);
-                    log.debug(m.getText());
-                    log.debug(m.getUrn() + " nb size: " + tmp.size());
-                } else {
-                    HashMap tmp = new HashMap<String, Integer>();
-                    tmp.put(target, 1);
-                    neighborsBidi.put(m.getUrn(), tmp);
-                    log.debug(m.getText());
-                    log.debug(m.getUrn() + " nb size: " + tmp.size());
+            if (message.getText().startsWith(prefixUni)) {
+//            LOGGER.info("Neighbor@" + message.getTime() + ":" + message.getUrn());
+                final String target = message.getText().split(delimiter)[1];
+                if ((message.getText().contains(prefixBidi))) {
+
+                    if (neighborsBidi.containsKey(message.getUrn())) {
+                        final HashMap<String, Integer> tmp = neighborsBidi.get(message.getUrn());
+                        tmp.put(target, 1);
+                        neighborsBidi.put(message.getUrn(), tmp);
+                        LOGGER.debug(message.getText());
+                        LOGGER.debug(message.getUrn() + " nb size: " + tmp.size());
+                    } else {
+                        HashMap tmp = new HashMap<String, Integer>();
+                        tmp.put(target, 1);
+                        neighborsBidi.put(message.getUrn(), tmp);
+                        LOGGER.debug(message.getText());
+                        LOGGER.debug(message.getUrn() + " nb size: " + tmp.size());
+                    }
+                } else if ((message.getText().contains(prefixDrop)) || (message.getText().contains(prefixLost))) {
+                    if (neighborsBidi.containsKey(message.getUrn())) {
+                        HashMap<String, Integer> tmp = neighborsBidi.get(message.getUrn());
+                        tmp.remove(target);
+                        neighborsBidi.put(message.getUrn(), tmp);
+                        LOGGER.debug(message.getText());
+                        LOGGER.debug(message.getUrn() + " nb size: " + tmp.size());
+                    }
+
                 }
-            } else if ((m.getText().contains(prefix_drop)) || (m.getText().contains(prefix_lost))) {
-                if (neighborsBidi.containsKey(m.getUrn())) {
-                    HashMap<String, Integer> tmp = neighborsBidi.get(m.getUrn());
-                    tmp.remove(target);
-                    neighborsBidi.put(m.getUrn(), tmp);
-                    log.debug(m.getText());
-                    log.debug(m.getUrn() + " nb size: " + tmp.size());
-                }
+
+                series[0].addOrUpdate(((int) ((message.getTime() - file.getStartTime()) / 1000)), getAvgNeighbors());
+                series[1].addOrUpdate(((int) ((message.getTime() - file.getStartTime()) / 1000)), getMinNeighbors());
+                series[2].addOrUpdate(((int) ((message.getTime() - file.getStartTime()) / 1000)), getMaxNeighbors());
 
             }
-
-            series[0].addOrUpdate(((int) ((m.getTime() - file.getStartTime()) / 1000)), get_avg_neighbors());
-            series[1].addOrUpdate(((int) ((m.getTime() - file.getStartTime()) / 1000)), get_min_neighbors());
-            series[2].addOrUpdate(((int) ((m.getTime() - file.getStartTime()) / 1000)), get_max_neighbors());
-
         }
     }
 
-    private double get_avg_neighbors() {
+    private double getAvgNeighbors() {
         int count = 0;
         int sum = 0;
 
@@ -202,7 +204,7 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
         }
     }
 
-    private double get_max_neighbors() {
+    private double getMaxNeighbors() {
         int max = 0;
         for (String urn : neighborsBidi.keySet()) {
             if (max < neighborsBidi.get(urn).size()) {
@@ -212,7 +214,7 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
         return max;
     }
 
-    private double get_min_neighbors() {
+    private double getMinNeighbors() {
         int min = 0;
         for (String urn : neighborsBidi.keySet()) {
 
@@ -226,38 +228,38 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
         return min;
     }
 
-    public void actionPerformed(ActionEvent actionEvent) {
+    public void actionPerformed(final ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(plotbutton)) {
             reset();
-            log.info("|=== parsing tracefile: " + file.getFilename() + "...");
-            TraceReader a = new TraceReader(file);
-            a.addObserver(this);
-            a.run();
-            log.info("|--- done parsing!");
-            log.info("|=== generating plot...");
-            JFrame jnew = new JFrame();
-            jnew.add(getPlot());
-            jnew.pack();
-            jnew.setVisible(true);
-            log.info("|--- presenting plot...");
+            LOGGER.info("|=== parsing tracefile: " + file.getFilename() + "...");
+            TraceReader traceReader = new TraceReader(file);
+            traceReader.addObserver(this);
+            traceReader.run();
+            LOGGER.info("|--- done parsing!");
+            LOGGER.info("|=== generating plot...");
+            final JFrame frame = new JFrame();
+            frame.add(getPlot());
+            frame.pack();
+            frame.setVisible(true);
+            LOGGER.info("|--- presenting plot...");
         } else if (actionEvent.getSource().equals(removeButton)) {
             tabbedPane.remove(this);
         }
     }
 
     private void reset() {
-        setDelimiter(delimitertextfield.getText());
-        setTemplates(nbtextfield.getText(), losttextfield.getText(), biditextfield.getText(), droptextfield.getText());
+        setDelimiter(delimiterTf.getText());
+        setTemplates(nbTf.getText(), lostTf.getText(), bidiTf.getText(), dropTf.getText());
 
         neighborsBidi = new HashMap();
         series = new XYSeries[3];
         series[0] = new XYSeries("Avg Neighbors");
         series[1] = new XYSeries("Min Neighbors");
         series[2] = new XYSeries("Max Neighbors");
-        log.info("NeighborhoodParser initialized");
+        LOGGER.info("NeighborhoodParser initialized");
     }
 
-    private void setDelimiter(String delimiter) {
+    private void setDelimiter(final String delimiter) {
         this.delimiter = delimiter;
     }
 

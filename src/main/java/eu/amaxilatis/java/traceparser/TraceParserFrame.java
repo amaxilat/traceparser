@@ -96,8 +96,8 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         savePropertiesButton.addActionListener(this);
 
         DefaultListModel listModel = new DefaultListModel();
-        listModel.addElement(NeighborhoodParser.Name);
-        listModel.addElement(ClustersParser.Name);
+        listModel.addElement(NeighborhoodParser.NAME);
+        listModel.addElement(ClustersParser.NAME);
         listModel.addElement(EventParser.Name);
         listModel.addElement(SendParser.Name);
         listModel.addElement(SensorAggregationParser.Name);
@@ -189,9 +189,9 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
                 final String title = availableParsersList.getSelectedValue().toString();
 
-                if (title.equals(NeighborhoodParser.Name)) {
+                if (title.equals(NeighborhoodParser.NAME)) {
                     panel2add = new NeighborhoodParser(jTabbedPane1);
-                } else if (title.equals(ClustersParser.Name)) {
+                } else if (title.equals(ClustersParser.NAME)) {
                     panel2add = new ClustersParser(jTabbedPane1);
                 } else if (title.equals(EventParser.Name)) {
                     panel2add = new EventParser(jTabbedPane1);
