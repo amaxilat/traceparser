@@ -156,14 +156,14 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
         for (int i = 0; i < duration; i++) {
             int cluster_count = 0;
             int simple_count = 0;
-            LOGGER.info(clusters[i].keySet().size());
+            LOGGER.debug(clusters[i].keySet().size());
             for (String key : clusters[i].keySet()) {
 
                 if (clusters[i].get(key).equals(key)) {
-                    LOGGER.info(key + " - " + clusters[i].get(key) + " N");
+                    LOGGER.debug(key + " - " + clusters[i].get(key) + " N");
                     cluster_count++;
                 } else {
-                    LOGGER.info(key + " - " + clusters[i].get(key));
+                    LOGGER.debug(key + " - " + clusters[i].get(key));
                     simple_count++;
                 }
             }
@@ -206,7 +206,7 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
 
         LOGGER.debug(m.getText());
         if (m.getText().startsWith(prefix)) {
-            LOGGER.info("Cluster@" + m.getTime() + ":" + m.getUrn());
+            LOGGER.debug("Cluster@" + m.getTime() + ":" + m.getUrn());
             final String[] mess = m.getText().split(delimiter);
             set_cluster(mess[pid], mess[pcluster], ((int) ((m.getTime() - file.getStartTime()) / 1000)));
         }

@@ -15,7 +15,7 @@ public class NodeSelectorPanel extends JPanel implements ActionListener {
     public final static String NAME = "Node Selection";
     public static TraceFile file = null;
     private final JButton updateButton;
-    private final JLabel enabledCountLabel;
+    private static JLabel enabledCountLabel = null;
     private static JList nodesList;
 
     private static Map<String, Integer> selectNodesMap = new HashMap<String, Integer>();
@@ -26,35 +26,39 @@ public class NodeSelectorPanel extends JPanel implements ActionListener {
 
         this.setLayout(new BorderLayout());
 
-        final JPanel mainpanel = new JPanel(new BorderLayout());
-        mainpanel.add(new JLabel(NAME), BorderLayout.NORTH);
+        final JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(new JLabel(NAME), BorderLayout.NORTH);
         updateButton = new JButton("Reload Selections");
         updateButton.addActionListener(this);
 
-        enabledCountLabel = new JLabel("all");
-        mainpanel.add(new CouplePanel(updateButton, enabledCountLabel), BorderLayout.SOUTH);
+        enabledCountLabel = new JLabel("unset");
+        mainPanel.add(new CouplePanel(updateButton, enabledCountLabel), BorderLayout.SOUTH);
 
         final ListModel nodesListModel = new DefaultListModel();
         nodesList = new JList(nodesListModel);
         JScrollPane nodeScrollPane = new JScrollPane(nodesList);
 
-        mainpanel.add(nodeScrollPane);
+        mainPanel.add(nodeScrollPane);
         LOGGER.info(NAME + " initialized");
 
 
-        this.add(mainpanel);
+        this.add(mainPanel);
     }
 
 
     public void actionPerformed(final ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(updateButton)) {
-            enabledCountLabel.setText(String.valueOf(nodesList.getSelectedIndices().length));
-            selectNodesMap = new HashMap<String, Integer>();
-            for (Object selectedNode : nodesList.getSelectedValues()) {
-                selectNodesMap.put((String) selectedNode, 1);
-            }
+            updateSelected();
         }
 
+    }
+
+    private static void updateSelected() {
+        enabledCountLabel.setText(String.valueOf(nodesList.getSelectedIndices().length));
+        selectNodesMap = new HashMap<String, Integer>();
+        for (Object selectedNode : nodesList.getSelectedValues()) {
+            selectNodesMap.put((String) selectedNode, 1);
+        }
     }
 
     public static void setFile(final TraceFile file) {
@@ -69,6 +73,8 @@ public class NodeSelectorPanel extends JPanel implements ActionListener {
             selected[count] = count++;
         }
         nodesList.setSelectedIndices(selected);
+
+        updateSelected();
 
     }
 

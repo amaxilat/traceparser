@@ -3,6 +3,7 @@ package eu.amaxilatis.java.traceparser;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.PropertyConfigurator;
 
 
 public class TraceParserApp {
@@ -12,7 +13,7 @@ public class TraceParserApp {
     public static void main(final String[] args) {
         new TraceParserFrame();
 
-        BasicConfigurator.configure();
+        PropertyConfigurator.configure(TraceParserApp.class.getClassLoader().getResource("log4j.properties"));
         LOGGER.info("App stared!");
 
     }

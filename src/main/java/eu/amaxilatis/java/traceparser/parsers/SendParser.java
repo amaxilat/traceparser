@@ -112,7 +112,7 @@ public class SendParser extends AbstractParser implements Observer, ActionListen
                 if (message.getText().startsWith(prefix)) {
 
                     final String[] mess = message.getText().split(delimiter);
-                    LOGGER.info("Send@" + ":" + message.getUrn() + " type:" + mess[type]);
+                    LOGGER.debug("Send@" + ":" + message.getUrn() + " type:" + mess[type]);
                     messages[Integer.parseInt(mess[type])][((int) ((message.getTime() - file.getStartTime()) / 1000))]++;
                 }
             } catch (Exception e) {
