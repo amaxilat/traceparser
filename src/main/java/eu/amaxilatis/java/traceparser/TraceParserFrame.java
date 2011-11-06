@@ -100,7 +100,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         listModel.addElement(ClustersParser.NAME);
         listModel.addElement(EventParser.Name);
         listModel.addElement(SendParser.NAME);
-        listModel.addElement(SensorAggregationParser.Name);
+        listModel.addElement(SensorAggregationParser.NAME);
         availableParsersList = new JList(listModel);
 
 
@@ -195,7 +195,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
                     panel2add = new ClustersParser(jTabbedPane1);
                 } else if (title.equals(EventParser.Name)) {
                     panel2add = new EventParser(jTabbedPane1);
-                } else if (title.equals(SensorAggregationParser.Name)) {
+                } else if (title.equals(SensorAggregationParser.NAME)) {
                     panel2add = new SensorAggregationParser(jTabbedPane1);
                 } else if (title.equals(SendParser.NAME)) {
                     panel2add = new SendParser(jTabbedPane1);

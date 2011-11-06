@@ -23,72 +23,67 @@ import java.util.*;
 
 public class SensorAggregationParser extends AbstractParser implements Observer, ActionListener {
 
+    private static final Logger LOGGER = Logger.getLogger(SensorAggregationParser.class);
+    public static final String NAME = "SensorAggregation Parser";
+
+    private final JButton plotButton;
+    private final JButton removeButton;
+    private final JTabbedPane tabbedPane;
+    private final JTextField delimiterTf;
+    private final JTextField plotTitleTf;
+    private final JTextField xLabelTf;
+    private final JTextField yLabelTf;
+
     private TraceFile file;
-    private static final Logger log = Logger.getLogger(SensorAggregationParser.class);
-
-    private String delimiter = ":";
-    private final JButton plotbutton;
-    private final JTextField delimitertextfield;
-    public static final String Name = "SensorAggregation Parser";
-
-    private final String sensorPrefix = "Sread";
-    private final String aggregatedPrefix = "Sval";
-    private final int startuptime = 100;
-
-
-    private java.util.List<SensorReading> sensorReadings = new ArrayList<SensorReading>();
-    private java.util.List<AggregatedSensorReading> aggregatedReadings = new ArrayList<AggregatedSensorReading>();
+    private transient String delimiter = ":";
+    private java.util.List<SensorReading> senReadings = new ArrayList<SensorReading>();
+    private java.util.List<AggregatedSensorReading> agReadings = new ArrayList<AggregatedSensorReading>();
     private Hashtable<String, Integer> sensors = new Hashtable<String, Integer>();
-    private Hashtable<String, Integer> sensorClusters = new Hashtable<String, Integer>();
-    private final JPanel rightmainpanel;
-    private TextField plotTitle;
-    private TextField xLabel;
-    private TextField yLabel;
-    private JButton removeButton;
-    private JTabbedPane tabbedPane;
+    private Hashtable<String, Integer> senClusters = new Hashtable<String, Integer>();
+    private transient final String senPrefix = "Sread";
+    private transient final String agPrefix = "Sval";
+    private final int startTime = 100;
+    private Map<String, String> semantics = new HashMap<String, String>();
 
 
-    private HashMap<String, String> semantics = new HashMap<String, String>();
-
-
-    public SensorAggregationParser(JTabbedPane jTabbedPane1) {
-        this.tabbedPane = jTabbedPane1;
+    public SensorAggregationParser(final JTabbedPane jTabbedPane1) {
+        tabbedPane = jTabbedPane1;
         init();
         this.setLayout(new BorderLayout());
 
-        JPanel mainpanel = new JPanel(new GridLayout(0, 2, 30, 30));
-        JPanel leftmainpanel = new JPanel(new GridLayout(0, 1));
-        rightmainpanel = new JPanel(new GridLayout(0, 1));
-        mainpanel.add(leftmainpanel);
-        mainpanel.add(rightmainpanel);
+        final JPanel mainPanel = new JPanel(new GridLayout(0, 2, 30, 30));
+        final JPanel leftMainPanel = new JPanel(new GridLayout(0, 1));
+        final JPanel rightMainPanel = new JPanel(new GridLayout(0, 1));
+        mainPanel.add(leftMainPanel);
+        mainPanel.add(rightMainPanel);
 
-        this.add(new JLabel(Name), BorderLayout.NORTH);
-        this.add(mainpanel, BorderLayout.CENTER);
+        this.add(new JLabel(NAME), BorderLayout.NORTH);
+        this.add(mainPanel, BorderLayout.CENTER);
 
 
-        plotbutton = new JButton(super.PLOT);
-        plotbutton.addActionListener(this);
+        plotButton = new JButton(super.PLOT);
+        plotButton.addActionListener(this);
         removeButton = new JButton(super.REMOVE);
         removeButton.addActionListener(this);
-        rightmainpanel.add(new CouplePanel(plotbutton, removeButton));
+        rightMainPanel.add(new CouplePanel(plotButton, removeButton));
 
-        delimitertextfield = new JTextField(delimiter);
-        JTextField meantextfield = new JTextField(sensorPrefix);
-        JTextField aggregatedtextfield = new JTextField(aggregatedPrefix);
-        JTextField startUptextfield = new JTextField("" + startuptime);
+        delimiterTf = new JTextField(delimiter);
+        JTextField meanTf = new JTextField(senPrefix);
+        JTextField agTf = new JTextField(agPrefix);
+        JTextField startTf = new JTextField("" + startTime);
 
-        leftmainpanel.add(new CouplePanel(new JLabel("delimiter"), delimitertextfield));
-        leftmainpanel.add(new CouplePanel(new JLabel("Mean Value"), meantextfield));
-        leftmainpanel.add(new CouplePanel(new JLabel("Aggregated Value"), aggregatedtextfield));
-        leftmainpanel.add(new CouplePanel(new JLabel("Startup Time"), startUptextfield));
+        leftMainPanel.add(new CouplePanel(new JLabel("delimiter"), delimiterTf));
+        leftMainPanel.add(new CouplePanel(new JLabel("Mean Value"), meanTf));
+        leftMainPanel.add(new CouplePanel(new JLabel("Aggregated Value"), agTf));
+        leftMainPanel.add(new CouplePanel(new JLabel("Startup Time"), startTf));
 
 
-        plotTitle = new TextField("Semantics Statistics");
-        rightmainpanel.add(new CouplePanel(new JLabel("Plot title:"), plotTitle));
-        xLabel = new TextField("getTime in sec");
-        rightmainpanel.add(new CouplePanel(new JLabel("X axis Label:"), xLabel));
-        yLabel = new TextField("Sensor Value");
-        rightmainpanel.add(new CouplePanel(new JLabel("Y axis Label:"), yLabel));
+        plotTitleTf = new JTextField("Semantics Statistics");
+        rightMainPanel.add(new CouplePanel(new JLabel("Plot title:"), plotTitleTf));
+        xLabelTf = new JTextField("getTime in sec");
+        rightMainPanel.add(new CouplePanel(new JLabel("X axis Label:"), xLabelTf));
+        yLabelTf = new JTextField("Sensor Value");
+        rightMainPanel.add(new CouplePanel(new JLabel("Y axis Label:"), yLabelTf));
 
 
     }
@@ -105,37 +100,27 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
         semantics.put("1", "BUILDING");
 
 
-        log.info("SensorAggregationParser initialized");
+        LOGGER.info("SensorAggregationParser initialized");
     }
 
-    //    //    @Override
-//    public ChartPanel getPlot() {
-//        return getPlot();
-//    }
-
-    private ChartPanel getPlot(String sensor) {
-
-        XYSeriesCollection dataset = new XYSeriesCollection();
-
-        XYSeries[] clustersSeries = getSeries(sensor);
-
+    private ChartPanel getPlot(final String sensor) {
+        final XYSeriesCollection dataset = new XYSeriesCollection();
+        final XYSeries[] clustersSeries = getSeries(sensor);
 
         for (XYSeries clustersSery : clustersSeries) {
             dataset.addSeries(clustersSery);
         }
 
-
         JFreeChart chart = ChartFactory.createXYLineChart(
-                plotTitle.getText(),
-                xLabel.getText(),
-                yLabel.getText(),
+                plotTitleTf.getText(),
+                xLabelTf.getText(),
+                yLabelTf.getText(),
                 dataset, PlotOrientation.VERTICAL, true, true, false);
-
 
         final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
 
         final int sensorCount = sensors.size();
-        final int sensorClusterReadingsCount = sensorClusters.size();
+        final int sensorClusterReadingsCount = senClusters.size();
         for (int i = sensorCount; i < sensorClusterReadingsCount; i++) {
             renderer.setSeriesLinesVisible(i, false);
         }
@@ -148,70 +133,71 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
     }
 
 
-    XYSeries[] getSeries(String sensor) {
+    XYSeries[] getSeries(final String sensor) {
 
         XYSeriesCollection seriesCollection = new XYSeriesCollection();
 
         for (final String cursensor : sensors.keySet()) {
-            if (!cursensor.equals(sensor)) continue;
-            String s2 = "Sensor  " + sensor + "  Value";
-            for (String key : semantics.keySet()) {
-                s2 = s2.replaceFirst(" " + key + " ", semantics.get(key));
-            }
-            XYSeries newseries = new XYSeries(s2);
-            HashMap<String, Double> SensorReadingMap = new HashMap<String, Double>();
+            if (cursensor.equals(sensor)) {
+                String s2 = "Sensor  " + sensor + "  Value";
+                for (String key : semantics.keySet()) {
+                    s2 = s2.replaceFirst(" " + key + " ", semantics.get(key));
+                }
+                XYSeries newseries = new XYSeries(s2);
+                HashMap<String, Double> SensorReadingMap = new HashMap<String, Double>();
 
-            double avgReading = 0;
-            for (final SensorReading sensorReading : sensorReadings) {
-                if (sensorReading.getSensorName().equals(sensor)) {
-                    log.debug("avgReading:" + avgReading + ", sensorReading.value:" + sensorReading.getSensorValue() + "@" + sensorReading.getUrn());
-                    SensorReadingMap.put(sensorReading.getUrn(), sensorReading.getSensorValue());
-                    avgReading = 0;
-                    for (String key : SensorReadingMap.keySet()) {
-                        avgReading += SensorReadingMap.get(key);
+                double avgReading = 0;
+                for (final SensorReading sensorReading : senReadings) {
+                    if (sensorReading.getSensorName().equals(sensor)) {
+                        LOGGER.debug("avgReading:" + avgReading + ", sensorReading.value:" + sensorReading.getSensorValue() + "@" + sensorReading.getUrn());
+                        SensorReadingMap.put(sensorReading.getUrn(), sensorReading.getSensorValue());
+                        avgReading = 0;
+                        for (String key : SensorReadingMap.keySet()) {
+                            avgReading += SensorReadingMap.get(key);
 
-                    }
-                    avgReading /= SensorReadingMap.keySet().size();
+                        }
+                        avgReading /= SensorReadingMap.keySet().size();
 
 //                    avgReading = (int) ((((avgReading * readingsCount) + sensorReading.getSensorValue())) / (readingsCount + 1));
 //                    avgReading = (int) ((((avgReading * (file.getNodeSize() - 1)) + sensorReading.getSensorValue())) / file.getNodeSize());
 //                    avgReading = (int) ((avgReading + sensorReading.getSensorValue()) / 2);
 
-                    log.debug("avg: " + avgReading);
+                        LOGGER.debug("avg: " + avgReading);
 
-                    newseries.add((int) (sensorReading.getTime() - file.getStartTime()) / 1000, avgReading);
+                        newseries.add((int) (sensorReading.getTime() - file.getStartTime()) / 1000, avgReading);
+                    }
                 }
+                newseries.add((int) (file.getEndTime() - file.getStartTime()) / 1000, avgReading);
+                seriesCollection.addSeries(newseries);
             }
-            newseries.add((int) (file.getEndTime() - file.getStartTime()) / 1000, avgReading);
-            seriesCollection.addSeries(newseries);
         }
 
 
-        Collections.sort(aggregatedReadings);
-        for (String sensorCluster : sensorClusters.keySet()) {
-            if (!sensorCluster.contains(sensor)) continue;
+        Collections.sort(agReadings);
+        for (String sensorCluster : senClusters.keySet()) {
+            if (sensorCluster.contains(sensor)) {
 
 
-            String s2 = "Aggregated " + sensorCluster + " Value";
-            for (String key : semantics.keySet()) {
-                s2 = s2.replaceFirst("-" + key + " ", "-" + semantics.get(key)+" ");
-            }
-
-
-            XYSeries newseries = new XYSeries(s2);
-
-            final String sensorSeCluster = sensorCluster.substring(0, sensorCluster.indexOf("-"));
-            final String sensorName = sensorCluster.substring(sensorCluster.indexOf("-"));
-            log.debug(sensorName);
-            log.debug(sensorSeCluster);
-            for (final AggregatedSensorReading aggregatedSensorReading : aggregatedReadings) {
-                if ((aggregatedSensorReading.getSeClusterID().equals(sensorSeCluster))
-                        && (aggregatedSensorReading.getSensorName().equals(sensorName))) {
-                    newseries.add((int) (aggregatedSensorReading.getTime() - file.getStartTime()) / 1000, aggregatedSensorReading.getSensorValue());
+                String s2 = "Aggregated " + sensorCluster + " Value";
+                for (String key : semantics.keySet()) {
+                    s2 = s2.replaceFirst("-" + key + " ", "-" + semantics.get(key) + " ");
                 }
-            }
 
-            seriesCollection.addSeries(newseries);
+                final XYSeries newseries = new XYSeries(s2);
+
+                final String sensorSeCluster = sensorCluster.substring(0, sensorCluster.indexOf("-"));
+                final String sensorName = sensorCluster.substring(sensorCluster.indexOf("-"));
+                LOGGER.debug(sensorName);
+                LOGGER.debug(sensorSeCluster);
+                for (final AggregatedSensorReading aggregatedSensorReading : agReadings) {
+                    if ((aggregatedSensorReading.getSeClusterID().equals(sensorSeCluster))
+                            && (aggregatedSensorReading.getSensorName().equals(sensorName))) {
+                        newseries.add((int) (aggregatedSensorReading.getTime() - file.getStartTime()) / 1000, aggregatedSensorReading.getSensorValue());
+                    }
+                }
+
+                seriesCollection.addSeries(newseries);
+            }
         }
 
         XYSeries[] series = new XYSeries[seriesCollection.getSeriesCount()];
@@ -240,26 +226,20 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
         reset();
     }
 
-//    void setTemplate(String template) {
-//        parts = template.split(delimiter);
-//        prefix = template.substring(0, template.indexOf(delimiter));
-//        this.template = template;
-//    }
-
     public void update(Observable observable, Object o) {
         final TraceMessage m = (TraceMessage) o;
         if (!NodeSelectorPanel.isSelected(m.getUrn())) return;
-        if (m.getTime() < file.getStartTime() + startuptime * 1000) return;
-        if (m.getText().contains(sensorPrefix)) {
+        if (m.getTime() < file.getStartTime() + startTime * 1000) return;
+        if (m.getText().contains(senPrefix)) {
             final String text = m.getText();
 //            LOGGER.info("Sensor@" + m.getTime() + ":" + m.getUrn() + "\"" + text + "\"");
             final String[] parts = text.split(delimiter);
 
             final String sensorName = parts[1];
             final String sensorValue = parts[2];
-            sensorReadings.add(new SensorReading(m.getTime(), sensorName, Double.parseDouble(sensorValue), m.getUrn()));
+            senReadings.add(new SensorReading(m.getTime(), sensorName, Double.parseDouble(sensorValue), m.getUrn()));
             sensors.put(sensorName, 1);
-        } else if (m.getText().contains(aggregatedPrefix)) {
+        } else if (m.getText().contains(agPrefix)) {
             final String text = m.getText();
 
             final String[] parts = text.split(delimiter);
@@ -268,8 +248,8 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
             final String sensorName = parts[1].substring(parts[1].indexOf("-"));
             final String sensorValue = parts[2];
 //            LOGGER.info("AggregatedSensor@" + m.getTime() + ":" + cluster + "\"" + sensorName + "\"");
-            aggregatedReadings.add(new AggregatedSensorReading(m.getTime(), sensorName, cluster, Double.parseDouble(sensorValue)));
-            sensorClusters.put(cluster + sensorName, 1);
+            agReadings.add(new AggregatedSensorReading(m.getTime(), sensorName, cluster, Double.parseDouble(sensorValue)));
+            senClusters.put(cluster + sensorName, 1);
 
         }
     }
@@ -290,30 +270,26 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
         }
     }
 
-    public void actionPerformed(ActionEvent actionEvent) {
-        if (actionEvent.getSource().equals(plotbutton)) {
+    public void actionPerformed(final ActionEvent actionEvent) {
+        if (actionEvent.getSource().equals(plotButton)) {
             reset();
 
-            log.info("|=== parsing tracefile: " + file.getFilename() + "...");
+            LOGGER.info("|=== parsing tracefile: " + file.getFilename() + "...");
             parse();
-            log.info("|--- done parsing!");
-            log.info("|=== generating plot...");
+            LOGGER.info("|--- done parsing!");
+            LOGGER.info("|=== generating plot...");
             plot();
-            log.info("|--- presenting plot...");
+            LOGGER.info("|--- presenting plot...");
         } else if (actionEvent.getSource().equals(removeButton)) {
             tabbedPane.remove(this);
         }
     }
 
-    private void setDelimiter(String text) {
-        delimiter = text;
-    }
-
     private void reset() {
-        sensorReadings = new ArrayList<SensorReading>();
-        aggregatedReadings = new ArrayList<AggregatedSensorReading>();
+        senReadings = new ArrayList<SensorReading>();
+        agReadings = new ArrayList<AggregatedSensorReading>();
         sensors = new Hashtable<String, Integer>();
-        sensorClusters = new Hashtable<String, Integer>();
+        senClusters = new Hashtable<String, Integer>();
         init();
     }
 
@@ -327,7 +303,7 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
             return urn;
         }
 
-        private SensorReading(long time, String sensorName, double sensorValue, String urn) {
+        private SensorReading(final long time, final String sensorName, final double sensorValue, final String urn) {
             this.time = time;
             SensorName = sensorName;
             SensorValue = sensorValue;
@@ -346,8 +322,8 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
             return SensorValue;
         }
 
-        public int compareTo(Object o) {
-            final SensorReading other = (SensorReading) o;
+        public int compareTo(final Object object) {
+            final SensorReading other = (SensorReading) object;
             return (int) (getTime() - other.getTime());
         }
     }
@@ -363,7 +339,7 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
 
         private final double SensorValue;
 
-        private AggregatedSensorReading(long time, String sensorName, String seClusterID, double sensorValue) {
+        private AggregatedSensorReading(final long time, final String sensorName, final String seClusterID, final double sensorValue) {
             this.time = time;
             SensorName = sensorName;
             SensorValue = sensorValue;
@@ -382,8 +358,8 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
             return SensorValue;
         }
 
-        public int compareTo(Object o) {
-            final AggregatedSensorReading other = (AggregatedSensorReading) o;
+        public int compareTo(final Object object) {
+            final AggregatedSensorReading other = (AggregatedSensorReading) object;
             return (int) (getTime() - other.getTime());
         }
     }
