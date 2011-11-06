@@ -99,7 +99,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         listModel.addElement(NeighborhoodParser.NAME);
         listModel.addElement(ClustersParser.NAME);
         listModel.addElement(EventParser.Name);
-        listModel.addElement(SendParser.Name);
+        listModel.addElement(SendParser.NAME);
         listModel.addElement(SensorAggregationParser.Name);
         availableParsersList = new JList(listModel);
 
@@ -197,7 +197,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
                     panel2add = new EventParser(jTabbedPane1);
                 } else if (title.equals(SensorAggregationParser.Name)) {
                     panel2add = new SensorAggregationParser(jTabbedPane1);
-                } else if (title.equals(SendParser.Name)) {
+                } else if (title.equals(SendParser.NAME)) {
                     panel2add = new SendParser(jTabbedPane1);
                 }
                 if (panel2add != null) {
@@ -268,7 +268,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         durationFileText.setText("calculating");
         selectedFileText.setText(filename);
         mytracefile = new TraceFile(filename);
-        durationFileText.setText(mytracefile.getDuration() / 60000 + " min= "+mytracefile.getDuration()/1000 + " sec");
+        durationFileText.setText(mytracefile.getDuration() / 60000 + " min= " + mytracefile.getDuration() / 1000 + " sec");
         nodesFileText.setText(mytracefile.getNodeSize() + " nodes");
         linesFileText.setText(mytracefile.getLines() + " getLines");
         NodeSelectorPanel.setFile(mytracefile);

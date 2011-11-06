@@ -36,9 +36,9 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
     private final JTextField lostTf;
     private final JTextField bidiTf;
     private final JTextField dropTf;
-    private final JTextField plotTitle;
-    private final JTextField yLabel;
-    private final JTextField xLabel;
+    private final JTextField plotTitleTf;
+    private final JTextField yLabelTf;
+    private final JTextField xLabelTf;
 
     private TraceFile file;
     private String delimiter;
@@ -87,12 +87,12 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
 
         rightmainpanel.add(new CouplePanel(plotbutton, removeButton));
 
-        plotTitle = new JTextField("Neighborhood Statistics");
-        rightmainpanel.add(new CouplePanel(new JLabel("Plot title:"), plotTitle));
-        xLabel = new JTextField("getTime in sec");
-        rightmainpanel.add(new CouplePanel(new JLabel("X axis Label:"), xLabel));
-        yLabel = new JTextField("# of Nodes");
-        rightmainpanel.add(new CouplePanel(new JLabel("Y axis Label:"), yLabel));
+        plotTitleTf = new JTextField("Neighborhood Statistics");
+        rightmainpanel.add(new CouplePanel(new JLabel("Plot title:"), plotTitleTf));
+        xLabelTf = new JTextField("getTime in sec");
+        rightmainpanel.add(new CouplePanel(new JLabel("X axis Label:"), xLabelTf));
+        yLabelTf = new JTextField("# of Nodes");
+        rightmainpanel.add(new CouplePanel(new JLabel("Y axis Label:"), yLabelTf));
 
         reset();
 
@@ -118,10 +118,6 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
     }
 
     private ChartPanel getPlot() {
-        return getPlot(plotTitle.getText(), xLabel.getText(), yLabel.getText());
-    }
-
-    private ChartPanel getPlot(final String title, final String xlabel, final String ylabel) {
         XYSeriesCollection dataset = new XYSeriesCollection();
         XYSeries[] clustersSeries;
         clustersSeries = getAggregatedSeries();
@@ -131,9 +127,9 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
         }
 
         JFreeChart chart = ChartFactory.createXYLineChart(
-                title,
-                xlabel,
-                ylabel,
+                plotTitleTf.getText(),
+                xLabelTf.getText(),
+                yLabelTf.getText(),
                 dataset, PlotOrientation.VERTICAL, true, true, false);
         JFreeChart chartTransformed = ChartFormater.transformChart(chart);
         return new ChartPanel(chartTransformed);
