@@ -31,14 +31,15 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
     public static final String Name = "Events Parser";
 
     private TraceFile file;
-    private static final Logger log = Logger.getLogger(EventParser.class);
+    private static final Logger LOGGER = Logger.getLogger(EventParser.class);
+    private static final String PARTITIONER = ",";
     private long duration;
     private int events[][];
     private int eventTypes;
 
     private String[] prefixes;
     private JButton plotbutton;
-    String partitioner = ",";
+
     String templates = "NB,CLL";
     private JTextField partitionerTextField;
     private JTextField templatesTextField;
@@ -69,7 +70,7 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
         rightmainpanel.add(new CouplePanel(plotbutton, removeButton));
 
 
-        partitionerTextField = new JTextField(partitioner);
+        partitionerTextField = new JTextField(PARTITIONER);
         templatesTextField = new JTextField(templates);
         leftmainpanel.add(new CouplePanel(new JLabel("partitioner"), partitionerTextField));
         leftmainpanel.add(new CouplePanel(new JLabel("templates"), templatesTextField));
@@ -88,7 +89,7 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
 
 
     private void init() {
-        log.info("EventParser initialized");
+        LOGGER.info("EventParser initialized");
     }
 
     //TODO: add multiple Events
@@ -98,7 +99,7 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
         duration = f.getDuration();
 
 
-        String partitioner = "-";
+        final String partitioner = "-";
         eventTypes = template.split(partitioner).length;
 
         file = f;
@@ -116,14 +117,14 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
 
 
         for (int type = 0; type < eventTypes; type++) {
-            log.info(templates[type]);
+            LOGGER.info(templates[type]);
             String delimiter = ";";
             if (templates[type].contains(delimiter)) {
                 prefixes[type] = templates[type].substring(0, templates[type].indexOf(delimiter));
             } else {
                 prefixes[type] = templates[type];
             }
-            log.info(prefixes[type]);
+            LOGGER.info(prefixes[type]);
         }
 
         init();
@@ -224,27 +225,25 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(plotbutton)) {
             reset();
-            log.info("|=== parsing tracefile: " + file.getFilename() + "...");
+            LOGGER.info("|=== parsing tracefile: " + file.getFilename() + "...");
             TraceReader a = new TraceReader(file);
             a.addObserver(this);
             a.run();
-            log.info("|--- done parsing!");
-            log.info("|=== generating plot...");
+            LOGGER.info("|--- done parsing!");
+            LOGGER.info("|=== generating plot...");
             JFrame jnew = new JFrame();
             jnew.add(getPlot());
             jnew.pack();
             jnew.setVisible(true);
-            log.info("|--- presenting plot...");
+            LOGGER.info("|--- presenting plot...");
         } else if (actionEvent.getSource().equals(removeButton)) {
             tabbedPane.remove(this);
         }
     }
 
     private void reset() {
-        partitioner = partitionerTextField.getText();
         templates = templatesTextField.getText();
-
-        prefixes = templates.split(partitioner);
+        prefixes = templates.split(partitionerTextField.getText());
         eventTypes = prefixes.length;
 
         duration = file.getDuration() / 1000 + 1;

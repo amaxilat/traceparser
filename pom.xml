@@ -34,6 +34,11 @@
             <artifactId>sloccount</artifactId>
             <version>1.4</version>
         </dependency>
+        <dependency>
+            <groupId>hudson.plugins.sloccount</groupId>
+            <artifactId>sloccount</artifactId>
+            <version>1.4</version>
+        </dependency>
     </dependencies>
     <build>
         <resources>
@@ -72,7 +77,13 @@
             <url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
         </pluginRepository>
     </pluginRepositories>
-
+    <repositories>
+        <repository>
+            <id>JBOSS</id>
+            <name>JBoss Repository</name>
+            <url>http://repository.jboss.org/maven2/</url>
+        </repository>
+    </repositories>
 
     <reporting>
         <plugins>
