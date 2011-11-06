@@ -2,10 +2,7 @@ package eu.amaxilatis.java.traceparser;
 
 import org.apache.log4j.Logger;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -35,7 +32,7 @@ public class TraceFile {
     private long lines;
 
 
-    public TraceFile(final String file) {
+    public TraceFile(final String file, final InputStream inputStream) throws IOException {
 
 
         startTime = (new Date()).getTime();
@@ -46,50 +43,38 @@ public class TraceFile {
         filename = file;
 
         long max = 0, min = 0;
-        try {
-            // Open the file that is the first
-            // command line parameter
-            final FileInputStream fstream = new FileInputStream(filename);
-            // Get the object of DataInputStream
-            final DataInputStream in = new DataInputStream(fstream);
-            final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
-            String strLine;
-            long tempDuration = 0;
-            //Read File Line By Line
-            while ((strLine = bufferedReader.readLine()) != null) {
-                lines++;
-                // Print the content on the console
-                final TraceMessage m = new TraceMessage(strLine);
-                final long date = m.getTime();
-                if (date < startTime) {
-                    min = lines;
-                    startTime = date;
-                    tempDuration = endTime - startTime;
-                } else if (date > endTime) {
-                    max = lines;
-                    endTime = date;
-                    tempDuration = endTime - startTime;
-                }
 
-                final String nodeurn = m.getUrn();
-                if (!nodeNames.contains(nodeurn)) {
-                    nodeNames.add(nodeurn);
-                }
+        final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
+        String strLine;
+        long tempDuration = 0;
+        //Read File Line By Line
+        while ((strLine = bufferedReader.readLine()) != null) {
+            lines++;
+            // Print the content on the console
+            final TraceMessage m = new TraceMessage(strLine);
+            final long date = m.getTime();
+            if (date < startTime) {
+                min = lines;
+                startTime = date;
+                tempDuration = endTime - startTime;
+            } else if (date > endTime) {
+                max = lines;
+                endTime = date;
+                tempDuration = endTime - startTime;
             }
-            duration = tempDuration;
 
+            final String nodeurn = m.getUrn();
+            if (!nodeNames.contains(nodeurn)) {
+                nodeNames.add(nodeurn);
+            }
 
-            LOGGER.info("Date Started(" + min + ") : " + new Date(startTime).toString());
-            LOGGER.info("Date Ended(" + max + ") : " + new Date(endTime).toString());
-            //Close the input stream
-            in.close();
-        } catch (Exception e) {//Catch exception if any
-            LOGGER.error("Error: reading the file : " + filename + " line " + lines);
-            LOGGER.error(e);
         }
+        duration = tempDuration;
 
 
+        LOGGER.info("Date Started(" + min + ") : " + new Date(startTime).toString());
+        LOGGER.info("Date Ended(" + max + ") : " + new Date(endTime).toString());
     }
 
 

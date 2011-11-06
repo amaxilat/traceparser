@@ -15,6 +15,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -25,7 +26,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
 
-    private static final Logger log = Logger.getLogger(TraceParserFrame.class);
+    private static final Logger LOGGER = Logger.getLogger(TraceParserFrame.class);
     private static final String propfilename = "traceparser.properties";
 
 
@@ -71,7 +72,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         try {
             properties.load(this.getClass().getClassLoader().getResourceAsStream(propfilename));
         } catch (IOException e) {
-            log.error("could not load property file!");
+            LOGGER.error("could not load property file!");
         }
 
         jTabbedPane1 = new JTabbedPane();
@@ -258,10 +259,14 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
     }
 
     private void open_trace(String filename) {
-        log.debug("opening " + filename);
+        LOGGER.debug("opening " + filename);
         durationFileText.setText("calculating");
         selectedFileText.setText(filename);
-        mytracefile = new TraceFile(filename);
+        try {
+            mytracefile = new TraceFile(filename, new FileInputStream(filename));
+        } catch (IOException exception) {
+            LOGGER.error(exception);
+        }
         durationFileText.setText(mytracefile.getDuration() / 60000 + " min= " + mytracefile.getDuration() / 1000 + " sec");
         nodesFileText.setText(mytracefile.getNodeSize() + " nodes");
         linesFileText.setText(mytracefile.getLines() + " getLines");
