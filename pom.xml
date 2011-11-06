@@ -60,8 +60,6 @@
                     <useFile>false</useFile>
                     <forkMode>once</forkMode>
                     <useSystemClassLoader>true</useSystemClassLoader>
-                    <workingDirectory>/home/amaxilatis/Documents/Dropbox/tr.assembly/tr.scripts/traces/
-                    </workingDirectory>
                 </configuration>
             </plugin>
             <plugin>
