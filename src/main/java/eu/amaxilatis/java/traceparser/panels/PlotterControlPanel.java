@@ -48,27 +48,27 @@ public class PlotterControlPanel extends JPanel implements ActionListener {
 
 
 //bgcolor
-        chartBGColor = new JTextField(color2string(ChartFormater.backgroundColor));
-        chartBGColor.setBorder(BorderFactory.createLineBorder(ChartFormater.backgroundColor, 5));
+        chartBGColor = new JTextField(color2string(ChartFormater.getBackgroundColor()));
+        chartBGColor.setBorder(BorderFactory.createLineBorder(ChartFormater.getBackgroundColor(), 5));
         leftmainpanel.add(new CouplePanel(new JLabel("Bg color"), chartBGColor));
 //bordeColor
-        chartBorderColor = new JTextField(color2string(ChartFormater.borderColor));
-        chartBorderColor.setBorder(BorderFactory.createLineBorder(ChartFormater.borderColor, 5));
+        chartBorderColor = new JTextField(color2string(ChartFormater.getBorderColor()));
+        chartBorderColor.setBorder(BorderFactory.createLineBorder(ChartFormater.getBorderColor(), 5));
         leftmainpanel.add(new CouplePanel(new JLabel("Border color"), chartBorderColor));
 //bordeColor
         chartBorderSize = new JSpinner();
-        chartBorderSize.setValue(ChartFormater.borderSize);
+        chartBorderSize.setValue(ChartFormater.getBorderSize());
         leftmainpanel.add(new CouplePanel(new JLabel("Border size"), chartBorderSize));
 
 //use border
-        chartHasBorder = new JCheckBox("", ChartFormater.hasBorder);
+        chartHasBorder = new JCheckBox("", ChartFormater.getHasBorder());
         rightmainpanel.add(new CouplePanel(new JLabel("Use Border"), chartHasBorder));
 //use border
-        chartHideLegend = new JCheckBox("", ChartFormater.hideLegend);
+        chartHideLegend = new JCheckBox("", ChartFormater.getHideLegend());
         rightmainpanel.add(new CouplePanel(new JLabel("Hide Legend"), chartHideLegend));
 
         //use border
-        chartHideTitle = new JCheckBox("", ChartFormater.hideTitle);
+        chartHideTitle = new JCheckBox("", ChartFormater.getHideTitle());
         rightmainpanel.add(new CouplePanel(new JLabel("Hide Title"), chartHideTitle));
 
 
@@ -79,15 +79,15 @@ public class PlotterControlPanel extends JPanel implements ActionListener {
 
             final Color newBGColor = new Color(getRed(chartBGColor.getText()), getGreen(chartBGColor.getText()), getBlue(chartBGColor.getText()));
             chartBGColor.setBorder(BorderFactory.createLineBorder(newBGColor, 5));
-            ChartFormater.backgroundColor = newBGColor;
+            ChartFormater.setBackgroundColor(newBGColor);
             final Color newBorderColor = new Color(getRed(chartBorderColor.getText()), getGreen(chartBorderColor.getText()), getBlue(chartBorderColor.getText()));
             chartBorderColor.setBorder(BorderFactory.createLineBorder(newBorderColor, 5));
-            ChartFormater.borderColor = newBorderColor;
-            ChartFormater.borderSize = Float.parseFloat(chartBorderSize.getValue().toString());
+            ChartFormater.setBorderColor(newBorderColor);
+            ChartFormater.setBorderSize(Float.parseFloat(chartBorderSize.getValue().toString()));
 
-            ChartFormater.hasBorder = chartHasBorder.isSelected();
-            ChartFormater.hideLegend = chartHideLegend.isSelected();
-            ChartFormater.hideTitle = chartHideTitle.isSelected();
+            ChartFormater.setHasBorder(chartHasBorder.isSelected());
+            ChartFormater.setHideLegend(chartHideLegend.isSelected());
+            ChartFormater.setHideTitle(chartHideTitle.isSelected());
 
 
         }

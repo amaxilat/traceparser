@@ -8,22 +8,30 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-
+/**
+ * TraceFile
+ */
 public class TraceFile {
 
-    private final static Logger LOGGER = Logger.getLogger(TraceFile.class);
+    private static final Logger LOGGER = Logger.getLogger(TraceFile.class);
 
     private final String filename;
     private long duration;
     private long startTime;
 
-    public long getEndTime() {
+    /**
+     * @return
+     */
+    public final long getEndTime() {
         return endTime;
     }
 
     private long endTime;
 
-    public List<String> getNodeNames() {
+    /**
+     * @return
+     */
+    public final List<String> getNodeNames() {
         Collections.sort(nodeNames);
         return nodeNames;
     }
@@ -31,7 +39,11 @@ public class TraceFile {
     private final List nodeNames = new ArrayList();
     private long lines;
 
-
+    /**
+     * @param file
+     * @param inputStream
+     * @throws IOException
+     */
     public TraceFile(final String file, final InputStream inputStream) throws IOException {
 
 
@@ -44,7 +56,8 @@ public class TraceFile {
 
         long max = 0, min = 0;
 
-        final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        final InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+        final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
         String strLine;
         long tempDuration = 0;
@@ -73,28 +86,42 @@ public class TraceFile {
         duration = tempDuration;
 
 
-        LOGGER.info("Date Started(" + min + ") : " + new Date(startTime).toString());
-        LOGGER.info("Date Ended(" + max + ") : " + new Date(endTime).toString());
+        LOGGER.info("Date Started(" + min + ") : " + new Date(startTime));
+        LOGGER.info("Date Ended(" + max + ") : " + new Date(endTime));
     }
 
-
-    public long getDuration() {
+    /**
+     * @return
+     */
+    public final long getDuration() {
         return duration;
     }
 
-    public String getFilename() {
+    /**
+     * @return
+     */
+    public final String getFilename() {
         return filename;
     }
 
-    public long getStartTime() {
+    /**
+     * @return
+     */
+    public final long getStartTime() {
         return startTime;
     }
 
-    public int getNodeSize() {
+    /**
+     * @return
+     */
+    public final int getNodeSize() {
         return nodeNames.size();
     }
 
-    public long getLines() {
+    /**
+     * @return
+     */
+    public final long getLines() {
         return lines;
     }
 
