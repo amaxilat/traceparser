@@ -1,9 +1,4 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
  * ParseOrPlotFrame.java
  *
  * Created on Jun 22, 2011, 5:23:34 PM
@@ -12,8 +7,7 @@
 package eu.amaxilatis.java.traceparser;
 
 
-import eu.amaxilatis.java.traceparser.panels.NodeSelectorPanel;
-import eu.amaxilatis.java.traceparser.panels.PlotterControlPanel;
+import eu.amaxilatis.java.traceparser.panels.*;
 import eu.amaxilatis.java.traceparser.parsers.*;
 import org.apache.log4j.Logger;
 

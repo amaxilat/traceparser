@@ -25,23 +25,27 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
 
     private static final Logger LOGGER = Logger.getLogger(SensorAggregationParser.class);
     public static final String NAME = "SensorAggregation Parser";
+    private final static String DELIMITER = ":";
+    private static final String SENS_PREFIX = "Sread";
+    private static final String AG_PREFIX = "Sval";
 
-    private final JButton plotButton;
-    private final JButton removeButton;
-    private final JTabbedPane tabbedPane;
-    private final JTextField delimiterTf;
-    private final JTextField plotTitleTf;
-    private final JTextField xLabelTf;
-    private final JTextField yLabelTf;
+    private transient final JButton plotButton;
+    private transient final JButton removeButton;
+    private transient final JTabbedPane tabbedPane;
+    private transient final JTextField delimiterTf;
+    private transient final JTextField plotTitleTf;
+    private transient final JTextField xLabelTf;
+    private transient final JTextField yLabelTf;
+    private transient final JTextField meanTf;
+    private transient final JTextField agTf;
+    private transient final JTextField startTf;
 
     private TraceFile file;
-    private transient String delimiter = ":";
+
     private java.util.List<SensorReading> senReadings = new ArrayList<SensorReading>();
     private java.util.List<AggregatedSensorReading> agReadings = new ArrayList<AggregatedSensorReading>();
     private Hashtable<String, Integer> sensors = new Hashtable<String, Integer>();
     private Hashtable<String, Integer> senClusters = new Hashtable<String, Integer>();
-    private transient final String senPrefix = "Sread";
-    private transient final String agPrefix = "Sval";
     private final int startTime = 100;
     private Map<String, String> semantics = new HashMap<String, String>();
 
@@ -67,10 +71,10 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
         removeButton.addActionListener(this);
         rightMainPanel.add(new CouplePanel(plotButton, removeButton));
 
-        delimiterTf = new JTextField(delimiter);
-        JTextField meanTf = new JTextField(senPrefix);
-        JTextField agTf = new JTextField(agPrefix);
-        JTextField startTf = new JTextField("" + startTime);
+        delimiterTf = new JTextField(DELIMITER);
+        meanTf = new JTextField(SENS_PREFIX);
+        agTf = new JTextField(AG_PREFIX);
+        startTf = new JTextField("" + startTime);
 
         leftMainPanel.add(new CouplePanel(new JLabel("delimiter"), delimiterTf));
         leftMainPanel.add(new CouplePanel(new JLabel("Mean Value"), meanTf));
@@ -230,19 +234,19 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
         final TraceMessage m = (TraceMessage) o;
         if (!NodeSelectorPanel.isSelected(m.getUrn())) return;
         if (m.getTime() < file.getStartTime() + startTime * 1000) return;
-        if (m.getText().contains(senPrefix)) {
+        if (m.getText().contains(meanTf.getText())) {
             final String text = m.getText();
 //            LOGGER.info("Sensor@" + m.getTime() + ":" + m.getUrn() + "\"" + text + "\"");
-            final String[] parts = text.split(delimiter);
+            final String[] parts = text.split(delimiterTf.getText());
 
             final String sensorName = parts[1];
             final String sensorValue = parts[2];
             senReadings.add(new SensorReading(m.getTime(), sensorName, Double.parseDouble(sensorValue), m.getUrn()));
             sensors.put(sensorName, 1);
-        } else if (m.getText().contains(agPrefix)) {
+        } else if (m.getText().contains(agTf.getText())) {
             final String text = m.getText();
 
-            final String[] parts = text.split(delimiter);
+            final String[] parts = text.split(delimiterTf.getText());
 
             final String cluster = parts[1].substring(0, parts[1].indexOf("-"));
             final String sensorName = parts[1].substring(parts[1].indexOf("-"));

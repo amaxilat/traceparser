@@ -24,29 +24,29 @@ import java.util.Observer;
 public class SendParser extends AbstractParser implements Observer, ActionListener {
 
     private static final Logger LOGGER = Logger.getLogger(SendParser.class);
-    public static String NAME = "Send Parser";
+    public static final String NAME = "Send Parser";
 
-    private final JTabbedPane tabbedPane;
-    private final JButton plotButton;
-    private final JButton updateButton;
-    private final JLabel prefixLabel;
-    private final JCheckBox aggregateCheckbox;
-    private final JTextField templateTf;
-    private final JTextField hiddenTf;
-    private final JTextField plotTitleTf;
-    private final JTextField xLabelTf;
-    private final JTextField yLabelTf;
+    private transient final JTabbedPane tabbedPane;
+    private transient final JButton plotButton;
+    private transient final JButton updateButton;
+    private transient final JLabel prefixLabel;
+    private transient final JCheckBox aggregateCheckbox;
+    private transient final JTextField templateTf;
+    private transient final JTextField hiddenTf;
+    private transient final JTextField plotTitleTf;
+    private transient final JTextField xLabelTf;
+    private transient final JTextField yLabelTf;
 
-    private TraceFile file;
-    private long duration;
-    private int messages[][];
+    private transient TraceFile file;
+    private transient long duration;
+    private transient int messages[][];
     private static String delimiter = ";";
-    private int type = 2;
-    private String[] parts;
-    private String template = "CLS;%s;%t;%d";
-    private boolean aggregate = false;
-    private String hidden = "";
-    private String prefix;
+    private transient int type = 2;
+    private transient String[] parts;
+    private transient String template = "CLS;%s;%t;%d";
+    private transient boolean aggregate = false;
+    private transient String hidden = "";
+    private transient String prefix;
 
 
     public SendParser(final JTabbedPane tabbedPane) {
@@ -190,8 +190,7 @@ public class SendParser extends AbstractParser implements Observer, ActionListen
 
         for (int types = 0; types < 255; types++) {
             if ((exists(types)) && (!hidden.contains(Integer.toString(types)))) {
-                LOGGER.debug("class conatins : " + hidden.contains(Integer.toString(types)) + " type " + Integer.toString(types));
-
+//                LOGGER.debug("class conatins : " + hidden.contains(Integer.toString(types)) + " type " + Integer.toString(types));
                 final XYSeries series = new XYSeries("Mes. " + types);
                 for (int i = 0; i < duration; i++) {
                     if (countUntil(types, i) > 0) {
