@@ -14,14 +14,14 @@ import java.awt.event.ActionListener;
  * Time: 8:03 PM
  */
 public class PlotterControlPanel extends JPanel implements ActionListener {
-    private final static JButton updateButton = new JButton("Apply new Settings");
-    private final static JButton resetButton = new JButton("Reset");
-    private final static JTextField chartBGColor = new JTextField("default");
-    private final static JTextField chartBorderColor = new JTextField("default");
-    private final static JCheckBox chartHasBorder = new JCheckBox("", ChartFormater.getHasBorder());
-    private final static JCheckBox chartHideLegend = new JCheckBox("", ChartFormater.getHideLegend());
-    private final static JCheckBox chartHideTitle = new JCheckBox("", ChartFormater.getHideTitle());
-    private final static JSpinner chartBorderSize = new JSpinner();
+    private final static JButton UPDATE_BUTTON = new JButton("Apply new Settings");
+    private final static JButton RESET_BUTTON = new JButton("Reset");
+    private final static JTextField BG_COLOR = new JTextField("default");
+    private final static JTextField BORDER_COLOR = new JTextField("default");
+    private final static JCheckBox HAS_BORDER = new JCheckBox("", ChartFormater.getHasBorder());
+    private final static JCheckBox HIDE_LEGEND = new JCheckBox("", ChartFormater.getHideLegend());
+    private final static JCheckBox HIDE_TITLE = new JCheckBox("", ChartFormater.getHideTitle());
+    private final static JSpinner BORDER_SIZE = new JSpinner();
 
     public PlotterControlPanel() {
         this.setLayout(new BorderLayout());
@@ -35,64 +35,83 @@ public class PlotterControlPanel extends JPanel implements ActionListener {
         this.add(new JLabel("Plot options"), BorderLayout.NORTH);
         this.add(mainPanel, BorderLayout.CENTER);
 
-        updateButton.addActionListener(this);
+        UPDATE_BUTTON.addActionListener(this);
 
-        resetButton.addActionListener(this);
-        rightPanel.add(new CouplePanel(updateButton, resetButton));
+        RESET_BUTTON.addActionListener(this);
+        rightPanel.add(new CouplePanel(UPDATE_BUTTON, RESET_BUTTON));
 
         leftPanel.add(new JLabel("Setting for the graphics of all generated plots."));
         leftPanel.add(new JLabel("All color settings are in RGB format. (0-255) separate with ,"));
 
 
         //bgcolor
-        chartBGColor.setBorder(BorderFactory.createLineBorder(ChartFormater.getBackgroundColor(), 5));
-        leftPanel.add(new CouplePanel(new JLabel("Bg color"), chartBGColor));
+        BG_COLOR.setBorder(BorderFactory.createLineBorder(ChartFormater.getBackgroundColor(), 5));
+        leftPanel.add(new CouplePanel(new JLabel("Bg color"), BG_COLOR));
         //bordeColor
-        chartBorderColor.setBorder(BorderFactory.createLineBorder(ChartFormater.getBorderColor(), 5));
-        leftPanel.add(new CouplePanel(new JLabel("Border color"), chartBorderColor));
+        BORDER_COLOR.setBorder(BorderFactory.createLineBorder(ChartFormater.getBorderColor(), 5));
+        leftPanel.add(new CouplePanel(new JLabel("Border color"), BORDER_COLOR));
         //bordeColor
-        chartBorderSize.setValue(ChartFormater.getBorderSize());
-        leftPanel.add(new CouplePanel(new JLabel("Border size"), chartBorderSize));
+        BORDER_SIZE.setValue(ChartFormater.getBorderSize());
+        leftPanel.add(new CouplePanel(new JLabel("Border size"), BORDER_SIZE));
         //use border
-        rightPanel.add(new CouplePanel(new JLabel("Use Border"), chartHasBorder));
+        rightPanel.add(new CouplePanel(new JLabel("Use Border"), HAS_BORDER));
         //use border
-        rightPanel.add(new CouplePanel(new JLabel("Hide Legend"), chartHideLegend));
+        rightPanel.add(new CouplePanel(new JLabel("Hide Legend"), HIDE_LEGEND));
         //use border
-        rightPanel.add(new CouplePanel(new JLabel("Hide Title"), chartHideTitle));
+        rightPanel.add(new CouplePanel(new JLabel("Hide Title"), HIDE_TITLE));
     }
 
+    /**
+     *
+     * @param actionEvent
+     */
     public void actionPerformed(final ActionEvent actionEvent) {
-        if (actionEvent.getSource().equals(updateButton)) {
-            final Color newBGColor = new Color(getRed(chartBGColor.getText()), getGreen(chartBGColor.getText()), getBlue(chartBGColor.getText()));
-            chartBGColor.setBorder(BorderFactory.createLineBorder(newBGColor, 5));
+        if (actionEvent.getSource().equals(UPDATE_BUTTON)) {
+            final Color newBGColor = new Color(getRed(BG_COLOR.getText()), getGreen(BG_COLOR.getText()), getBlue(BG_COLOR.getText()));
+            BG_COLOR.setBorder(BorderFactory.createLineBorder(newBGColor, 5));
             ChartFormater.setBackgroundColor(newBGColor);
-            final Color newBorderColor = new Color(getRed(chartBorderColor.getText()), getGreen(chartBorderColor.getText()), getBlue(chartBorderColor.getText()));
-            chartBorderColor.setBorder(BorderFactory.createLineBorder(newBorderColor, 5));
+            final Color newBorderColor = new Color(getRed(BORDER_COLOR.getText()), getGreen(BORDER_COLOR.getText()), getBlue(BORDER_COLOR.getText()));
+            BORDER_COLOR.setBorder(BorderFactory.createLineBorder(newBorderColor, 5));
             ChartFormater.setBorderColor(newBorderColor);
-            ChartFormater.setBorderSize(Float.parseFloat(chartBorderSize.getValue().toString()));
-            ChartFormater.setHasBorder(chartHasBorder.isSelected());
-            ChartFormater.setHideLegend(chartHideLegend.isSelected());
-            ChartFormater.setHideTitle(chartHideTitle.isSelected());
+            ChartFormater.setBorderSize(Float.parseFloat(BORDER_SIZE.getValue().toString()));
+            ChartFormater.setHasBorder(HAS_BORDER.isSelected());
+            ChartFormater.setHideLegend(HIDE_LEGEND.isSelected());
+            ChartFormater.setHideTitle(HIDE_TITLE.isSelected());
         }
     }
 
+    /**
+     *
+     * @param text
+     * @return
+     */
     private int getRed(final String text) {
         return Integer.parseInt(text.split(",")[0]);
     }
 
+    /**
+     *
+     * @param text
+     * @return
+     */
     private int getGreen(final String text) {
         return Integer.parseInt(text.split(",")[1]);
     }
 
+    /**
+     *
+     * @param text
+     * @return
+     */
     private int getBlue(final String text) {
         return Integer.parseInt(text.split(",")[2]);
     }
 
-    private String color2string(final Color color) {
-        final String red, green, blue;
-        red = Integer.toString(color.getRed());
-        green = Integer.toString(color.getGreen());
-        blue = Integer.toString(color.getBlue());
-        return red + "," + green + "," + blue;
-    }
+//    private String color2string(final Color color) {
+//        final String red, green, blue;
+//        red = Integer.toString(color.getRed());
+//        green = Integer.toString(color.getGreen());
+//        blue = Integer.toString(color.getBlue());
+//        return red + "," + green + "," + blue;
+//    }
 }
