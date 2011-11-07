@@ -10,6 +10,7 @@ import junit.framework.TestSuite;
 
 import java.io.*;
 import java.net.URL;
+import java.util.Date;
 
 
 public class TraceFileTest
@@ -23,14 +24,13 @@ public class TraceFileTest
      */
     public TraceFileTest(String testName) {
         super(testName);
-        BasicConfigurator.configure();
     }
 
     /**
      * @return the suite of tests being tested
      */
     public static Test suite() {
-        return new TestSuite(AppTest.class);
+        return new TestSuite(TraceFileTest.class);
     }
 
     /**
@@ -40,14 +40,17 @@ public class TraceFileTest
 
         FileInputStream inputStream = null;
         try {
+            final long start = System.currentTimeMillis();
             inputStream = new FileInputStream(new File("src/test/resources/trace.test"));
             TraceFile tracefile = new TraceFile("trace.test", inputStream);
-            System.out.println("TraceFile Filename is :" + tracefile.getFilename());
-            System.out.println("TraceFile Lines is :" + tracefile.getLines());
-            System.out.println("TraceFile NodeSize is :" + tracefile.getNodeSize());
-            System.out.println("TraceFile Duration is :" + tracefile.getDuration());
-            System.out.println("TraceFile StartTime is :" + tracefile.getStartTime());
-            System.out.println("TraceFile EndTime is :" + tracefile.getEndTime());
+            final long total = System.currentTimeMillis() - start;
+            LOGGER.info("TraceFile Created in " + total + " msec");
+            LOGGER.info("TraceFile is named " + tracefile.getFilename());
+            LOGGER.info("TraceFile contains " + tracefile.getLines() + " lines");
+            LOGGER.info("TraceFile contains " + tracefile.getNodeSize() + " nodes");
+            LOGGER.info("TraceFile lasts for " + tracefile.getDuration() + " seconds");
+            LOGGER.info("TraceFile starts @ " + new Date(tracefile.getStartTime()));
+            LOGGER.info("TraceFile ends @ " + new Date(tracefile.getEndTime()));
 
             assertTrue(true);
         } catch (Exception e) {

@@ -14,8 +14,8 @@ public class NodeSelectorPanel extends JPanel implements ActionListener {
 
     public final static String NAME = "Node Selection";
     public static TraceFile file = null;
-    private final JButton updateButton;
-    private static JLabel enabledCountLabel = null;
+    private final static JButton updateButton = new JButton("Reload Selections");
+    private final static JLabel enabledCountLabel = new JLabel("unset");
     private static JList nodesList;
 
     private static Map<String, Integer> selectNodesMap = new HashMap<String, Integer>();
@@ -28,15 +28,13 @@ public class NodeSelectorPanel extends JPanel implements ActionListener {
 
         final JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(new JLabel(NAME), BorderLayout.NORTH);
-        updateButton = new JButton("Reload Selections");
         updateButton.addActionListener(this);
 
-        enabledCountLabel = new JLabel("unset");
         mainPanel.add(new CouplePanel(updateButton, enabledCountLabel), BorderLayout.SOUTH);
 
         final ListModel nodesListModel = new DefaultListModel();
         nodesList = new JList(nodesListModel);
-        JScrollPane nodeScrollPane = new JScrollPane(nodesList);
+        final JScrollPane nodeScrollPane = new JScrollPane(nodesList);
 
         mainPanel.add(nodeScrollPane);
         LOGGER.info(NAME + " initialized");
