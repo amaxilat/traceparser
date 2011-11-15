@@ -7,6 +7,13 @@
     <version>0.21</version>
     <name>traceparser</name>
     <url>http://qopbot.dyndns.org</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <main.basedir>${project.basedir}</main.basedir>
+    </properties>
+
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
