@@ -20,11 +20,11 @@ public class ChartFormater {
      *
      * @return
      */
-    public static ChartFormater getInstance() {
-        if (instance == null) {
-            instance = new ChartFormater();
+    public ChartFormater getInstance() {
+        if (this.instance == null) {
+            this.instance = new ChartFormater();
         }
-        return instance;
+        return this.instance;
     }
 
     private static Color backgroundColor = Color.white;
