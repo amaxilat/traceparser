@@ -2,22 +2,50 @@ package eu.amaxilatis.java.traceparser;
 
 import org.apache.log4j.Logger;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 /**
- * TraceFile
+ * TraceFile.
  */
 public class TraceFile {
 
+    /**
+     * Logger.
+     */
     private static final Logger LOGGER = Logger.getLogger(TraceFile.class);
 
+    /**
+     * traceFile filename.
+     */
     private final String filename;
+    /**
+     * traceFile duration.
+     */
     private long duration;
+    /**
+     * traceFile start time.
+     */
     private long startTime;
+
+    /**
+     * traceFile end time.
+     */
+    private long endTime;
+    /**
+     * nodes of the traceFile.
+     */
+    private final List nodeNames = new ArrayList();
+    /**
+     * total count of lines in traceFile.
+     */
+    private long lines;
 
     /**
      * @return
@@ -26,8 +54,6 @@ public class TraceFile {
         return endTime;
     }
 
-    private long endTime;
-
     /**
      * @return
      */
@@ -35,9 +61,6 @@ public class TraceFile {
         Collections.sort(nodeNames);
         return nodeNames;
     }
-
-    private final List nodeNames = new ArrayList();
-    private long lines;
 
     /**
      * @param file
@@ -56,8 +79,10 @@ public class TraceFile {
 
         long max = 0, min = 0;
 
-        final InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-        final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+        InputStreamReader inputStreamReader = null;
+        inputStreamReader = new InputStreamReader(inputStream);
+        BufferedReader bufferedReader = null;
+        bufferedReader = new BufferedReader(inputStreamReader);
 
         String strLine;
         long tempDuration = 0;

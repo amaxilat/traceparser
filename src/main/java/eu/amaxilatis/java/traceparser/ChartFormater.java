@@ -10,14 +10,19 @@ import java.awt.BasicStroke;
  */
 public class ChartFormater {
 
+    /**
+     *
+     */
     private static ChartFormater instance = null;
 
+    /**
+     * Constructor.
+     */
     protected ChartFormater() {
         // Exists only to defeat instantiation.
     }
 
     /**
-     *
      * @return
      */
     public ChartFormater getInstance() {
@@ -27,11 +32,29 @@ public class ChartFormater {
         return this.instance;
     }
 
+    /**
+     *
+     */
     private static Color backgroundColor = Color.white;
+    /**
+     *
+     */
     private static Color borderColor = Color.black;
+    /**
+     *
+     */
     private static boolean hasBorder = false;
+    /**
+     *
+     */
     private static boolean hideLegend = false;
+    /**
+     *
+     */
     private static float borderSize = 1;
+    /**
+     *
+     */
     private static boolean hideTitle;
 
     /**
@@ -144,6 +167,5 @@ public class ChartFormater {
         chart.setBorderStroke(new BasicStroke(ChartFormater.borderSize));
 
         return chart;
-
     }
 }
