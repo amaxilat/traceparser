@@ -25,41 +25,41 @@ import java.util.Observer;
 
 public class ClustersParser extends AbstractParser implements Observer, ActionListener {
 
-    private static final Logger LOGGER = Logger.getLogger(ClustersParser.class);
     public static final String NAME = "Clusters Parser";
+    private static final Logger LOGGER = Logger.getLogger(ClustersParser.class);
     private static final String PLOT_TITLE = "Cluster Statistics";
     private static final String X_LABEL = "time in sec";
     private static final String Y_LABEL = "# of Clusters";
 
-    private String template;
-    private String prefix;
-    private String delimiter = ";";
-    private String[] parts;
-    private final JButton plotbutton;
-    private final JButton removeButton;
-    private final JTextField delimiterTf;
-    private final JTextField templateTf;
-    private final JTabbedPane tabbedPane;
-    private final TextField plotTitleTf;
-    private final TextField xLabelTf;
-    private final TextField yLabelTf;
+    private transient String template;
+    private transient String prefix;
+    private transient String delimiter = ";";
+    private transient String[] parts;
+    private final transient JButton plot;
+    private final transient JButton remove;
+    private final transient JTextField delimiterTf;
+    private final transient JTextField templateTf;
+    private final transient JTabbedPane tabbedPane;
+    private final transient TextField plotTitleTf;
+    private final transient TextField xLabelTf;
+    private final transient TextField yLabelTf;
 
-    private long duration;
-    private Map<String, String>[] clusters;
-    private int pcluster;
-    private int pid;
-    private TraceFile file;
+    private transient long duration;
+    private transient Map<String, String>[] clusters;
+    private transient int pcluster;
+    private transient int pid;
+    private transient TraceFile file;
 
 
-    public ClustersParser(JTabbedPane jTabbedPane1) {
+    public ClustersParser(final JTabbedPane jTabbedPane1) {
         this.tabbedPane = jTabbedPane1;
         init();
 
         this.setLayout(new BorderLayout());
 
-        JPanel mainpanel = new JPanel(new GridLayout(0, 2, 30, 30));
-        JPanel leftmainpanel = new JPanel(new GridLayout(0, 1));
-        JPanel rightmainpanel = new JPanel(new GridLayout(0, 1));
+        final JPanel mainpanel = new JPanel(new GridLayout(0, 2, 30, 30));
+        final JPanel leftmainpanel = new JPanel(new GridLayout(0, 1));
+        final JPanel rightmainpanel = new JPanel(new GridLayout(0, 1));
         mainpanel.add(leftmainpanel);
         mainpanel.add(rightmainpanel);
 
@@ -74,11 +74,11 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
         leftmainpanel.add(new CouplePanel(new JLabel("Template"), templateTf));
 
 
-        plotbutton = new JButton(super.PLOT);
-        plotbutton.addActionListener(this);
-        removeButton = new JButton(super.REMOVE);
-        removeButton.addActionListener(this);
-        rightmainpanel.add(new CouplePanel(plotbutton, removeButton));
+        plot = new JButton(super.PLOT);
+        plot.addActionListener(this);
+        remove = new JButton(super.REMOVE);
+        remove.addActionListener(this);
+        rightmainpanel.add(new CouplePanel(plot, remove));
 
 
         plotTitleTf = new TextField(PLOT_TITLE);
@@ -106,9 +106,10 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
                     pid = i;
                 } else if (parts[i].equals("CLUSTER")) {
                     pcluster = i;
-                } else if (parts[i].equals("TYPE")) {
-
                 }
+//                else if (parts[i].equals("TYPE")) {
+//
+//                }
             }
         }
 
@@ -116,34 +117,25 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
         LOGGER.info("ClustersParser initialized");
     }
 
-    public ChartPanel getPlot(boolean has_title, boolean aggregate, String title, String xlabel, String ylabel) {
-        XYSeriesCollection dataset = new XYSeriesCollection();
+    public ChartPanel getPlot() {
+        final XYSeriesCollection dataset = new XYSeriesCollection();
         XYSeries[] clustersSeries;
-        if (aggregate) {
-            clustersSeries = getSeries_aggregate();
-        } else {
-            clustersSeries = getSeries();
-        }
+        clustersSeries = getSeries();
 
         for (XYSeries clustersSery : clustersSeries) {
             dataset.addSeries(clustersSery);
         }
 
 
-        JFreeChart chart = ChartFactory.createXYLineChart(
-                title,
-                xlabel,
-                ylabel,
+        final JFreeChart chart = ChartFactory.createXYLineChart(
+                plotTitleTf.getText(),
+                xLabelTf.getText(),
+                yLabelTf.getText(),
                 dataset, PlotOrientation.VERTICAL, true, true, false);
 
 
         JFreeChart chartTransformed = ChartFormater.transformChart(chart);
         return new ChartPanel(chartTransformed);
-    }
-
-    //    @Override
-    public ChartPanel getPlot() {
-        return getPlot(false, false, "", "", "");
     }
 
     public XYSeries[] getSeries() {
@@ -154,14 +146,14 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
 
         LOGGER.debug(duration);
         for (int i = 0; i < duration; i++) {
-            int cluster_count = 0;
+            int clusterCount = 0;
             int simple_count = 0;
             LOGGER.debug(clusters[i].keySet().size());
             for (String key : clusters[i].keySet()) {
 
                 if (clusters[i].get(key).equals(key)) {
                     LOGGER.debug(key + " - " + clusters[i].get(key) + " N");
-                    cluster_count++;
+                    clusterCount++;
                 } else {
                     LOGGER.debug(key + " - " + clusters[i].get(key));
                     simple_count++;
@@ -169,12 +161,12 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
             }
 
 
-            series[0].add(i, cluster_count);
-            if (cluster_count > 0) {
-                //LOGGER.info("Clusters : " + cluster_count + " clSize : " + (simple_count + cluster_count) / cluster_count);
-                series[1].add(i, (simple_count + cluster_count) / cluster_count);
+            series[0].add(i, clusterCount);
+            if (clusterCount > 0) {
+                //LOGGER.info("Clusters : " + clusterCount + " clSize : " + (simple_count + clusterCount) / clusterCount);
+                series[1].add(i, (simple_count + clusterCount) / clusterCount);
             } else {
-                //LOGGER.info("Clusters : " + cluster_count + " clSize : 0");
+                //LOGGER.info("Clusters : " + clusterCount + " clSize : 0");
                 series[1].add(i, 0);
             }
             LOGGER.debug("setting " + i);
@@ -183,57 +175,55 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
         return series;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public XYSeries[] getSeries_aggregate() {
-        return getSeries();
-    }
-
     //    @Override
-    public void setTraceFile(TraceFile file) {
+    public void setTraceFile(final TraceFile file) {
         this.file = file;
 
         reset();
     }
 
-    void setTemplate(String template) {
+    void setTemplate(final String template) {
         parts = template.split(delimiter);
         prefix = template.substring(0, template.indexOf(delimiter));
         this.template = template;
     }
 
-    public void update(Observable observable, Object o) {
-        final TraceMessage m = (TraceMessage) o;
-        if (!NodeSelectorPanel.isSelected(m.getUrn())) return;
+    public void update(final Observable observable, final Object obj) {
+        final TraceMessage message = (TraceMessage) obj;
+        if (!NodeSelectorPanel.isSelected(message.getUrn())) {
+            return;
+        }
 
-        LOGGER.debug(m.getText());
-        if (m.getText().startsWith(prefix)) {
-            LOGGER.debug("Cluster@" + m.getTime() + ":" + m.getUrn());
-            final String[] mess = m.getText().split(delimiter);
-            set_cluster(mess[pid], mess[pcluster], ((int) ((m.getTime() - file.getStartTime()) / 1000)));
+        LOGGER.debug(message.getText());
+        if (message.getText().startsWith(prefix)) {
+            LOGGER.debug("Cluster@" + message.getTime() + ":" + message.getUrn());
+            final String[] mess = message.getText().split(delimiter);
+            setCluster(mess[pid], mess[pcluster], ((int) ((message.getTime() - file.getStartTime()) / 1000)));
         }
     }
 
-    private void set_cluster(String node, String clust, int time) {
-        LOGGER.debug(node + "-" + clust + "@" + time);
+    private void setCluster(final String node,final String cluster,final int time) {
+        LOGGER.debug(node + "-" + cluster + "@" + time);
         for (int i = time; i < duration - 1; i++) {
-            clusters[i].put(node, clust);
+            clusters[i].put(node, cluster);
         }
     }
 
-    public void actionPerformed(ActionEvent actionEvent) {
-        if (actionEvent.getSource().equals(plotbutton)) {
+    public void actionPerformed(final ActionEvent actionEvent) {
+        if (actionEvent.getSource().equals(plot)) {
             reset();
             LOGGER.info("|=== parsing tracefile: " + file.getFilename() + "...");
-            TraceReader a = new TraceReader(file);
-            a.addObserver(this);
-            a.run();
+            TraceReader reader = new TraceReader(file);
+            reader.addObserver(this);
+            reader.run();
             LOGGER.info("|--- done parsing!");
             LOGGER.info("|=== generating plot...");
-            JFrame jnew = new JFrame();
-            jnew.add(getPlot());
-            jnew.pack();
-            jnew.setVisible(true);
+            JFrame frame = new JFrame();
+            frame.add(getPlot());
+            frame.pack();
+            frame.setVisible(true);
             LOGGER.info("|--- presenting plot...");
-        } else if (actionEvent.getSource().equals(removeButton)) {
+        } else if (actionEvent.getSource().equals(remove)) {
             tabbedPane.remove(this);
         }
     }
