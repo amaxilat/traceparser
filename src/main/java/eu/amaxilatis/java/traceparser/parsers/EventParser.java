@@ -28,60 +28,60 @@ import java.util.Observer;
  */
 public class EventParser extends AbstractParser implements Observer, ActionListener {
 
-    public static final String Name = "Events Parser";
+    public static final String NAME = "Events Parser";
 
-    private TraceFile file;
+    private transient TraceFile file;
     private static final Logger LOGGER = Logger.getLogger(EventParser.class);
     private static final String PARTITIONER = ",";
-    private long duration;
-    private int events[][];
-    private int eventTypes;
+    private transient long duration;
+    private transient int events[][];
+    private transient int eventTypes;
 
-    private String[] prefixes;
-    private JButton plotbutton;
+    private transient String[] prefixes;
+    private transient JButton plot;
 
-    String templates = "NB,CLL";
-    private JTextField partitionerTextField;
-    private JTextField templatesTextField;
-    private JTabbedPane tabbedPane;
-    private TextField plotTitle;
-    private TextField xLabel;
-    private TextField yLabel;
-    private JButton removeButton;
+    private transient String templates = "NB,CLL";
+    private transient JTextField partitionerTf;
+    private transient JTextField templatesTf;
+    private transient JTabbedPane tabbedPane;
+    private transient TextField plotTitle;
+    private transient TextField xLabel;
+    private transient TextField yLabel;
+    private transient JButton remove;
 
-    public EventParser(JTabbedPane jTabbedPane1) {
+    public EventParser(final JTabbedPane jTabbedPane1) {
         this.tabbedPane = jTabbedPane1;
 
         this.setLayout(new BorderLayout());
 
-        JPanel mainpanel = new JPanel(new GridLayout(0, 2, 30, 30));
-        JPanel leftmainpanel = new JPanel(new GridLayout(0, 1));
-        JPanel rightmainpanel = new JPanel(new GridLayout(0, 1));
-        mainpanel.add(leftmainpanel);
-        mainpanel.add(rightmainpanel);
+        final JPanel mainPanel = new JPanel(new GridLayout(0, 2, 30, 30));
+        final JPanel leftPanel = new JPanel(new GridLayout(0, 1));
+        final JPanel rightPanel = new JPanel(new GridLayout(0, 1));
+        mainPanel.add(leftPanel);
+        mainPanel.add(rightPanel);
 
-        this.add(new JLabel(Name), BorderLayout.NORTH);
-        this.add(mainpanel, BorderLayout.CENTER);
+        this.add(new JLabel(NAME), BorderLayout.NORTH);
+        this.add(mainPanel, BorderLayout.CENTER);
 
-        plotbutton = new JButton(super.PLOT);
-        plotbutton.addActionListener(this);
-        removeButton = new JButton(super.REMOVE);
-        removeButton.addActionListener(this);
-        rightmainpanel.add(new CouplePanel(plotbutton, removeButton));
+        plot = new JButton(super.PLOT);
+        plot.addActionListener(this);
+        remove = new JButton(super.REMOVE);
+        remove.addActionListener(this);
+        rightPanel.add(new CouplePanel(plot, remove));
 
 
-        partitionerTextField = new JTextField(PARTITIONER);
-        templatesTextField = new JTextField(templates);
-        leftmainpanel.add(new CouplePanel(new JLabel("partitioner"), partitionerTextField));
-        leftmainpanel.add(new CouplePanel(new JLabel("templates"), templatesTextField));
+        partitionerTf = new JTextField(PARTITIONER);
+        templatesTf = new JTextField(templates);
+        leftPanel.add(new CouplePanel(new JLabel("partitioner"), partitionerTf));
+        leftPanel.add(new CouplePanel(new JLabel("templates"), templatesTf));
 
 
         plotTitle = new TextField("Event Statistics");
-        rightmainpanel.add(new CouplePanel(new JLabel("Plot title:"), plotTitle));
+        rightPanel.add(new CouplePanel(new JLabel("Plot title:"), plotTitle));
         xLabel = new TextField("getTime in sec");
-        rightmainpanel.add(new CouplePanel(new JLabel("X axis Label:"), xLabel));
+        rightPanel.add(new CouplePanel(new JLabel("X axis Label:"), xLabel));
         yLabel = new TextField("# of Events");
-        rightmainpanel.add(new CouplePanel(new JLabel("Y axis Label:"), yLabel));
+        rightPanel.add(new CouplePanel(new JLabel("Y axis Label:"), yLabel));
 
         init();
 
@@ -92,62 +92,63 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
         LOGGER.info("EventParser initialized");
     }
 
-    //TODO: add multiple Events
-    public EventParser(TraceFile f, String template) {
+//    //TODO: add multiple Events
+//    public EventParser(TraceFile f, String template) {
+//
+//        //LOGGER.info("EventParser initialized");
+//        duration = f.getDuration();
+//
+//
+//        final String partitioner = "-";
+//        eventTypes = template.split(partitioner).length;
+//
+//        file = f;
+//        duration = f.getDuration() / 1000 + 1;
+//        events = new int[eventTypes][(int) duration];
+//
+//        for (int type = 0; type < eventTypes; type++) {
+//            for (int j = 0; j < (int) duration; j++) {
+//                events[type][j] = 0;
+//            }
+//        }
+//
+//        prefixes = new String[eventTypes];
+//        final String[] templates = template.split(partitioner);
+//
+//
+//        for (int type = 0; type < eventTypes; type++) {
+//            LOGGER.info(templates[type]);
+//            String delimiter = ";";
+//            if (templates[type].contains(delimiter)) {
+//                prefixes[type] = templates[type].substring(0, templates[type].indexOf(delimiter));
+//            } else {
+//                prefixes[type] = templates[type];
+//            }
+//            LOGGER.info(prefixes[type]);
+//        }
+//
+//        init();
+//    }
 
-        //LOGGER.info("EventParser initialized");
-        duration = f.getDuration();
+    public void update(final Observable observable, final Object obj) {
+        final TraceMessage message = (TraceMessage) obj;
+        if (NodeSelectorPanel.isSelected(message.getUrn())) {
 
-
-        final String partitioner = "-";
-        eventTypes = template.split(partitioner).length;
-
-        file = f;
-        duration = f.getDuration() / 1000 + 1;
-        events = new int[eventTypes][(int) duration];
-
-        for (int type = 0; type < eventTypes; type++) {
-            for (int j = 0; j < (int) duration; j++) {
-                events[type][j] = 0;
+            for (int type = 0; type < eventTypes; type++) {
+                if (message.getText().contains(prefixes[type])) {
+                    //LOGGER.info("Event@" + message.getTime() + ":" + message.getUrn());
+                    events[type][((int) ((message.getTime() - file.getStartTime()) / 1000))]++;
+                }
             }
         }
-
-        prefixes = new String[eventTypes];
-        final String[] templates = template.split(partitioner);
-
-
-        for (int type = 0; type < eventTypes; type++) {
-            LOGGER.info(templates[type]);
-            String delimiter = ";";
-            if (templates[type].contains(delimiter)) {
-                prefixes[type] = templates[type].substring(0, templates[type].indexOf(delimiter));
-            } else {
-                prefixes[type] = templates[type];
-            }
-            LOGGER.info(prefixes[type]);
-        }
-
-        init();
     }
 
-    public void update(Observable observable, Object o) {
-        final TraceMessage m = (TraceMessage) o;
-        if (!NodeSelectorPanel.isSelected(m.getUrn())) return;
+    public ChartPanel getPlot(final boolean aggregate) {
 
-        for (int type = 0; type < eventTypes; type++) {
-            if (m.getText().contains(prefixes[type])) {
-                //LOGGER.info("Event@" + m.getTime() + ":" + m.getUrn());
-                events[type][((int) ((m.getTime() - file.getStartTime()) / 1000))]++;
-            }
-        }
-    }
-
-    public ChartPanel getPlot(boolean has_title, boolean aggregate) {
-
-        XYSeriesCollection dataset = new XYSeriesCollection();
+        final XYSeriesCollection dataset = new XYSeriesCollection();
         XYSeries[] messageTypes;
         if (aggregate) {
-            messageTypes = getSeries_aggregate();
+            messageTypes = getSeriesAggregate();
         } else {
             messageTypes = getSeries();
         }
@@ -155,7 +156,7 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
             dataset.addSeries(messageType);
         }
 
-        JFreeChart chart = ChartFactory.createXYLineChart(
+        final JFreeChart chart = ChartFactory.createXYLineChart(
                 plotTitle.getText(),
                 xLabel.getText(),
                 yLabel.getText(),
@@ -167,7 +168,7 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
 
     //    @Override
     public ChartPanel getPlot() {
-        return getPlot(false, true);
+        return getPlot(true);
     }
 
 
@@ -183,7 +184,7 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
     }
 
     //TODO: add aggregate plots
-    public XYSeries[] getSeries_aggregate() {
+    public XYSeries[] getSeriesAggregate() {
         XYSeries[] series = new XYSeries[eventTypes];
         for (int type = 0; type < eventTypes; type++) {
             if (prefixes[type].equals("CLL")) {
@@ -194,56 +195,48 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
                 series[type] = new XYSeries("Events " + prefixes[type]);
             }
             for (int i = 0; i < duration; i++) {
-                series[type].add(i, count_until(type, i));
+                series[type].add(i, countUntil(type, i));
             }
         }
         return series;
     }
 
     //    @Override
-    public void setTraceFile(TraceFile file) {
+    public void setTraceFile(final TraceFile file) {
         this.file = file;
         reset();
     }
 
-    public void setTemplate(String template) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public String getTemplate() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    private int count_until(int type, int time_until) {
+    private int countUntil(final int type, final int timeUntil) {
         int sum = 0;
-        for (int i = 0; i <= time_until; i++) {
+        for (int i = 0; i <= timeUntil; i++) {
             sum += events[type][i];
         }
         return sum;
     }
 
-    public void actionPerformed(ActionEvent actionEvent) {
-        if (actionEvent.getSource().equals(plotbutton)) {
+    public void actionPerformed(final ActionEvent actionEvent) {
+        if (actionEvent.getSource().equals(plot)) {
             reset();
             LOGGER.info("|=== parsing tracefile: " + file.getFilename() + "...");
-            TraceReader a = new TraceReader(file);
-            a.addObserver(this);
-            a.run();
+            TraceReader reader = new TraceReader(file);
+            reader.addObserver(this);
+            reader.run();
             LOGGER.info("|--- done parsing!");
             LOGGER.info("|=== generating plot...");
-            JFrame jnew = new JFrame();
-            jnew.add(getPlot());
-            jnew.pack();
-            jnew.setVisible(true);
+            JFrame frame = new JFrame();
+            frame.add(getPlot());
+            frame.pack();
+            frame.setVisible(true);
             LOGGER.info("|--- presenting plot...");
-        } else if (actionEvent.getSource().equals(removeButton)) {
+        } else if (actionEvent.getSource().equals(remove)) {
             tabbedPane.remove(this);
         }
     }
 
     private void reset() {
-        templates = templatesTextField.getText();
-        prefixes = templates.split(partitionerTextField.getText());
+        templates = templatesTf.getText();
+        prefixes = templates.split(partitionerTf.getText());
         eventTypes = prefixes.length;
 
         duration = file.getDuration() / 1000 + 1;

@@ -2,22 +2,50 @@ package eu.amaxilatis.java.traceparser;
 
 import org.apache.log4j.Logger;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 /**
- * TraceFile
+ * TraceFile.
  */
 public class TraceFile {
 
+    /**
+     * Logger.
+     */
     private static final Logger LOGGER = Logger.getLogger(TraceFile.class);
 
-    private final String filename;
-    private long duration;
-    private long startTime;
+    /**
+     * traceFile filename.
+     */
+    private final transient String filename;
+    /**
+     * traceFile duration.
+     */
+    private final transient long duration;
+    /**
+     * traceFile start time.
+     */
+    private final transient long startTime;
+
+    /**
+     * traceFile end time.
+     */
+    private final transient long endTime;
+    /**
+     * nodes of the traceFile.
+     */
+    private final transient List nodeNames = new ArrayList();
+    /**
+     * total count of lines in traceFile.
+     */
+    private final transient long lines;
 
     /**
      * @return
@@ -25,8 +53,6 @@ public class TraceFile {
     public final long getEndTime() {
         return endTime;
     }
-
-    private long endTime;
 
     /**
      * @return
@@ -36,9 +62,6 @@ public class TraceFile {
         return nodeNames;
     }
 
-    private final List nodeNames = new ArrayList();
-    private long lines;
-
     /**
      * @param file
      * @param inputStream
@@ -47,43 +70,49 @@ public class TraceFile {
     public TraceFile(final String file, final InputStream inputStream) throws IOException {
 
 
-        startTime = (new Date()).getTime();
-        endTime = 0;
-        lines = 0;
+        long countStartTime = 0;
+        long countEndTime = 0;
         nodeNames.clear();
 
         filename = file;
 
         long max = 0, min = 0;
+        long countLines = 0;
 
-        final InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-        final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+        InputStreamReader inputStreamReader = null;
+        inputStreamReader = new InputStreamReader(inputStream);
+        BufferedReader bufferedReader = null;
+        bufferedReader = new BufferedReader(inputStreamReader);
 
         String strLine;
         long tempDuration = 0;
         //Read File Line By Line
         while ((strLine = bufferedReader.readLine()) != null) {
-            lines++;
+            countLines++;
             // Print the content on the console
-            final TraceMessage m = new TraceMessage(strLine);
-            final long date = m.getTime();
-            if (date < startTime) {
-                min = lines;
-                startTime = date;
-                tempDuration = endTime - startTime;
-            } else if (date > endTime) {
-                max = lines;
-                endTime = date;
-                tempDuration = endTime - startTime;
+            final TraceMessage message = new TraceMessage(strLine);
+            final long date = message.getTime();
+            if (date < countStartTime) {
+                min = countLines;
+                countStartTime = date;
+                tempDuration = countEndTime - countStartTime;
+            } else if (date > countEndTime) {
+                max = countLines;
+                countEndTime = date;
+                tempDuration = countEndTime - countStartTime;
             }
 
-            final String nodeurn = m.getUrn();
-            if (!nodeNames.contains(nodeurn)) {
-                nodeNames.add(nodeurn);
+            final String nodeUrn = message.getUrn();
+            if (!nodeNames.contains(nodeUrn)) {
+                nodeNames.add(nodeUrn);
             }
 
         }
         duration = tempDuration;
+        lines = countLines;
+        startTime = countStartTime;
+        endTime = countEndTime;
 
 
         LOGGER.info("Date Started(" + min + ") : " + new Date(startTime));

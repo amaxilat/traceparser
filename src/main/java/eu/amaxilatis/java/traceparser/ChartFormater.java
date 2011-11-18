@@ -10,76 +10,99 @@ import java.awt.BasicStroke;
  */
 public class ChartFormater {
 
+    /**
+     *
+     */
     private static ChartFormater instance = null;
 
+    /**
+     * Constructor.
+     */
     protected ChartFormater() {
         // Exists only to defeat instantiation.
     }
 
     /**
-     *
      * @return
      */
-    public static ChartFormater getInstance() {
-        if (instance == null) {
-            instance = new ChartFormater();
+    public ChartFormater getInstance() {
+        if (this.instance == null) {
+            this.instance = new ChartFormater();
         }
-        return instance;
+        return this.instance;
     }
 
+    /**
+     *
+     */
     private static Color backgroundColor = Color.white;
+    /**
+     *
+     */
     private static Color borderColor = Color.black;
+    /**
+     *
+     */
     private static boolean hasBorder = false;
+    /**
+     *
+     */
     private static boolean hideLegend = false;
+    /**
+     *
+     */
     private static float borderSize = 1;
+    /**
+     *
+     */
     private static boolean hideTitle;
 
     /**
      * @param instance
      */
-    public static void setInstance(ChartFormater instance) {
+    public static void setInstance(final ChartFormater instance) {
         ChartFormater.instance = instance;
     }
 
     /**
      * @param backgroundColor
      */
-    public static void setBackgroundColor(Color backgroundColor) {
+    public static void setBackgroundColor(final Color backgroundColor) {
         ChartFormater.backgroundColor = backgroundColor;
     }
 
     /**
      * @param borderColor
      */
-    public static void setBorderColor(Color borderColor) {
+    public static void setBorderColor(final Color borderColor) {
         ChartFormater.borderColor = borderColor;
     }
 
     /**
      * @param hasBorder
      */
-    public static void setHasBorder(boolean hasBorder) {
+    public static void setHasBorder(final boolean hasBorder) {
         ChartFormater.hasBorder = hasBorder;
     }
 
     /**
      * @param hideLegend
      */
-    public static void setHideLegend(boolean hideLegend) {
+    public static void setHideLegend(final boolean hideLegend) {
         ChartFormater.hideLegend = hideLegend;
     }
 
     /**
      * @param borderSize
      */
-    public static void setBorderSize(float borderSize) {
+    public static void setBorderSize(final float borderSize) {
         ChartFormater.borderSize = borderSize;
     }
 
     /**
      * @param hideTitle
      */
-    public static void setHideTitle(boolean hideTitle) {
+    public static void setHideTitle(final boolean hideTitle) {
         ChartFormater.hideTitle = hideTitle;
     }
 
@@ -100,14 +123,14 @@ public class ChartFormater {
     /**
      * @return
      */
-    public static boolean getHasBorder() {
+    public static boolean isBorder() {
         return hasBorder;
     }
 
     /**
      * @return
      */
-    public static boolean getHideLegend() {
+    public static boolean isHideLegend() {
         return hideLegend;
     }
 
@@ -121,7 +144,7 @@ public class ChartFormater {
     /**
      * @return
      */
-    public static boolean getHideTitle() {
+    public static boolean isHideTitle() {
         return hideTitle;
     }
 
@@ -144,6 +167,5 @@ public class ChartFormater {
         chart.setBorderStroke(new BasicStroke(ChartFormater.borderSize));
 
         return chart;
-
     }
 }

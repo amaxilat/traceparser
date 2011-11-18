@@ -18,9 +18,9 @@ public class PlotterControlPanel extends JPanel implements ActionListener {
     private final static JButton RESET_BUTTON = new JButton("Reset");
     private final static JTextField BG_COLOR = new JTextField("default");
     private final static JTextField BORDER_COLOR = new JTextField("default");
-    private final static JCheckBox HAS_BORDER = new JCheckBox("", ChartFormater.getHasBorder());
-    private final static JCheckBox HIDE_LEGEND = new JCheckBox("", ChartFormater.getHideLegend());
-    private final static JCheckBox HIDE_TITLE = new JCheckBox("", ChartFormater.getHideTitle());
+    private final static JCheckBox HAS_BORDER = new JCheckBox("", ChartFormater.isBorder());
+    private final static JCheckBox HIDE_LEGEND = new JCheckBox("", ChartFormater.isHideLegend());
+    private final static JCheckBox HIDE_TITLE = new JCheckBox("", ChartFormater.isHideTitle());
     private final static JSpinner BORDER_SIZE = new JSpinner();
 
     public PlotterControlPanel() {

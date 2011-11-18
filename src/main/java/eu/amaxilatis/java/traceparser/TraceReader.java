@@ -8,12 +8,13 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Observable;
 
 public class TraceReader extends Observable implements Runnable {
 
 
-    private final TraceFile file;
+    private final transient TraceFile file;
 
     private static final String URN = "Source [";
     private static final String TEXT = "Text [";
@@ -34,12 +35,12 @@ public class TraceReader extends Observable implements Runnable {
         try {
             // Open the file that is the first
             // command line parameter
-            final FileInputStream fstream = new FileInputStream(file.getFilename());
+            final FileInputStream stream = new FileInputStream(file.getFilename());
             // Get the object of DataInputStream
-            final DataInputStream dataInputStream = new DataInputStream(fstream);
-            final BufferedReader br = new BufferedReader(new InputStreamReader(dataInputStream));
+            final DataInputStream dataInputStream = new DataInputStream(stream);
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(dataInputStream));
             //Read File Line By Line
-            while ((strLine = br.readLine()) != null) {
+            while ((strLine = reader.readLine()) != null) {
                 // Print the content on the console
                 //LOGGER.debug(strLine);
                 //LOGGER.debug(extractNodeUrn(strLine) + "@" + extractDate(strLine) + ":" + extractText(strLine));
@@ -58,9 +59,9 @@ public class TraceReader extends Observable implements Runnable {
     }
 
     String extractNodeUrn(final String line) {
-        final int nodeurn_start = line.indexOf(URN) + URN.length();
-        final int nodeurn_stop = line.indexOf(END, nodeurn_start);
-        return line.substring(nodeurn_start, nodeurn_stop);
+        final int nodeurnStart = line.indexOf(URN) + URN.length();
+        final int nodeurnStop = line.indexOf(END, nodeurnStart);
+        return line.substring(nodeurnStart, nodeurnStop);
     }
 
     String extractText(final String line) {
@@ -73,7 +74,7 @@ public class TraceReader extends Observable implements Runnable {
         final int date_start = line.indexOf(DATE) + DATE.length();
         final int date_stop = line.indexOf("+02:00" + END, date_start);
         final String date = line.substring(date_start, date_stop);
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.'S");
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.'S", Locale.US);
         try {
             final Date parseDate = dateFormat.parse(date);
             return parseDate.getTime();
