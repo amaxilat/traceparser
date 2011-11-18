@@ -29,40 +29,40 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
     public static final String NAME = "Neighborhood Parser";
 
     private JTabbedPane tabbedPane;
-    private final JButton plotbutton;
-    private final JButton removeButton;
-    private final JTextField delimiterTf;
-    private final JTextField nbTf;
-    private final JTextField lostTf;
-    private final JTextField bidiTf;
-    private final JTextField dropTf;
-    private final JTextField plotTitleTf;
-    private final JTextField yLabelTf;
-    private final JTextField xLabelTf;
+    private final transient JButton plotbutton;
+    private final transient JButton removeButton;
+    private final transient JTextField delimiterTf;
+    private final transient JTextField nbTf;
+    private final transient JTextField lostTf;
+    private final transient JTextField bidiTf;
+    private final transient JTextField dropTf;
+    private final transient JTextField plotTitleTf;
+    private final transient JTextField yLabelTf;
+    private final transient JTextField xLabelTf;
 
-    private TraceFile file;
-    private String delimiter;
-    private Map<String, HashMap<String, Integer>> neighborsBidi;
-    private String prefixUni;
-    private String prefixLost;
-    private String prefixBidi;
-    private String prefixDrop;
+    private transient TraceFile file;
+    private transient String delimiter;
+    private transient Map<String, HashMap<String, Integer>> neighborsBidi;
+    private transient String prefixUni;
+    private transient String prefixLost;
+    private transient String prefixBidi;
+    private transient String prefixDrop;
 
-    private XYSeries[] series;
+    private transient XYSeries[] series;
 
     public NeighborhoodParser() {
         init();
 
         this.setLayout(new BorderLayout());
 
-        JPanel mainpanel = new JPanel(new GridLayout(0, 2, 30, 30));
-        JPanel leftmainpanel = new JPanel(new GridLayout(0, 1));
-        JPanel rightmainpanel = new JPanel(new GridLayout(0, 1));
-        mainpanel.add(leftmainpanel);
-        mainpanel.add(rightmainpanel);
+        final JPanel mainPanel = new JPanel(new GridLayout(0, 2, 30, 30));
+        final JPanel leftPanel = new JPanel(new GridLayout(0, 1));
+        final JPanel rightPanel = new JPanel(new GridLayout(0, 1));
+        mainPanel.add(leftPanel);
+        mainPanel.add(rightPanel);
 
         this.add(new JLabel(NAME), BorderLayout.NORTH);
-        this.add(mainpanel, BorderLayout.CENTER);
+        this.add(mainPanel, BorderLayout.CENTER);
 
         plotbutton = new JButton(super.PLOT);
         plotbutton.addActionListener(this);
@@ -76,21 +76,21 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
         dropTf = new JTextField(prefixDrop);
         lostTf = new JTextField(prefixLost);
 
-        leftmainpanel.add(new CouplePanel(new JLabel("delimiter"), delimiterTf));
-        leftmainpanel.add(new CouplePanel(new JLabel("Uni prefix"), nbTf));
-        leftmainpanel.add(new CouplePanel(new JLabel("Bidi prefix"), bidiTf));
-        leftmainpanel.add(new CouplePanel(new JLabel("Drop prefix"), dropTf));
-        leftmainpanel.add(new CouplePanel(new JLabel("Lost prefix"), lostTf));
+        leftPanel.add(new CouplePanel(new JLabel("delimiter"), delimiterTf));
+        leftPanel.add(new CouplePanel(new JLabel("Uni prefix"), nbTf));
+        leftPanel.add(new CouplePanel(new JLabel("Bidi prefix"), bidiTf));
+        leftPanel.add(new CouplePanel(new JLabel("Drop prefix"), dropTf));
+        leftPanel.add(new CouplePanel(new JLabel("Lost prefix"), lostTf));
 
 
-        rightmainpanel.add(new CouplePanel(plotbutton, removeButton));
+        rightPanel.add(new CouplePanel(plotbutton, removeButton));
 
         plotTitleTf = new JTextField("Neighborhood Statistics");
-        rightmainpanel.add(new CouplePanel(new JLabel("Plot title:"), plotTitleTf));
+        rightPanel.add(new CouplePanel(new JLabel("Plot title:"), plotTitleTf));
         xLabelTf = new JTextField("getTime in sec");
-        rightmainpanel.add(new CouplePanel(new JLabel("X axis Label:"), xLabelTf));
+        rightPanel.add(new CouplePanel(new JLabel("X axis Label:"), xLabelTf));
         yLabelTf = new JTextField("# of Nodes");
-        rightmainpanel.add(new CouplePanel(new JLabel("Y axis Label:"), yLabelTf));
+        rightPanel.add(new CouplePanel(new JLabel("Y axis Label:"), yLabelTf));
 
         reset();
 
