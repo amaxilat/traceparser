@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by IntelliJ IDEA.
@@ -40,19 +41,19 @@ public class TraceMessage {
     /**
      * text of message.
      */
-    private String text;
+    private transient String text;
     /**
      * urn of node.
      */
-    private String urn = null;
+    private transient String urn = null;
     /**
      * timestamp.
      */
-    private long time = 0;
+    private transient long time = 0;
     /**
      * level of message.
      */
-    private String level = null;
+    private transient String level = null;
     /**
      *
      */
@@ -142,7 +143,7 @@ public class TraceMessage {
         final int dateStop = dateStart + 23;
         final String date = line.substring(dateStart, dateStop);
         SimpleDateFormat dateFormat = null;
-        dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.'S");
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.'S", Locale.US);
         int timeOffset = 0;
         if (line.substring(dateStop).contains("+")) {
             final int offsetStart = line.indexOf('+', dateStop) + 1;

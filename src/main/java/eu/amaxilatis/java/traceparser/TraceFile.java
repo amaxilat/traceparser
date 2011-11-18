@@ -24,28 +24,28 @@ public class TraceFile {
     /**
      * traceFile filename.
      */
-    private final String filename;
+    private final transient String filename;
     /**
      * traceFile duration.
      */
-    private long duration;
+    private final transient long duration;
     /**
      * traceFile start time.
      */
-    private long startTime;
+    private final transient long startTime;
 
     /**
      * traceFile end time.
      */
-    private long endTime;
+    private final transient long endTime;
     /**
      * nodes of the traceFile.
      */
-    private final List nodeNames = new ArrayList();
+    private final transient List nodeNames = new ArrayList();
     /**
      * total count of lines in traceFile.
      */
-    private long lines;
+    private final transient long lines;
 
     /**
      * @return
@@ -70,14 +70,15 @@ public class TraceFile {
     public TraceFile(final String file, final InputStream inputStream) throws IOException {
 
 
-        startTime = (new Date()).getTime();
-        endTime = 0;
-        lines = 0;
+        long countStartTime = 0;
+        long countEndTime = 0;
         nodeNames.clear();
 
         filename = file;
 
         long max = 0, min = 0;
+        long countLines = 0;
+
 
         InputStreamReader inputStreamReader = null;
         inputStreamReader = new InputStreamReader(inputStream);
@@ -88,27 +89,30 @@ public class TraceFile {
         long tempDuration = 0;
         //Read File Line By Line
         while ((strLine = bufferedReader.readLine()) != null) {
-            lines++;
+            countLines++;
             // Print the content on the console
-            final TraceMessage m = new TraceMessage(strLine);
-            final long date = m.getTime();
-            if (date < startTime) {
-                min = lines;
-                startTime = date;
-                tempDuration = endTime - startTime;
-            } else if (date > endTime) {
-                max = lines;
-                endTime = date;
-                tempDuration = endTime - startTime;
+            final TraceMessage message = new TraceMessage(strLine);
+            final long date = message.getTime();
+            if (date < countStartTime) {
+                min = countLines;
+                countStartTime = date;
+                tempDuration = countEndTime - countStartTime;
+            } else if (date > countEndTime) {
+                max = countLines;
+                countEndTime = date;
+                tempDuration = countEndTime - countStartTime;
             }
 
-            final String nodeurn = m.getUrn();
-            if (!nodeNames.contains(nodeurn)) {
-                nodeNames.add(nodeurn);
+            final String nodeUrn = message.getUrn();
+            if (!nodeNames.contains(nodeUrn)) {
+                nodeNames.add(nodeUrn);
             }
 
         }
         duration = tempDuration;
+        lines = countLines;
+        startTime = countStartTime;
+        endTime = countEndTime;
 
 
         LOGGER.info("Date Started(" + min + ") : " + new Date(startTime));

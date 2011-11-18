@@ -30,21 +30,21 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
     private static final String propfilename = "traceparser.properties";
 
 
-    private javax.swing.JButton addParser;
-    private JList availableParsersList;
-    private javax.swing.JButton savePropertiesButton;
-    private JButton openFileChooserButton;
-    private JButton refreshTraceButton;
+    private transient javax.swing.JButton addParser;
+    private transient JList availableParsers;
+    private transient javax.swing.JButton saveProperties;
+    private transient JButton openFileChooser;
+    private transient JButton refreshTrace;
 
 
-    private javax.swing.JLabel selectedFileText;
-    private javax.swing.JLabel linesFileText;
-    private javax.swing.JLabel durationFileText;
-    private javax.swing.JLabel nodesFileText;
+    private transient javax.swing.JLabel selectedFileText;
+    private transient javax.swing.JLabel linesFileText;
+    private transient javax.swing.JLabel durationFileText;
+    private transient javax.swing.JLabel nodesFileText;
 
-    private TraceFile mytracefile;
+    private transient TraceFile mytracefile;
 
-    private JTabbedPane jTabbedPane1;
+    private transient JTabbedPane jTabbedPane1;
 
 
     /**
@@ -68,9 +68,9 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         try {
-            properties.load(this.getClass().getClassLoader().getResourceAsStream(propfilename));
+            properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(propfilename));
         } catch (IOException e) {
             LOGGER.error("could not load property file!");
         }
@@ -78,7 +78,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         jTabbedPane1 = new JTabbedPane();
 
 
-        JPanel fileOptionsPanel = new JPanel();
+        final JPanel fileOptionsPanel = new JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -87,37 +87,37 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         addParser = new javax.swing.JButton("Add Parser");
         addParser.addActionListener(this);
 
-        savePropertiesButton = new javax.swing.JButton("Save Properties");
-        savePropertiesButton.addActionListener(this);
+        saveProperties = new javax.swing.JButton("Save Properties");
+        saveProperties.addActionListener(this);
 
-        DefaultListModel listModel = new DefaultListModel();
+        final DefaultListModel listModel = new DefaultListModel();
         listModel.addElement(NeighborhoodParser.NAME);
         listModel.addElement(ClustersParser.NAME);
         listModel.addElement(EventParser.Name);
         listModel.addElement(SendParser.NAME);
         listModel.addElement(SensorAggregationParser.NAME);
-        availableParsersList = new JList(listModel);
+        availableParsers = new JList(listModel);
 
 
-        fileOptionsPanel.add(new JLabel(new ImageIcon(this.getClass().getClassLoader().getResource("favicon.png"), "")));
+        fileOptionsPanel.add(new JLabel(new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("favicon.png"), "")));
 
         selectedFileText = new JLabel("no file selected");
         fileOptionsPanel.add(selectedFileText);
         setSize(fileOptionsPanel);
 
-        openFileChooserButton = new JButton("Open File...");
-        openFileChooserButton.addActionListener(this);
-        setSize(openFileChooserButton);
-        fileOptionsPanel.add(openFileChooserButton);
+        openFileChooser = new JButton("Open File...");
+        openFileChooser.addActionListener(this);
+        setSize(openFileChooser);
+        fileOptionsPanel.add(openFileChooser);
 
 
         linesFileText = new JLabel("0");
         fileOptionsPanel.add(new JLabel("Trace Lines"));
         fileOptionsPanel.add(linesFileText);
 
-        refreshTraceButton = new JButton("Refresh Trace");
-        refreshTraceButton.addActionListener(this);
-        fileOptionsPanel.add(refreshTraceButton);
+        refreshTrace = new JButton("Refresh Trace");
+        refreshTrace.addActionListener(this);
+        fileOptionsPanel.add(refreshTrace);
 
         durationFileText = new JLabel("0");
         fileOptionsPanel.add(new JLabel("Trace Duration"));
@@ -136,9 +136,9 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
         getContentPane().setLayout(new BorderLayout());
         final JPanel buttonsmain = new JPanel(new GridLayout(1, 3, 10, 10));
-        buttonsmain.add(availableParsersList);
+        buttonsmain.add(availableParsers);
         buttonsmain.add(addParser);
-        buttonsmain.add(savePropertiesButton);
+        buttonsmain.add(saveProperties);
         getContentPane().add(buttonsmain, BorderLayout.PAGE_END);
         jTabbedPane1.setPreferredSize(new Dimension(1000, 500));
         getContentPane().add(jTabbedPane1, BorderLayout.CENTER);
@@ -164,7 +164,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 //        });
 //    }
 
-    private void setSize(Component obj) {
+    private void setSize(final Component obj) {
         obj.setPreferredSize(new Dimension(150, 40));
         obj.setMaximumSize(new Dimension(150, 40));
         obj.setMinimumSize(new Dimension(150, 40));
@@ -174,15 +174,13 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
     // End of variables declaration//GEN-END:variables
 
-    public void actionPerformed(ActionEvent actionEvent) {
-        //To change body of implemented methods use File | Settings | File Templates.
-        final Object e = actionEvent.getSource();
-        if (e.equals(addParser)) {
+    public void actionPerformed(final ActionEvent actionEvent) {
+        if (actionEvent.getSource().equals(addParser)) {
 
             try {
                 AbstractParser panel2add = null;
 
-                final String title = availableParsersList.getSelectedValue().toString();
+                final String title = availableParsers.getSelectedValue().toString();
 
                 if (title.equals(NeighborhoodParser.NAME)) {
                     panel2add = new NeighborhoodParser(jTabbedPane1);
@@ -201,64 +199,26 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
                     jTabbedPane1.addTab(title, panel2add);
                     jTabbedPane1.updateUI();
                 }
-            } catch (NullPointerException ignore) {
             } catch (Exception e1) {
-                e1.printStackTrace();
+                LOGGER.debug(e1);
             }
 
-        } else if ((e.equals(openFileChooserButton)) || ((e.equals(selectedFileText)))) {
-            JFileChooser chooser = new JFileChooser("~/");
+        } else if ((actionEvent.getSource().equals(openFileChooser)) || ((actionEvent.getSource().equals(selectedFileText)))) {
+            final JFileChooser chooser = new JFileChooser("~/");
             chooser.setDialogTitle("Select trace file to load");
-            int returnVal = chooser.showOpenDialog(chooser);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                if (chooser.getSelectedFile().canRead()) {
-                    final String filename2open = chooser.getSelectedFile().getAbsolutePath();
-                    open_trace(filename2open);
-                }
+            final int returnVal = chooser.showOpenDialog(chooser);
+            if ((returnVal == JFileChooser.APPROVE_OPTION) && (chooser.getSelectedFile().canRead())) {
+                final String filename2open = chooser.getSelectedFile().getAbsolutePath();
+                open_trace(filename2open);
             }
-        } else if (e.equals(refreshTraceButton)) {
-            open_trace(mytracefile.getFilename());
 
-        } else if (e.equals(savePropertiesButton)) {
-//            LOGGER.info("Writing properties");
-//            properties.setProperty("parser.filename", mytracefile.filename());
-//            String parserTemplates = "";
-//            for (int i = 0; i < properties.getProperty("parser.templates").split(",").length; i++) {
-//
-//            }
-//
-//            properties.setProperty("parser.templates", parserTemplates);
-//            LOGGER.info("parset.templates=" + parserTemplates.substring(0, parserTemplates.length() - 1));
-//
-//            LOGGER.info("plotter.aggregate=" + aggregatePlots.isSelected());
-//            properties.setProperty("plotter.aggregate", aggregatePlots.isSelected() ? "true" : "false");
-//            LOGGER.info("plotter.messages=" + aggregatePlots.isSelected());
-//            properties.setProperty("plotter.messages", messagesPlots.isSelected() ? "true" : "false");
-//            LOGGER.info("plotter.clusters=" + aggregatePlots.isSelected());
-//            properties.setProperty("plotter.clusters", clustersPlots.isSelected() ? "true" : "false");
-//            LOGGER.info("plotter.events=" + aggregatePlots.isSelected());
-//            properties.setProperty("plotter.events", eventsPlots.isSelected() ? "true" : "false");
-//            LOGGER.info("plotter.neighborhood=" + neighborhoodPlots.isSelected());
-//            properties.setProperty("plotter.neighborhood", neighborhoodPlots.isSelected() ? "true" : "false");
-//
-//
-//            properties.setProperty("plotter.labels.messages", labelsMessages[0].getText() + "," + labelsMessages[1].getText() + "," + labelsMessages[2].getText());
-//            properties.setProperty("plotter.labels.clusters", labelsClusters[0].getText() + "," + labelsClusters[1].getText() + "," + labelsClusters[2].getText());
-//            properties.setProperty("plotter.labels.events", labelsEvents[0].getText() + "," + labelsEvents[1].getText() + "," + labelsEvents[2].getText());
-//            properties.setProperty("plotter.labels.neighborhood", labelsNeighborhood[0].getText() + "," + labelsNeighborhood[1].getText() + "," + labelsNeighborhood[2].getText());
-//
-//            // Write properties file.
-//            try {
-//                properties.store(new FileOutputStream(propfilename), null);
-//            } catch (IOException a) {
-//                LOGGER.warn("Could not write properties file");
-//
-//            }
+        } else if (actionEvent.getSource().equals(refreshTrace)) {
+            open_trace(mytracefile.getFilename());
         }
 
     }
 
-    private void open_trace(String filename) {
+    private void open_trace(final String filename) {
         LOGGER.debug("opening " + filename);
         durationFileText.setText("calculating");
         selectedFileText.setText(filename);
