@@ -27,7 +27,9 @@ public class TraceReader extends Observable implements Runnable {
         this.file = file;
     }
 
-
+    /**
+     *
+     */
     public void run() {
         int count = 0;
 
