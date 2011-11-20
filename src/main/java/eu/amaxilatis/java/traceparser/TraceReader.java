@@ -23,7 +23,9 @@ public class TraceReader extends Observable implements Runnable {
     public TraceReader() {
     }
 
-
+    /**
+     *
+     */
     public void run() {
         int count = 0;
 
