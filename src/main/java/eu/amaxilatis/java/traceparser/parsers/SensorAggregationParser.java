@@ -5,7 +5,6 @@ import eu.amaxilatis.java.traceparser.TraceFile;
 import eu.amaxilatis.java.traceparser.TraceMessage;
 import eu.amaxilatis.java.traceparser.TraceReader;
 import eu.amaxilatis.java.traceparser.panels.NodeSelectorPanel;
-import eu.amaxilatis.java.traceparser.panels.CouplePanel;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -16,12 +15,11 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 
-public class SensorAggregationParser extends AbstractParser implements Observer, ActionListener {
+public class SensorAggregationParser extends GenericParser implements Observer, ActionListener {
 
     private static final Logger LOGGER = Logger.getLogger(SensorAggregationParser.class);
     public static final String NAME = "SensorAggregation Parser";
@@ -49,45 +47,33 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
 
 
     public SensorAggregationParser(final JTabbedPane jTabbedPane1) {
+        super(NAME);
         tabbedPane = jTabbedPane1;
         init();
-        this.setLayout(new BorderLayout());
-
-        final JPanel mainPanel = new JPanel(new GridLayout(0, 2, 30, 30));
-        final JPanel leftMainPanel = new JPanel(new GridLayout(0, 1));
-        final JPanel rightMainPanel = new JPanel(new GridLayout(0, 1));
-        mainPanel.add(leftMainPanel);
-        mainPanel.add(rightMainPanel);
-
-        this.add(new JLabel(NAME), BorderLayout.NORTH);
-        this.add(mainPanel, BorderLayout.CENTER);
-
 
         plotButton = new JButton(super.PLOT);
         plotButton.addActionListener(this);
         removeButton = new JButton(super.REMOVE);
         removeButton.addActionListener(this);
-        rightMainPanel.add(new CouplePanel(plotButton, removeButton));
+        addRight(plotButton, removeButton);
 
         delimiterTf = new JTextField(DELIMITER);
         meanTf = new JTextField(SENS_PREFIX);
         agTf = new JTextField(AG_PREFIX);
         startTf = new JTextField("" + startTime);
 
-        leftMainPanel.add(new CouplePanel(new JLabel("delimiter"), delimiterTf));
-        leftMainPanel.add(new CouplePanel(new JLabel("Mean Value"), meanTf));
-        leftMainPanel.add(new CouplePanel(new JLabel("Aggregated Value"), agTf));
-        leftMainPanel.add(new CouplePanel(new JLabel("Startup Time"), startTf));
+        addLeft(new JLabel("delimiter"), delimiterTf);
+        addLeft(new JLabel("Mean Value"), meanTf);
+        addLeft(new JLabel("Aggregated Value"), agTf);
+        addLeft(new JLabel("Startup Time"), startTf);
 
 
         plotTitleTf = new JTextField("Semantics Statistics");
-        rightMainPanel.add(new CouplePanel(new JLabel("Plot title:"), plotTitleTf));
+        addRight(new JLabel("Plot title:"), plotTitleTf);
         xLabelTf = new JTextField("getTime in sec");
-        rightMainPanel.add(new CouplePanel(new JLabel("X axis Label:"), xLabelTf));
+        addRight(new JLabel("X axis Label:"), xLabelTf);
         yLabelTf = new JTextField("Sensor Value");
-        rightMainPanel.add(new CouplePanel(new JLabel("Y axis Label:"), yLabelTf));
-
-
+        addRight(new JLabel("Y axis Label:"), yLabelTf);
     }
 
     private void init() {

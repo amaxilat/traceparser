@@ -5,7 +5,6 @@ import eu.amaxilatis.java.traceparser.TraceFile;
 import eu.amaxilatis.java.traceparser.TraceMessage;
 import eu.amaxilatis.java.traceparser.TraceReader;
 import eu.amaxilatis.java.traceparser.panels.NodeSelectorPanel;
-import eu.amaxilatis.java.traceparser.panels.CouplePanel;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -23,7 +22,7 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-public class ClustersParser extends AbstractParser implements Observer, ActionListener {
+public class ClustersParser extends GenericParser implements Observer, ActionListener {
 
     public static final String NAME = "Clusters Parser";
     private static final Logger LOGGER = Logger.getLogger(ClustersParser.class);
@@ -51,41 +50,32 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
 
 
     public ClustersParser(final JTabbedPane jTabbedPane1) {
+        super(NAME);
         this.tabbedPane = jTabbedPane1;
         init();
 
         this.setLayout(new BorderLayout());
 
-        final JPanel mainpanel = new JPanel(new GridLayout(0, 2, 30, 30));
-        final JPanel leftmainpanel = new JPanel(new GridLayout(0, 1));
-        final JPanel rightmainpanel = new JPanel(new GridLayout(0, 1));
-        mainpanel.add(leftmainpanel);
-        mainpanel.add(rightmainpanel);
-
-        this.add(new JLabel(NAME), BorderLayout.NORTH);
-        this.add(mainpanel, BorderLayout.CENTER);
-
-
         delimiterTf = new JTextField(delimiter);
         templateTf = new JTextField(template);
 
-        leftmainpanel.add(new CouplePanel(new JLabel("delimiter"), delimiterTf));
-        leftmainpanel.add(new CouplePanel(new JLabel("Template"), templateTf));
+        addLeft(new JLabel("delimiter"), delimiterTf);
+        addLeft(new JLabel("Template"), templateTf);
 
 
         plot = new JButton(super.PLOT);
         plot.addActionListener(this);
         remove = new JButton(super.REMOVE);
         remove.addActionListener(this);
-        rightmainpanel.add(new CouplePanel(plot, remove));
+        addRight(plot, remove);
 
 
         plotTitleTf = new TextField(PLOT_TITLE);
-        rightmainpanel.add(new CouplePanel(new JLabel("Plot title:"), plotTitleTf));
+        addRight(new JLabel("Plot title:"), plotTitleTf);
         xLabelTf = new TextField(X_LABEL);
-        rightmainpanel.add(new CouplePanel(new JLabel("X axis Label:"), xLabelTf));
+        addRight(new JLabel("X axis Label:"), xLabelTf);
         yLabelTf = new TextField(Y_LABEL);
-        rightmainpanel.add(new CouplePanel(new JLabel("Y axis Label:"), yLabelTf));
+        addRight(new JLabel("Y axis Label:"), yLabelTf);
 
     }
 
@@ -194,7 +184,7 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
         }
     }
 
-    private void setCluster(final String node,final String cluster,final int time) {
+    private void setCluster(final String node, final String cluster, final int time) {
         LOGGER.debug(node + "-" + cluster + "@" + time);
         for (int i = time; i < duration - 1; i++) {
             clusters[i].put(node, cluster);

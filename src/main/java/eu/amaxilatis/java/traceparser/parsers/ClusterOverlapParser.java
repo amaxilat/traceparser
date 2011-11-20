@@ -4,7 +4,6 @@ import eu.amaxilatis.java.traceparser.ChartFormater;
 import eu.amaxilatis.java.traceparser.TraceFile;
 import eu.amaxilatis.java.traceparser.TraceMessage;
 import eu.amaxilatis.java.traceparser.TraceReader;
-import eu.amaxilatis.java.traceparser.panels.CouplePanel;
 import eu.amaxilatis.java.traceparser.panels.NodeSelectorPanel;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
@@ -23,7 +22,7 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-public class ClusterOverlapParser extends AbstractParser implements Observer, ActionListener {
+public class ClusterOverlapParser extends GenericParser implements Observer, ActionListener {
 
     private static final Logger LOGGER = Logger.getLogger(ClustersParser.class);
     public static final String NAME = "ClusterOverlap Parser";
@@ -41,7 +40,6 @@ public class ClusterOverlapParser extends AbstractParser implements Observer, Ac
     private final JTextField yLabelTf;
     private final JTextField clTypeTf;
 
-    private long duration;
     private Map<String, Node> nodes;
     private Map<String, SemanticEntity> semanticEntityMap;
     private int pid, pcluster, pparent, ptname, ptid;
@@ -57,44 +55,35 @@ public class ClusterOverlapParser extends AbstractParser implements Observer, Ac
 
 
     public ClusterOverlapParser(JTabbedPane jTabbedPane1) {
+        super(NAME);
         this.tabbedPane = jTabbedPane1;
 
         setTemplate("CLL;ID;CLUSTER;PARENT");
 
         this.setLayout(new BorderLayout());
-
-        JPanel mainpanel = new JPanel(new GridLayout(0, 2, 30, 30));
-        JPanel leftmainpanel = new JPanel(new GridLayout(0, 1));
-        JPanel rightmainpanel = new JPanel(new GridLayout(0, 1));
-        mainpanel.add(leftmainpanel);
-        mainpanel.add(rightmainpanel);
-
-        this.add(new JLabel(NAME), BorderLayout.NORTH);
-        this.add(mainpanel, BorderLayout.CENTER);
-
-
+       
         delimiterTf = new JTextField(delimiter);
         templateTf = new JTextField(template);
         clTypeTf = new JTextField(clType);
 
-        leftmainpanel.add(new CouplePanel(new JLabel("delimiter"), delimiterTf));
-        leftmainpanel.add(new CouplePanel(new JLabel("Template"), templateTf));
-        leftmainpanel.add(new CouplePanel(new JLabel("Cluster Template"), clTypeTf));
+        addLeft(new JLabel("delimiter"), delimiterTf);
+        addLeft(new JLabel("Template"), templateTf);
+        addLeft(new JLabel("Cluster Template"), clTypeTf);
 
 
         plotButton = new JButton(super.PLOT);
         plotButton.addActionListener(this);
         removeButton = new JButton(super.REMOVE);
         removeButton.addActionListener(this);
-        rightmainpanel.add(new CouplePanel(plotButton, removeButton));
+        addRight(plotButton, removeButton);
 
 
         plotTitleTf = new JTextField(PLOT_TITLE);
-        rightmainpanel.add(new CouplePanel(new JLabel("Plot title:"), plotTitleTf));
+        addRight(new JLabel("Plot title:"), plotTitleTf);
         xLabelTf = new JTextField(X_LABEL);
-        rightmainpanel.add(new CouplePanel(new JLabel("X axis Label:"), xLabelTf));
+        addRight(new JLabel("X axis Label:"), xLabelTf);
         yLabelTf = new JTextField(Y_LABEL);
-        rightmainpanel.add(new CouplePanel(new JLabel("Y axis Label:"), yLabelTf));
+        addRight(new JLabel("Y axis Label:"), yLabelTf);
 
 
         init();
@@ -170,38 +159,6 @@ public class ClusterOverlapParser extends AbstractParser implements Observer, Ac
     }
 
     public XYSeries[] getSeries() {
-
-//        XYSeries[] series = new XYSeries[2];
-//        series[0] = new XYSeries("Clusters");
-//        series[1] = new XYSeries("Avg. Size of Cluster");
-
-//        LOGGER.debug(duration);
-//        for (int i = 0; i < duration; i++) {
-//            int cluster_count = 0;
-//            int simple_count = 0;
-////            LOGGER.debug(clusters[i].keySet().size());
-////            for (String key : clusters[i].keySet()) {
-////
-////                if (clusters[i].get(key).equals(key)) {
-////                    LOGGER.debug(key + " - " + clusters[i].get(key) + " N");
-////                    cluster_count++;
-////                } else {
-////                    LOGGER.debug(key + " - " + clusters[i].get(key));
-////                    simple_count++;
-////                }
-////            }
-//
-//
-//            series[0].add(i, cluster_count);
-//            if (cluster_count > 0) {
-//                //LOGGER.info("Clusters : " + cluster_count + " clSize : " + (simple_count + cluster_count) / cluster_count);
-//                series[1].add(i, (simple_count + cluster_count) / cluster_count);
-//            } else {
-//                //LOGGER.info("Clusters : " + cluster_count + " clSize : 0");
-//                series[1].add(i, 0);
-//            }
-//            LOGGER.debug("setting " + i);
-//        }
         XYSeriesCollection collection = new XYSeriesCollection();
         collection.addSeries(avgClusters);
 
@@ -210,11 +167,7 @@ public class ClusterOverlapParser extends AbstractParser implements Observer, Ac
             series[i] = collection.getSeries(i);
         }
 
-        return series;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public XYSeries[] getSeries_aggregate() {
-        return getSeries();
+        return series;
     }
 
     void setTemplate(String template) {
@@ -246,14 +199,14 @@ public class ClusterOverlapParser extends AbstractParser implements Observer, Ac
         }
     }
 
-    private void setCluster(String node, String clust, int time) {
+    private void setCluster(String node, String cluster, int time) {
         Node tempNode;
         if (nodes.containsKey(node)) {
             tempNode = nodes.get(node);
-            tempNode.setSemantic(clust, "1");
+            tempNode.setSemantic(cluster, "1");
         } else {
             tempNode = new Node(node);
-            tempNode.setSemantic(clust, "1");
+            tempNode.setSemantic(cluster, "1");
         }
         nodes.put(node, tempNode);
 
@@ -304,8 +257,6 @@ public class ClusterOverlapParser extends AbstractParser implements Observer, Ac
     private void reset() {
         delimiter = delimiterTf.getText();
         template = templateTf.getText();
-
-        duration = (int) (TraceFile.getInstance().getDuration() / 1000 + 1);
 
 
         nodes = new HashMap<String, Node>();

@@ -4,7 +4,6 @@ import eu.amaxilatis.java.traceparser.TraceFile;
 import eu.amaxilatis.java.traceparser.TraceMessage;
 import eu.amaxilatis.java.traceparser.TraceReader;
 import eu.amaxilatis.java.traceparser.panels.NodeSelectorPanel;
-import eu.amaxilatis.java.traceparser.panels.CouplePanel;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -26,7 +25,7 @@ import java.util.Observer;
  * Date: 7/2/11
  * Time: 2:10 PM
  */
-public class EventParser extends AbstractParser implements Observer, ActionListener {
+public class EventParser extends GenericParser implements Observer, ActionListener {
 
     public static final String NAME = "Events Parser";
     private static final Logger LOGGER = Logger.getLogger(EventParser.class);
@@ -48,38 +47,28 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
     private transient JButton remove;
 
     public EventParser(final JTabbedPane jTabbedPane1) {
+        super(NAME);
         this.tabbedPane = jTabbedPane1;
-
-        this.setLayout(new BorderLayout());
-
-        final JPanel mainPanel = new JPanel(new GridLayout(0, 2, 30, 30));
-        final JPanel leftPanel = new JPanel(new GridLayout(0, 1));
-        final JPanel rightPanel = new JPanel(new GridLayout(0, 1));
-        mainPanel.add(leftPanel);
-        mainPanel.add(rightPanel);
-
-        this.add(new JLabel(NAME), BorderLayout.NORTH);
-        this.add(mainPanel, BorderLayout.CENTER);
 
         plot = new JButton(super.PLOT);
         plot.addActionListener(this);
         remove = new JButton(super.REMOVE);
         remove.addActionListener(this);
-        rightPanel.add(new CouplePanel(plot, remove));
+        addRight(plot, remove);
 
 
         partitionerTf = new JTextField(PARTITIONER);
         templatesTf = new JTextField(templates);
-        leftPanel.add(new CouplePanel(new JLabel("partitioner"), partitionerTf));
-        leftPanel.add(new CouplePanel(new JLabel("templates"), templatesTf));
+        addLeft(new JLabel("partitioner"), partitionerTf);
+        addLeft(new JLabel("templates"), templatesTf);
 
 
         plotTitle = new TextField("Event Statistics");
-        rightPanel.add(new CouplePanel(new JLabel("Plot title:"), plotTitle));
+        addRight(new JLabel("Plot title:"), plotTitle);
         xLabel = new TextField("getTime in sec");
-        rightPanel.add(new CouplePanel(new JLabel("X axis Label:"), xLabel));
+        addRight(new JLabel("X axis Label:"), xLabel);
         yLabel = new TextField("# of Events");
-        rightPanel.add(new CouplePanel(new JLabel("Y axis Label:"), yLabel));
+        addRight(new JLabel("Y axis Label:"), yLabel);
 
         init();
 
@@ -232,7 +221,7 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
         eventTypes = prefixes.length;
 
         duration = TraceFile.getInstance().getDuration() / 1000 + 1;
-        LOGGER.info(eventTypes +" dur"+duration);
+        LOGGER.info(eventTypes + " dur" + duration);
         events = new int[eventTypes][(int) duration];
 
         for (int type = 0; type < eventTypes; type++) {

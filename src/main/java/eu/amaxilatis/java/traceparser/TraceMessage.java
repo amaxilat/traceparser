@@ -58,100 +58,63 @@ public class TraceMessage {
      *
      */
     private static final int MILLIS_IN_HOUR = 60 * 60 * 1000;
+    /**
+     *
+     */
+    private String strLine="";
 
 
     /**
-     * @param strLine the message text
+     *
      */
-    public TraceMessage(final String strLine) {
-
-        init(strLine);
-
+    public TraceMessage() {
     }
 
     /**
      * @param strLine the string message
      */
-    private void init(final String strLine) {
-        try {
-            urn = extractNodeUrn(strLine);
-            text = extractText(strLine);
-            time = extractDate(strLine);
-            level = extractLevel(strLine);
-        } catch (Exception e) {
-            LOGGER.error("Error: " + e);
-        }
-    }
-
-    /**
-     * @return the message timestamp.
-     */
-    public final long getTime() {
-        return time;
-    }
-
-    /**
-     * @return the message text.
-     */
-    public final String getText() {
-        return text;
-    }
-
-    /**
-     * @return the experiment node urn.
-     */
-    public final String getUrn() {
-        return urn;
-    }
-
-    /**
-     * @return the message level type.
-     */
-    public final String getLevel() {
-        return level;
+    public void setString(final String strLine) {
+        this.strLine=strLine;
     }
 
 
     /**
-     * @param line message received
      * @return
      */
-    private String extractText(final String line) {
-        final int textStart = line.indexOf(TEXTTEXT) + TEXTTEXT.length();
-        final int textStop = line.indexOf(ENDTEXT, textStart);
-        return line.substring(textStart, textStop);
+    public String getText() {
+        final int textStart = strLine.indexOf(TEXTTEXT) + TEXTTEXT.length();
+        final int textStop = strLine.indexOf(ENDTEXT, textStart);
+        return strLine.substring(textStart, textStop);
     }
 
     /**
-     * @param line
      * @return
      */
-    private String extractLevel(final String line) {
-        final int levelStart = line.indexOf(LEVELTEXT) + LEVELTEXT.length();
-        final int levelStop = line.indexOf(ENDTEXT, levelStart);
-        return line.substring(levelStart, levelStop);
+    public String getLevel() {
+        final int levelStart = strLine.indexOf(LEVELTEXT) + LEVELTEXT.length();
+        final int levelStop = strLine.indexOf(ENDTEXT, levelStart);
+        return strLine.substring(levelStart, levelStop);
     }
 
     /**
-     * @param line
      * @return
      */
-    private long extractDate(final String line) {
-        final int dateStart = line.indexOf(DATETEXT) + DATETEXT.length();
+    public long getTime() {
+        final int dateStart = strLine.indexOf(DATETEXT) + DATETEXT.length();
 
-        //final int dateStop = line.indexOf("+", dateStart);
+        //final int dateStop = strLine.indexOf("+", dateStart);
         final int dateStop = dateStart + 23;
-        final String date = line.substring(dateStart, dateStop);
+        final String date = strLine.substring(dateStart, dateStop);
         SimpleDateFormat dateFormat = null;
         dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.'S", Locale.US);
         int timeOffset = 0;
-        if (line.substring(dateStop).contains("+")) {
-            final int offsetStart = line.indexOf('+', dateStop) + 1;
-            final String time = line.substring(offsetStart, offsetStart + 2);
+        if (strLine.substring(dateStop).contains("+")) {
+            final int offsetStart = strLine.indexOf('+', dateStop) + 1;
+            final String time = strLine.substring(offsetStart, offsetStart + 2);
             timeOffset = -1 * Integer.parseInt(time);
-        } else if (line.substring(dateStop).contains("-")) {
-            final int offsetStart = line.indexOf('-', dateStop) + 1;
-            final String time = line.substring(offsetStart, offsetStart + 2);
+        } else if (strLine.substring(dateStop).contains("-")) {
+            final int offsetStart = strLine.indexOf('-', dateStop) + 1;
+            final String time = strLine.substring(offsetStart, offsetStart + 2);
             timeOffset = Integer.parseInt(time);
         }
         try {
@@ -166,12 +129,11 @@ public class TraceMessage {
     }
 
     /**
-     * @param line
      * @return
      */
-    private String extractNodeUrn(final String line) {
-        final int nodeUrnStart = line.indexOf(URNTEXT) + URNTEXT.length();
-        final int nodeUrnStop = line.indexOf(ENDTEXT, nodeUrnStart);
-        return line.substring(nodeUrnStart, nodeUrnStop);
+    public String getUrn() {
+        final int nodeUrnStart = strLine.indexOf(URNTEXT) + URNTEXT.length();
+        final int nodeUrnStop = strLine.indexOf(ENDTEXT, nodeUrnStart);
+        return strLine.substring(nodeUrnStart, nodeUrnStop);
     }
 }

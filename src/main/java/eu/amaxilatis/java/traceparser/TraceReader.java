@@ -16,10 +16,12 @@ public class TraceReader extends Observable implements Runnable {
     private static final String URN = "Source [";
     private static final String TEXT = "Text [";
     private static final String DATE = "Time [";
-    private static final String levelText = "Level [";
     private static final String END = "]";
     private static final Logger LOGGER = Logger.getLogger(TraceReader.class);
 
+    /**
+     * default constructor
+     */
     public TraceReader() {
     }
 
@@ -38,11 +40,13 @@ public class TraceReader extends Observable implements Runnable {
             final DataInputStream dataInputStream = new DataInputStream(stream);
             final BufferedReader reader = new BufferedReader(new InputStreamReader(dataInputStream));
             //Read File Line By Line
+            final TraceMessage message = new TraceMessage();
             while ((strLine = reader.readLine()) != null) {
                 // Print the content on the console
                 //LOGGER.debug(strLine);
                 //LOGGER.debug(extractNodeUrn(strLine) + "@" + extractDate(strLine) + ":" + extractText(strLine));
-                notifyObservers(new TraceMessage(strLine));
+                message.setString(strLine);
+                notifyObservers(message);
                 notifyObservers();
                 this.setChanged();
 

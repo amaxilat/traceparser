@@ -43,7 +43,7 @@ public class TraceFile {
     /**
      * nodes of the traceFile.
      */
-    private transient List nodeNames = new ArrayList();
+    private final transient List nodeNames = new ArrayList();
     /**
      * total count of lines in traceFile.
      */
@@ -51,7 +51,7 @@ public class TraceFile {
     /**
      * instance of singletron
      */
-    private static TraceFile instance=null;
+    private static TraceFile instance = null;
 
     /**
      * @return
@@ -68,8 +68,8 @@ public class TraceFile {
         return nodeNames;
     }
 
-    public static TraceFile getInstance(){
-          if (instance == null) {
+    public static TraceFile getInstance() {
+        if (instance == null) {
             instance = new TraceFile();
         }
         return instance;
@@ -78,9 +78,10 @@ public class TraceFile {
     /**
      * singletron constructor
      */
-    public TraceFile(){
+    public TraceFile() {
         //nothing
     }
+
     /**
      * @param file
      * @param inputStream
@@ -106,11 +107,12 @@ public class TraceFile {
 
         String strLine;
         long tempDuration = 0;
+        final TraceMessage message = new TraceMessage();
         //Read File Line By Line
         while ((strLine = bufferedReader.readLine()) != null) {
             countLines++;
             // Print the content on the console
-            final TraceMessage message = new TraceMessage(strLine);
+            message.setString(strLine);
             final long date = message.getTime();
             if (date < countStartTime) {
                 min = countLines;

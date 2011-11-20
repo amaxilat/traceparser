@@ -27,12 +27,11 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
     // Variables declaration - do not modify//GEN-BEGIN:variables
 
     private static final Logger LOGGER = Logger.getLogger(TraceParserFrame.class);
-    private static final String propfilename = "traceparser.properties";
+    private static final String PROP_FILE = "traceparser.properties";
 
 
     private transient javax.swing.JButton addParser;
     private transient JList availableParsers;
-    private transient javax.swing.JButton saveProperties;
     private transient JButton openFileChooser;
     private transient JButton refreshTrace;
 
@@ -68,7 +67,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
         final Properties properties = new Properties();
         try {
-            properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(propfilename));
+            properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(PROP_FILE));
         } catch (IOException e) {
             LOGGER.error("could not load property file!");
         }
@@ -85,7 +84,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         addParser = new javax.swing.JButton("Add Parser");
         addParser.addActionListener(this);
 
-        saveProperties = new javax.swing.JButton("Save Properties");
+        JButton saveProperties = new JButton("Save Properties");
         saveProperties.addActionListener(this);
 
         final DefaultListModel listModel = new DefaultListModel();
@@ -143,7 +142,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         getContentPane().add(jTabbedPane1, BorderLayout.CENTER);
 
 
-        open_trace(properties.getProperty("parser.filename"));
+        openTrace(properties.getProperty("parser.filename"));
         pack();
 
     }
@@ -174,50 +173,51 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
     // End of variables declaration//GEN-END:variables
 
     public void actionPerformed(final ActionEvent actionEvent) {
-        if (actionEvent.getSource().equals(addParser)) {
-
-            try {
-                AbstractParser panel2add = null;
-
-                final String title = availableParsers.getSelectedValue().toString();
-
-                if (title.equals(NeighborhoodParser.NAME)) {
-                    panel2add = new NeighborhoodParser(jTabbedPane1);
-                } else if (title.equals(ClustersParser.NAME)) {
-                    panel2add = new ClustersParser(jTabbedPane1);
-                } else if (title.equals(EventParser.NAME)) {
-                    panel2add = new EventParser(jTabbedPane1);
-                } else if (title.equals(SensorAggregationParser.NAME)) {
-                    panel2add = new SensorAggregationParser(jTabbedPane1);
-                } else if (title.equals(SendParser.NAME)) {
-                    panel2add = new SendParser(jTabbedPane1);
-                } else if (title.equals(ClusterOverlapParser.NAME)) {
-                    panel2add = new ClusterOverlapParser(jTabbedPane1);
-                }
-                if (panel2add != null) {
-                    jTabbedPane1.addTab(title, panel2add);
-                    jTabbedPane1.updateUI();
-                }
-            } catch (Exception e1) {
-                LOGGER.debug(e1);
-            }
-
-        } else if ((actionEvent.getSource().equals(openFileChooser)) || ((actionEvent.getSource().equals(selectedFileText)))) {
+        final Object source = actionEvent.getSource();
+        if (source.equals(addParser)) {
+            addParser(availableParsers.getSelectedValue().toString());
+        } else if ((source.equals(openFileChooser)) || ((source.equals(selectedFileText)))) {
             final JFileChooser chooser = new JFileChooser("~/");
             chooser.setDialogTitle("Select trace file to load");
             final int returnVal = chooser.showOpenDialog(chooser);
             if ((returnVal == JFileChooser.APPROVE_OPTION) && (chooser.getSelectedFile().canRead())) {
                 final String filename2open = chooser.getSelectedFile().getAbsolutePath();
-                open_trace(filename2open);
+                openTrace(filename2open);
             }
 
-        } else if (actionEvent.getSource().equals(refreshTrace)) {
-            open_trace(TraceFile.getInstance().getFilename());
+        } else if (source.equals(refreshTrace)) {
+            openTrace(TraceFile.getInstance().getFilename());
         }
 
     }
 
-    private void open_trace(final String filename) {
+    private void addParser(final String title) {
+        try {
+            GenericParser panel2add = null;
+
+            if (title.equals(NeighborhoodParser.NAME)) {
+                panel2add = new NeighborhoodParser(jTabbedPane1);
+            } else if (title.equals(ClustersParser.NAME)) {
+                panel2add = new ClustersParser(jTabbedPane1);
+            } else if (title.equals(EventParser.NAME)) {
+                panel2add = new EventParser(jTabbedPane1);
+            } else if (title.equals(SensorAggregationParser.NAME)) {
+                panel2add = new SensorAggregationParser(jTabbedPane1);
+            } else if (title.equals(SendParser.NAME)) {
+                panel2add = new SendParser(jTabbedPane1);
+            } else if (title.equals(ClusterOverlapParser.NAME)) {
+                panel2add = new ClusterOverlapParser(jTabbedPane1);
+            }
+            if (panel2add != null) {
+                jTabbedPane1.addTab(title, panel2add);
+                jTabbedPane1.updateUI();
+            }
+        } catch (Exception e1) {
+            LOGGER.debug(e1);
+        }
+    }
+
+    private void openTrace(final String filename) {
         LOGGER.debug("opening " + filename);
         durationFileText.setText("calculating");
         selectedFileText.setText(filename);
