@@ -40,8 +40,6 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
     private transient final JTextField agTf;
     private transient final JTextField startTf;
 
-    private TraceFile file;
-
     private java.util.List<SensorReading> senReadings = new ArrayList<SensorReading>();
     private java.util.List<AggregatedSensorReading> agReadings = new ArrayList<AggregatedSensorReading>();
     private Hashtable<String, Integer> sensors = new Hashtable<String, Integer>();
@@ -168,10 +166,10 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
 
                         LOGGER.debug("avg: " + avgReading);
 
-                        newseries.add((int) (sensorReading.getTime() - file.getStartTime()) / 1000, avgReading);
+                        newseries.add((int) (sensorReading.getTime() - TraceFile.getInstance().getStartTime()) / 1000, avgReading);
                     }
                 }
-                newseries.add((int) (file.getEndTime() - file.getStartTime()) / 1000, avgReading);
+                newseries.add((int) (TraceFile.getInstance().getEndTime() - TraceFile.getInstance().getStartTime()) / 1000, avgReading);
                 seriesCollection.addSeries(newseries);
             }
         }
@@ -196,7 +194,7 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
                 for (final AggregatedSensorReading aggregatedSensorReading : agReadings) {
                     if ((aggregatedSensorReading.getSeClusterID().equals(sensorSeCluster))
                             && (aggregatedSensorReading.getSensorName().equals(sensorName))) {
-                        newseries.add((int) (aggregatedSensorReading.getTime() - file.getStartTime()) / 1000, aggregatedSensorReading.getSensorValue());
+                        newseries.add((int) (aggregatedSensorReading.getTime() - TraceFile.getInstance().getStartTime()) / 1000, aggregatedSensorReading.getSensorValue());
                     }
                 }
 
@@ -213,27 +211,10 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
     }
 
 
-    //    @Override
-    public void setTraceFile
-    (TraceFile
-             file) {
-        this.file = file;
-
-        DefaultListModel listModel = new DefaultListModel();
-
-        for (String node : file.getNodeNames()) {
-            listModel.addElement(node);
-
-        }
-
-
-        reset();
-    }
-
     public void update(Observable observable, Object o) {
         final TraceMessage m = (TraceMessage) o;
         if (!NodeSelectorPanel.isSelected(m.getUrn())) return;
-        if (m.getTime() < file.getStartTime() + startTime * 1000) return;
+        if (m.getTime() < TraceFile.getInstance().getStartTime() + startTime * 1000) return;
         if (m.getText().contains(meanTf.getText())) {
             final String text = m.getText();
 //            LOGGER.info("Sensor@" + m.getTime() + ":" + m.getUrn() + "\"" + text + "\"");
@@ -259,7 +240,7 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
     }
 
     void parse() {
-        TraceReader a = new TraceReader(file);
+        TraceReader a = new TraceReader();
         a.addObserver(this);
         a.run();
     }
@@ -278,7 +259,7 @@ public class SensorAggregationParser extends AbstractParser implements Observer,
         if (actionEvent.getSource().equals(plotButton)) {
             reset();
 
-            LOGGER.info("|=== parsing tracefile: " + file.getFilename() + "...");
+            LOGGER.info("|=== parsing tracefile: " + TraceFile.getInstance().getFilename() + "...");
             parse();
             LOGGER.info("|--- done parsing!");
             LOGGER.info("|=== generating plot...");

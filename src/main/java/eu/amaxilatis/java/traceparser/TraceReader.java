@@ -13,18 +13,14 @@ import java.util.Observable;
 
 public class TraceReader extends Observable implements Runnable {
 
-
-    private final transient TraceFile file;
-
     private static final String URN = "Source [";
     private static final String TEXT = "Text [";
     private static final String DATE = "Time [";
-    static String levelText = "Level [";
+    private static final String levelText = "Level [";
     private static final String END = "]";
     private static final Logger LOGGER = Logger.getLogger(TraceReader.class);
 
-    public TraceReader(final TraceFile file) {
-        this.file = file;
+    public TraceReader() {
     }
 
 
@@ -35,7 +31,7 @@ public class TraceReader extends Observable implements Runnable {
         try {
             // Open the file that is the first
             // command line parameter
-            final FileInputStream stream = new FileInputStream(file.getFilename());
+            final FileInputStream stream = new FileInputStream(TraceFile.getInstance().getFilename());
             // Get the object of DataInputStream
             final DataInputStream dataInputStream = new DataInputStream(stream);
             final BufferedReader reader = new BufferedReader(new InputStreamReader(dataInputStream));

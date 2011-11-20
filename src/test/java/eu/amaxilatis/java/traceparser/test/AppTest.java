@@ -1,13 +1,8 @@
 package eu.amaxilatis.java.traceparser.test;
 
-import eu.amaxilatis.java.traceparser.TraceFile;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 /**
  * Unit test for simple App.

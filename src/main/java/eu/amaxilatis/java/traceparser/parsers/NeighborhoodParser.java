@@ -40,7 +40,6 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
     private final transient JTextField yLabelTf;
     private final transient JTextField xLabelTf;
 
-    private transient TraceFile file;
     private transient String delimiter;
     private transient Map<String, HashMap<String, Integer>> neighborsBidi;
     private transient String prefixUni;
@@ -152,11 +151,6 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
         this.prefixBidi = prefix_bidi;
     }
 
-
-    public void setTraceFile(final TraceFile file) {
-        this.file = file;
-    }
-
     private void init() {
         setDelimiter(";");
         setTemplates("NB", "NBL", "NBB", "NBD");
@@ -190,6 +184,7 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
 
     public void update(final Observable observable, final Object object) {
         final TraceMessage message = (TraceMessage) object;
+        LOGGER.info(message.getText());
         if (NodeSelectorPanel.isSelected(message.getUrn())) {
 
 
@@ -222,9 +217,9 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
 
                 }
 
-                series[0].addOrUpdate(((int) ((message.getTime() - file.getStartTime()) / 1000)), getAvgNeighbors());
-                series[1].addOrUpdate(((int) ((message.getTime() - file.getStartTime()) / 1000)), getMinNeighbors());
-                series[2].addOrUpdate(((int) ((message.getTime() - file.getStartTime()) / 1000)), getMaxNeighbors());
+                series[0].addOrUpdate(((int) ((message.getTime() - TraceFile.getInstance().getStartTime()) / 1000)), getAvgNeighbors());
+                series[1].addOrUpdate(((int) ((message.getTime() - TraceFile.getInstance().getStartTime()) / 1000)), getMinNeighbors());
+                series[2].addOrUpdate(((int) ((message.getTime() - TraceFile.getInstance().getStartTime()) / 1000)), getMaxNeighbors());
 
             }
         }
@@ -272,8 +267,8 @@ public class NeighborhoodParser extends AbstractParser implements Observer, Acti
     public void actionPerformed(final ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(plotbutton)) {
             reset();
-            LOGGER.info("|=== parsing tracefile: " + file.getFilename() + "...");
-            TraceReader traceReader = new TraceReader(file);
+            LOGGER.info("|=== parsing tracefile: " + TraceFile.getInstance().getFilename() + "...");
+            TraceReader traceReader = new TraceReader();
             traceReader.addObserver(this);
             traceReader.run();
             LOGGER.info("|--- done parsing!");

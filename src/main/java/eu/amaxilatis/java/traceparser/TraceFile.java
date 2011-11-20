@@ -11,6 +11,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+//TODO: change to singletron
+
 /**
  * TraceFile.
  */
@@ -24,28 +26,32 @@ public class TraceFile {
     /**
      * traceFile filename.
      */
-    private final transient String filename;
+    private transient String filename;
     /**
      * traceFile duration.
      */
-    private final transient long duration;
+    private transient long duration;
     /**
      * traceFile start time.
      */
-    private final transient long startTime;
+    private transient long startTime;
 
     /**
      * traceFile end time.
      */
-    private final transient long endTime;
+    private transient long endTime;
     /**
      * nodes of the traceFile.
      */
-    private final transient List nodeNames = new ArrayList();
+    private transient List nodeNames = new ArrayList();
     /**
      * total count of lines in traceFile.
      */
-    private final transient long lines;
+    private transient long lines;
+    /**
+     * instance of singletron
+     */
+    private static TraceFile instance=null;
 
     /**
      * @return
@@ -62,15 +68,28 @@ public class TraceFile {
         return nodeNames;
     }
 
+    public static TraceFile getInstance(){
+          if (instance == null) {
+            instance = new TraceFile();
+        }
+        return instance;
+    }
+
+    /**
+     * singletron constructor
+     */
+    public TraceFile(){
+        //nothing
+    }
     /**
      * @param file
      * @param inputStream
      * @throws IOException
      */
-    public TraceFile(final String file, final InputStream inputStream) throws IOException {
+    public void setFile(final String file, final InputStream inputStream) throws IOException {
 
 
-        long countStartTime = 0;
+        long countStartTime = System.currentTimeMillis();
         long countEndTime = 0;
         nodeNames.clear();
 

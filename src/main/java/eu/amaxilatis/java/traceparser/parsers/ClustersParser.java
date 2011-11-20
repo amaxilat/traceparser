@@ -48,7 +48,6 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
     private transient Map<String, String>[] clusters;
     private transient int pcluster;
     private transient int pid;
-    private transient TraceFile file;
 
 
     public ClustersParser(final JTabbedPane jTabbedPane1) {
@@ -175,13 +174,6 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
         return series;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    //    @Override
-    public void setTraceFile(final TraceFile file) {
-        this.file = file;
-
-        reset();
-    }
-
     void setTemplate(final String template) {
         parts = template.split(delimiter);
         prefix = template.substring(0, template.indexOf(delimiter));
@@ -198,7 +190,7 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
         if (message.getText().startsWith(prefix)) {
             LOGGER.debug("Cluster@" + message.getTime() + ":" + message.getUrn());
             final String[] mess = message.getText().split(delimiter);
-            setCluster(mess[pid], mess[pcluster], ((int) ((message.getTime() - file.getStartTime()) / 1000)));
+            setCluster(mess[pid], mess[pcluster], ((int) ((message.getTime() - TraceFile.getInstance().getStartTime()) / 1000)));
         }
     }
 
@@ -212,8 +204,8 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
     public void actionPerformed(final ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(plot)) {
             reset();
-            LOGGER.info("|=== parsing tracefile: " + file.getFilename() + "...");
-            TraceReader reader = new TraceReader(file);
+            LOGGER.info("|=== parsing tracefile: " + TraceFile.getInstance().getFilename() + "...");
+            TraceReader reader = new TraceReader();
             reader.addObserver(this);
             reader.run();
             LOGGER.info("|--- done parsing!");
@@ -232,7 +224,7 @@ public class ClustersParser extends AbstractParser implements Observer, ActionLi
         delimiter = delimiterTf.getText();
         template = templateTf.getText();
 
-        duration = (int) (file.getDuration() / 1000 + 1);
+        duration = (int) (TraceFile.getInstance().getDuration() / 1000 + 1);
         clusters = new HashMap[(int) duration];
 
         for (int i = 0; i < duration; i++) {

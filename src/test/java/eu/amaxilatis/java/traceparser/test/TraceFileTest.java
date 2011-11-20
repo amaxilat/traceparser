@@ -42,15 +42,15 @@ public class TraceFileTest
         try {
             final long start = System.currentTimeMillis();
             inputStream = new FileInputStream(new File("src/test/resources/trace.test"));
-            TraceFile tracefile = new TraceFile("trace.test", inputStream);
+            TraceFile.getInstance().setFile("trace.test", inputStream);
             final long total = System.currentTimeMillis() - start;
             LOGGER.info("TraceFile Created in " + total + " msec");
-            LOGGER.info("TraceFile is named " + tracefile.getFilename());
-            LOGGER.info("TraceFile contains " + tracefile.getLines() + " lines");
-            LOGGER.info("TraceFile contains " + tracefile.getNodeSize() + " nodes");
-            LOGGER.info("TraceFile lasts for " + tracefile.getDuration() + " seconds");
-            LOGGER.info("TraceFile starts @ " + new Date(tracefile.getStartTime()));
-            LOGGER.info("TraceFile ends @ " + new Date(tracefile.getEndTime()));
+            LOGGER.info("TraceFile is named " + TraceFile.getInstance().getFilename());
+            LOGGER.info("TraceFile contains " + TraceFile.getInstance().getLines() + " lines");
+            LOGGER.info("TraceFile contains " + TraceFile.getInstance().getNodeSize() + " nodes");
+            LOGGER.info("TraceFile lasts for " + TraceFile.getInstance().getDuration() + " seconds");
+            LOGGER.info("TraceFile starts @ " + new Date(TraceFile.getInstance().getStartTime()));
+            LOGGER.info("TraceFile ends @ " + new Date(TraceFile.getInstance().getEndTime()));
 
             assertTrue(true);
         } catch (Exception e) {

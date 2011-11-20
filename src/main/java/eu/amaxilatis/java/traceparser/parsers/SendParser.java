@@ -37,7 +37,6 @@ public class SendParser extends AbstractParser implements Observer, ActionListen
     private transient final JTextField xLabelTf;
     private transient final JTextField yLabelTf;
 
-    private transient TraceFile file;
     private transient long duration;
     private transient int messages[][];
     private static String delimiter = ";";
@@ -113,7 +112,7 @@ public class SendParser extends AbstractParser implements Observer, ActionListen
 
                     final String[] mess = message.getText().split(delimiter);
                     LOGGER.debug("Send@" + ":" + message.getUrn() + " type:" + mess[type]);
-                    messages[Integer.parseInt(mess[type])][((int) ((message.getTime() - file.getStartTime()) / 1000))]++;
+                    messages[Integer.parseInt(mess[type])][((int) ((message.getTime() - TraceFile.getInstance().getStartTime()) / 1000))]++;
                 }
             } catch (Exception e) {
                 LOGGER.error(e.toString() + " Message : " + message.getText());
@@ -208,12 +207,6 @@ public class SendParser extends AbstractParser implements Observer, ActionListen
         return series;
     }
 
-    //    @Override
-    public void setTraceFile(final TraceFile file) {
-        this.file = file;
-        reset();
-    }
-
     private int countUntil(final int type, final int time_until) {
         int sum = 0;
         for (int i = 0; i <= time_until; i++) {
@@ -225,8 +218,8 @@ public class SendParser extends AbstractParser implements Observer, ActionListen
     public void actionPerformed(final ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(plotButton)) {
             reset();
-            LOGGER.info("|=== parsing tracefile: " + file.getFilename() + "...");
-            final TraceReader traceReader = new TraceReader(file);
+            LOGGER.info("|=== parsing tracefile: " + TraceFile.getInstance().getFilename() + "...");
+            final TraceReader traceReader = new TraceReader();
             traceReader.addObserver(this);
             traceReader.run();
             LOGGER.info("|--- done parsing!");
@@ -243,7 +236,7 @@ public class SendParser extends AbstractParser implements Observer, ActionListen
     }
 
     private void reset() {
-        duration = file.getDuration() / 1000 + 1;
+        duration = TraceFile.getInstance().getDuration() / 1000 + 1;
         messages = new int[255][(int) duration];
         for (int i = 0; i < 255; i++) {
             for (int j = 0; j < (int) duration; j++) {

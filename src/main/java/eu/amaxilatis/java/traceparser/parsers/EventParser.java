@@ -29,8 +29,6 @@ import java.util.Observer;
 public class EventParser extends AbstractParser implements Observer, ActionListener {
 
     public static final String NAME = "Events Parser";
-
-    private transient TraceFile file;
     private static final Logger LOGGER = Logger.getLogger(EventParser.class);
     private static final String PARTITIONER = ",";
     private transient long duration;
@@ -137,7 +135,7 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
             for (int type = 0; type < eventTypes; type++) {
                 if (message.getText().contains(prefixes[type])) {
                     //LOGGER.info("Event@" + message.getTime() + ":" + message.getUrn());
-                    events[type][((int) ((message.getTime() - file.getStartTime()) / 1000))]++;
+                    events[type][((int) ((message.getTime() - TraceFile.getInstance().getStartTime()) / 1000))]++;
                 }
             }
         }
@@ -201,12 +199,6 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
         return series;
     }
 
-    //    @Override
-    public void setTraceFile(final TraceFile file) {
-        this.file = file;
-        reset();
-    }
-
     private int countUntil(final int type, final int timeUntil) {
         int sum = 0;
         for (int i = 0; i <= timeUntil; i++) {
@@ -218,8 +210,8 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
     public void actionPerformed(final ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(plot)) {
             reset();
-            LOGGER.info("|=== parsing tracefile: " + file.getFilename() + "...");
-            TraceReader reader = new TraceReader(file);
+            LOGGER.info("|=== parsing tracefile: " + TraceFile.getInstance().getFilename() + "...");
+            TraceReader reader = new TraceReader();
             reader.addObserver(this);
             reader.run();
             LOGGER.info("|--- done parsing!");
@@ -239,7 +231,8 @@ public class EventParser extends AbstractParser implements Observer, ActionListe
         prefixes = templates.split(partitionerTf.getText());
         eventTypes = prefixes.length;
 
-        duration = file.getDuration() / 1000 + 1;
+        duration = TraceFile.getInstance().getDuration() / 1000 + 1;
+        LOGGER.info(eventTypes +" dur"+duration);
         events = new int[eventTypes][(int) duration];
 
         for (int type = 0; type < eventTypes; type++) {

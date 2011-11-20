@@ -42,8 +42,6 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
     private transient javax.swing.JLabel durationFileText;
     private transient javax.swing.JLabel nodesFileText;
 
-    private transient TraceFile mytracefile;
-
     private transient JTabbedPane jTabbedPane1;
 
 
@@ -96,6 +94,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         listModel.addElement(EventParser.NAME);
         listModel.addElement(SendParser.NAME);
         listModel.addElement(SensorAggregationParser.NAME);
+        listModel.addElement(ClusterOverlapParser.NAME);
         availableParsers = new JList(listModel);
 
 
@@ -192,10 +191,10 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
                     panel2add = new SensorAggregationParser(jTabbedPane1);
                 } else if (title.equals(SendParser.NAME)) {
                     panel2add = new SendParser(jTabbedPane1);
+                } else if (title.equals(ClusterOverlapParser.NAME)) {
+                    panel2add = new ClusterOverlapParser(jTabbedPane1);
                 }
                 if (panel2add != null) {
-                    panel2add.setTraceFile(mytracefile);
-
                     jTabbedPane1.addTab(title, panel2add);
                     jTabbedPane1.updateUI();
                 }
@@ -213,7 +212,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
             }
 
         } else if (actionEvent.getSource().equals(refreshTrace)) {
-            open_trace(mytracefile.getFilename());
+            open_trace(TraceFile.getInstance().getFilename());
         }
 
     }
@@ -223,14 +222,14 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         durationFileText.setText("calculating");
         selectedFileText.setText(filename);
         try {
-            mytracefile = new TraceFile(filename, new FileInputStream(filename));
+            TraceFile.getInstance().setFile(filename, new FileInputStream(filename));
         } catch (IOException exception) {
             LOGGER.error(exception);
         }
-        durationFileText.setText(mytracefile.getDuration() / 60000 + " min= " + mytracefile.getDuration() / 1000 + " sec");
-        nodesFileText.setText(mytracefile.getNodeSize() + " nodes");
-        linesFileText.setText(mytracefile.getLines() + " getLines");
-        NodeSelectorPanel.setFile(mytracefile);
+        durationFileText.setText(TraceFile.getInstance().getDuration() / 60000 + " min= " + TraceFile.getInstance().getDuration() / 1000 + " sec");
+        nodesFileText.setText(TraceFile.getInstance().getNodeSize() + " nodes");
+        linesFileText.setText(TraceFile.getInstance().getLines() + " getLines");
+        NodeSelectorPanel.update();
     }
 }
 

@@ -45,7 +45,6 @@ public class ClusterOverlapParser extends AbstractParser implements Observer, Ac
     private Map<String, Node> nodes;
     private Map<String, SemanticEntity> semanticEntityMap;
     private int pid, pcluster, pparent, ptname, ptid;
-    private TraceFile file;
     private String template;
     private String prefix;
     private String clType = "NAME-ID";
@@ -218,13 +217,6 @@ public class ClusterOverlapParser extends AbstractParser implements Observer, Ac
         return getSeries();
     }
 
-    //    @Override
-    public void setTraceFile(TraceFile file) {
-        this.file = file;
-
-        reset();
-    }
-
     void setTemplate(String template) {
         parts = template.split(delimiter);
         prefix = template.substring(0, template.indexOf(delimiter));
@@ -239,8 +231,8 @@ public class ClusterOverlapParser extends AbstractParser implements Observer, Ac
         if (m.getText().startsWith(prefix)) {
 //            LOGGER.debug("Cluster@" + m.getTime() + ":" + m.getUrn());
             final String[] mess = m.getText().split(delimiter);
-            setCluster(mess[pid], mess[pcluster].split(clTypeDelimiter)[ptname], ((int) ((m.getTime() - file.getStartTime()) / 1000)));
-            setSemanticEntity(mess[pcluster].split(clTypeDelimiter)[ptname], mess[pid], ((int) ((m.getTime() - file.getStartTime()) / 1000)));
+            setCluster(mess[pid], mess[pcluster].split(clTypeDelimiter)[ptname], ((int) ((m.getTime() - TraceFile.getInstance().getStartTime()) / 1000)));
+            setSemanticEntity(mess[pcluster].split(clTypeDelimiter)[ptname], mess[pid], ((int) ((m.getTime() - TraceFile.getInstance().getStartTime()) / 1000)));
         }
     }
 
@@ -293,8 +285,8 @@ public class ClusterOverlapParser extends AbstractParser implements Observer, Ac
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(plotButton)) {
             reset();
-            LOGGER.info("|=== parsing tracefile: " + file.getFilename() + "...");
-            TraceReader a = new TraceReader(file);
+            LOGGER.info("|=== parsing tracefile: " + TraceFile.getInstance().getFilename() + "...");
+            TraceReader a = new TraceReader();
             a.addObserver(this);
             a.run();
             LOGGER.info("|--- done parsing!");
@@ -313,7 +305,7 @@ public class ClusterOverlapParser extends AbstractParser implements Observer, Ac
         delimiter = delimiterTf.getText();
         template = templateTf.getText();
 
-        duration = (int) (file.getDuration() / 1000 + 1);
+        duration = (int) (TraceFile.getInstance().getDuration() / 1000 + 1);
 
 
         nodes = new HashMap<String, Node>();

@@ -18,7 +18,6 @@ public class NodeSelectorPanel extends JPanel implements ActionListener {
     private final static JLabel ENABLED_COUNT = new JLabel("unset");
 
     private static JList nodesList;
-    public static TraceFile file = null;
     private static Map<String, Integer> selectNodesMap = new HashMap<String, Integer>();
 
     public NodeSelectorPanel() {
@@ -58,14 +57,13 @@ public class NodeSelectorPanel extends JPanel implements ActionListener {
         }
     }
 
-    public static void setFile(final TraceFile file) {
-        NodeSelectorPanel.file = file;
+    public static void update() {
         final DefaultListModel listModel = (DefaultListModel) nodesList.getModel();
         listModel.clear();
 
-        int selected[] = new int[file.getNodeSize()];
+        int selected[] = new int[TraceFile.getInstance().getNodeSize()];
         int count = 0;
-        for (String node : file.getNodeNames()) {
+        for (String node : TraceFile.getInstance().getNodeNames()) {
             listModel.addElement(node);
             selected[count] = count++;
         }
