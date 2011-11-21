@@ -24,6 +24,9 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
+/**
+ *
+ */
 public class ClusterOverlapParser extends GenericParser implements Observer, ActionListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClustersParser.class);
@@ -55,7 +58,9 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
 
     XYSeries avgClusters = new XYSeries("avg SE per node");
 
-
+    /**
+     * @param jTabbedPane1
+     */
     public ClusterOverlapParser(JTabbedPane jTabbedPane1) {
         super(NAME);
         this.tabbedPane = jTabbedPane1;
@@ -63,7 +68,7 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
         setTemplate("CLL;ID;CLUSTER;PARENT");
 
         this.setLayout(new BorderLayout());
-       
+
         delimiterTf = new JTextField(delimiter);
         templateTf = new JTextField(template);
         clTypeTf = new JTextField(clType);
@@ -91,6 +96,9 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
         init();
     }
 
+    /**
+     *
+     */
     private void init() {
 
 
@@ -128,6 +136,13 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
         LOGGER.info("ClustersParser initialized");
     }
 
+    /**
+     * @param aggregate
+     * @param title
+     * @param xlabel
+     * @param ylabel
+     * @return
+     */
     public ChartPanel getPlot(boolean aggregate, String title, String xlabel, String ylabel) {
         XYSeriesCollection dataset = new XYSeriesCollection();
         XYSeries[] clustersSeries;
@@ -151,6 +166,9 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
         return new ChartPanel(chartTransformed);
     }
 
+    /**
+     * @return
+     */
     public ChartPanel getPlot() {
 
         for (final String entry : semanticEntityMap.keySet()) {
@@ -160,6 +178,9 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
         return getPlot(false, "", "", "");
     }
 
+    /**
+     * @return
+     */
     public XYSeries[] getSeries() {
         XYSeriesCollection collection = new XYSeriesCollection();
         collection.addSeries(avgClusters);
@@ -172,12 +193,19 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
         return series;
     }
 
+    /**
+     * @param template
+     */
     void setTemplate(String template) {
         parts = template.split(delimiter);
         prefix = template.substring(0, template.indexOf(delimiter));
         this.template = template;
     }
 
+    /**
+     * @param observable
+     * @param o
+     */
     public void update(Observable observable, Object o) {
         final TraceMessage m = (TraceMessage) o;
         if (!NodeSelectorPanel.isSelected(m.getUrn())) return;
@@ -191,6 +219,11 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
         }
     }
 
+    /**
+     * @param semanticEntity
+     * @param id
+     * @param time
+     */
     private void setSemanticEntity(String semanticEntity, String id, int time) {
         if (semanticEntityMap.containsKey(semanticEntity)) {
             semanticEntityMap.get(semanticEntity).addNode(id);
@@ -201,6 +234,11 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
         }
     }
 
+    /**
+     * @param node
+     * @param cluster
+     * @param time
+     */
     private void setCluster(String node, String cluster, int time) {
         Node tempNode;
         if (nodes.containsKey(node)) {
@@ -216,6 +254,9 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
         LOGGER.debug(node + "-" + tempNode.countSemantics() + "@" + time);
     }
 
+    /**
+     * @param time
+     */
     private void set2series(long time) {
         double totalClusters = 0;
         final double totalNodes = nodes.size();
@@ -237,6 +278,9 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
         }
     }
 
+    /**
+     * @param actionEvent
+     */
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(plotButton)) {
             reset();
@@ -256,6 +300,9 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
         }
     }
 
+    /**
+     *
+     */
     private void reset() {
         delimiter = delimiterTf.getText();
         template = templateTf.getText();
@@ -266,19 +313,32 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
         init();
     }
 
+    /**
+     *
+     */
     private class Node {
         private final String id;
         private Map<String, String> semantics;
 
+        /**
+         * @param id
+         */
         private Node(String id) {
             this.id = id;
             semantics = new HashMap<String, String>();
         }
 
+        /**
+         * @return
+         */
         public String getId() {
             return id;
         }
 
+        /**
+         * @param semantic
+         * @param semid
+         */
         public void setSemantic(String semantic, String semid) {
             if (semantics.containsKey(semantic)) {
                 semantics.put(semantic, semid);
@@ -287,29 +347,47 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
             }
         }
 
+        /**
+         * @return
+         */
         public int countSemantics() {
             return semantics.size();
         }
 
     }
 
+    /**
+     *
+     */
     private class SemanticEntity {
         private final String name;
         private Map<String, String> nodes;
 
+        /**
+         * @param name
+         */
         private SemanticEntity(String name) {
             this.name = name;
             nodes = new HashMap<String, String>();
         }
 
+        /**
+         * @return
+         */
         public String getName() {
             return name;
         }
 
+        /**
+         * @param id
+         */
         public void addNode(String id) {
             nodes.put(id, "1");
         }
 
+        /**
+         * @return
+         */
         public int countNodes() {
             return nodes.size();
         }

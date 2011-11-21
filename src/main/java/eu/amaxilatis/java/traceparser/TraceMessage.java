@@ -40,35 +40,20 @@ public class TraceMessage {
     private static final String ENDTEXT = "]";
 
     /**
-     * text of message.
-     */
-    private transient String text;
-    /**
-     * urn of node.
-     */
-    private transient String urn = null;
-    /**
-     * timestamp.
-     */
-    private transient long time = 0;
-    /**
-     * level of message.
-     */
-    private transient String level = null;
-    /**
      *
      */
     private static final int MILLIS_IN_HOUR = 60 * 60 * 1000;
     /**
      *
      */
-    private String strLine="";
+    private transient String strLine="";
 
 
     /**
      *
      */
     public TraceMessage() {
+        //empty
     }
 
     /**

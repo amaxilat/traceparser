@@ -36,18 +36,21 @@ public class EventParser extends GenericParser implements Observer, ActionListen
     private transient int events[][];
     private transient int eventTypes;
 
+    private final transient JButton plot;
+    private final transient JTextField partitionerTf;
+    private final transient JTextField templatesTf;
+    private final transient JTabbedPane tabbedPane;
+    private final transient TextField plotTitle;
+    private final transient TextField xLabel;
+    private final transient TextField yLabel;
+    private final transient JButton remove;
+
     private transient String[] prefixes;
-    private transient JButton plot;
-
     private transient String templates = "NB,CLL";
-    private transient JTextField partitionerTf;
-    private transient JTextField templatesTf;
-    private transient JTabbedPane tabbedPane;
-    private transient TextField plotTitle;
-    private transient TextField xLabel;
-    private transient TextField yLabel;
-    private transient JButton remove;
 
+    /**
+     * @param jTabbedPane1
+     */
     public EventParser(final JTabbedPane jTabbedPane1) {
         super(NAME);
         this.tabbedPane = jTabbedPane1;
@@ -76,49 +79,17 @@ public class EventParser extends GenericParser implements Observer, ActionListen
 
     }
 
-
+    /**
+     *
+     */
     private void init() {
         LOGGER.info("EventParser initialized");
     }
 
-//    //TODO: add multiple Events
-//    public EventParser(TraceFile f, String template) {
-//
-//        //LOGGER.info("EventParser initialized");
-//        duration = f.getDuration();
-//
-//
-//        final String partitioner = "-";
-//        eventTypes = template.split(partitioner).length;
-//
-//        file = f;
-//        duration = f.getDuration() / 1000 + 1;
-//        events = new int[eventTypes][(int) duration];
-//
-//        for (int type = 0; type < eventTypes; type++) {
-//            for (int j = 0; j < (int) duration; j++) {
-//                events[type][j] = 0;
-//            }
-//        }
-//
-//        prefixes = new String[eventTypes];
-//        final String[] templates = template.split(partitioner);
-//
-//
-//        for (int type = 0; type < eventTypes; type++) {
-//            LOGGER.info(templates[type]);
-//            String delimiter = ";";
-//            if (templates[type].contains(delimiter)) {
-//                prefixes[type] = templates[type].substring(0, templates[type].indexOf(delimiter));
-//            } else {
-//                prefixes[type] = templates[type];
-//            }
-//            LOGGER.info(prefixes[type]);
-//        }
-//
-//        init();
-//    }
-
+    /**
+     * @param observable
+     * @param obj
+     */
     public void update(final Observable observable, final Object obj) {
         final TraceMessage message = (TraceMessage) obj;
         if (NodeSelectorPanel.isSelected(message.getUrn())) {
@@ -132,6 +103,10 @@ public class EventParser extends GenericParser implements Observer, ActionListen
         }
     }
 
+    /**
+     * @param aggregate
+     * @return
+     */
     public ChartPanel getPlot(final boolean aggregate) {
 
         final XYSeriesCollection dataset = new XYSeriesCollection();
@@ -155,12 +130,16 @@ public class EventParser extends GenericParser implements Observer, ActionListen
         return new ChartPanel(chart);
     }
 
-    //    @Override
+    /**
+     * @return
+     */
     public ChartPanel getPlot() {
         return getPlot(true);
     }
 
-
+    /**
+     * @return
+     */
     public XYSeries[] getSeries() {
         XYSeries[] series = new XYSeries[eventTypes];
         for (int type = 0; type < eventTypes; type++) {
@@ -172,13 +151,15 @@ public class EventParser extends GenericParser implements Observer, ActionListen
         return series;
     }
 
-    //TODO: add aggregate plots
+    /**
+     * @return
+     */
     public XYSeries[] getSeriesAggregate() {
         XYSeries[] series = new XYSeries[eventTypes];
         for (int type = 0; type < eventTypes; type++) {
-            if (prefixes[type].equals("CLL")) {
+            if ("CLL".equals(prefixes[type])) {
                 series[type] = new XYSeries("Semantic Entity Changes");
-            } else if (prefixes[type].equals("NB")) {
+            } else if ("NB".equals(prefixes[type])) {
                 series[type] = new XYSeries("Neighborhood Changes");
             } else {
                 series[type] = new XYSeries("Events " + prefixes[type]);
@@ -190,6 +171,11 @@ public class EventParser extends GenericParser implements Observer, ActionListen
         return series;
     }
 
+    /**
+     * @param type
+     * @param timeUntil
+     * @return
+     */
     private int countUntil(final int type, final int timeUntil) {
         int sum = 0;
         for (int i = 0; i <= timeUntil; i++) {
@@ -198,16 +184,19 @@ public class EventParser extends GenericParser implements Observer, ActionListen
         return sum;
     }
 
+    /**
+     * @param actionEvent
+     */
     public void actionPerformed(final ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(plot)) {
             reset();
             LOGGER.info("|=== parsing tracefile: " + TraceFile.getInstance().getFilename() + "...");
-            TraceReader reader = new TraceReader();
+            final TraceReader reader = new TraceReader();
             reader.addObserver(this);
             reader.run();
             LOGGER.info("|--- done parsing!");
             LOGGER.info("|=== generating plot...");
-            JFrame frame = new JFrame();
+            final JFrame frame = new JFrame();
             frame.add(getPlot());
             frame.pack();
             frame.setVisible(true);
@@ -217,6 +206,9 @@ public class EventParser extends GenericParser implements Observer, ActionListen
         }
     }
 
+    /**
+     *
+     */
     private void reset() {
         templates = templatesTf.getText();
         prefixes = templates.split(partitionerTf.getText());

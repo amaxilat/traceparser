@@ -3,7 +3,14 @@ package eu.amaxilatis.java.traceparser.panels;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ *
+ */
 public class CouplePanel extends JPanel {
+    /**
+     * @param first
+     * @param second
+     */
     public CouplePanel(final Component first, final Component second) {
 
         this.setLayout(new FlowLayout());

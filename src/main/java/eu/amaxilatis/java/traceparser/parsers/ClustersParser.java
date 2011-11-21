@@ -24,6 +24,9 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
+/**
+ *
+ */
 public class ClustersParser extends GenericParser implements Observer, ActionListener {
 
     public static final String NAME = "Clusters Parser";
@@ -50,7 +53,9 @@ public class ClustersParser extends GenericParser implements Observer, ActionLis
     private transient int pcluster;
     private transient int pid;
 
-
+    /**
+     * @param jTabbedPane1
+     */
     public ClustersParser(final JTabbedPane jTabbedPane1) {
         super(NAME);
         this.tabbedPane = jTabbedPane1;
@@ -81,6 +86,9 @@ public class ClustersParser extends GenericParser implements Observer, ActionLis
 
     }
 
+    /**
+     *
+     */
     private void init() {
 
         setTemplate("CLP;ID;TYPE;CLUSTER");
@@ -108,6 +116,9 @@ public class ClustersParser extends GenericParser implements Observer, ActionLis
         LOGGER.info("ClustersParser initialized");
     }
 
+    /**
+     * @return
+     */
     public ChartPanel getPlot() {
         final XYSeriesCollection dataset = new XYSeriesCollection();
         XYSeries[] clustersSeries;
@@ -125,21 +136,24 @@ public class ClustersParser extends GenericParser implements Observer, ActionLis
                 dataset, PlotOrientation.VERTICAL, true, true, false);
 
 
-        JFreeChart chartTransformed = ChartFormater.transformChart(chart);
+        final JFreeChart chartTransformed = ChartFormater.transformChart(chart);
         return new ChartPanel(chartTransformed);
     }
 
+    /**
+     * @return
+     */
     public XYSeries[] getSeries() {
 
         XYSeries[] series = new XYSeries[2];
         series[0] = new XYSeries("Clusters");
         series[1] = new XYSeries("Avg. Size of Cluster");
 
-        LOGGER.debug("%d",duration);
+        LOGGER.debug("%d", duration);
         for (int i = 0; i < duration; i++) {
             int clusterCount = 0;
             int simple_count = 0;
-            LOGGER.debug("%d",clusters[i].keySet().size());
+            LOGGER.debug("%d", clusters[i].keySet().size());
             for (String key : clusters[i].keySet()) {
 
                 if (clusters[i].get(key).equals(key)) {
@@ -166,12 +180,19 @@ public class ClustersParser extends GenericParser implements Observer, ActionLis
         return series;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /**
+     * @param template
+     */
     void setTemplate(final String template) {
         parts = template.split(delimiter);
         prefix = template.substring(0, template.indexOf(delimiter));
         this.template = template;
     }
 
+    /**
+     * @param observable
+     * @param obj
+     */
     public void update(final Observable observable, final Object obj) {
         final TraceMessage message = (TraceMessage) obj;
         if (!NodeSelectorPanel.isSelected(message.getUrn())) {
@@ -186,6 +207,11 @@ public class ClustersParser extends GenericParser implements Observer, ActionLis
         }
     }
 
+    /**
+     * @param node
+     * @param cluster
+     * @param time
+     */
     private void setCluster(final String node, final String cluster, final int time) {
         LOGGER.debug(node + "-" + cluster + "@" + time);
         for (int i = time; i < duration - 1; i++) {
@@ -193,16 +219,19 @@ public class ClustersParser extends GenericParser implements Observer, ActionLis
         }
     }
 
+    /**
+     * @param actionEvent
+     */
     public void actionPerformed(final ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(plot)) {
             reset();
             LOGGER.info("|=== parsing tracefile: " + TraceFile.getInstance().getFilename() + "...");
-            TraceReader reader = new TraceReader();
+            final TraceReader reader = new TraceReader();
             reader.addObserver(this);
             reader.run();
             LOGGER.info("|--- done parsing!");
             LOGGER.info("|=== generating plot...");
-            JFrame frame = new JFrame();
+            final JFrame frame = new JFrame();
             frame.add(getPlot());
             frame.pack();
             frame.setVisible(true);
@@ -212,6 +241,9 @@ public class ClustersParser extends GenericParser implements Observer, ActionLis
         }
     }
 
+    /**
+     *
+     */
     private void reset() {
         delimiter = delimiterTf.getText();
         template = templateTf.getText();

@@ -20,6 +20,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 
+/**
+ *
+ */
 public class SensorAggregationParser extends GenericParser implements Observer, ActionListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorAggregationParser.class);
@@ -46,7 +49,9 @@ public class SensorAggregationParser extends GenericParser implements Observer, 
     private final int startTime = 100;
     private Map<String, String> semantics = new HashMap<String, String>();
 
-
+    /**
+     * @param jTabbedPane1
+     */
     public SensorAggregationParser(final JTabbedPane jTabbedPane1) {
         super(NAME);
         tabbedPane = jTabbedPane1;
@@ -77,6 +82,9 @@ public class SensorAggregationParser extends GenericParser implements Observer, 
         addRight(new JLabel("Y axis Label:"), yLabelTf);
     }
 
+    /**
+     *
+     */
     private void init() {
         semantics.put("212", "PIR");
         semantics.put("211", "TEMP");
@@ -92,6 +100,10 @@ public class SensorAggregationParser extends GenericParser implements Observer, 
         LOGGER.info("SensorAggregationParser initialized");
     }
 
+    /**
+     * @param sensor
+     * @return
+     */
     private ChartPanel getPlot(final String sensor) {
         final XYSeriesCollection dataset = new XYSeriesCollection();
         final XYSeries[] clustersSeries = getSeries(sensor);
@@ -121,7 +133,10 @@ public class SensorAggregationParser extends GenericParser implements Observer, 
 
     }
 
-
+    /**
+     * @param sensor
+     * @return
+     */
     XYSeries[] getSeries(final String sensor) {
 
         XYSeriesCollection seriesCollection = new XYSeriesCollection();
@@ -161,7 +176,6 @@ public class SensorAggregationParser extends GenericParser implements Observer, 
             }
         }
 
-
         Collections.sort(agReadings);
         for (String sensorCluster : senClusters.keySet()) {
             if (sensorCluster.contains(sensor)) {
@@ -197,7 +211,10 @@ public class SensorAggregationParser extends GenericParser implements Observer, 
         return series;
     }
 
-
+    /**
+     * @param observable
+     * @param o
+     */
     public void update(Observable observable, Object o) {
         final TraceMessage m = (TraceMessage) o;
         if (!NodeSelectorPanel.isSelected(m.getUrn())) return;
@@ -226,12 +243,18 @@ public class SensorAggregationParser extends GenericParser implements Observer, 
         }
     }
 
+    /**
+     *
+     */
     void parse() {
         TraceReader a = new TraceReader();
         a.addObserver(this);
         a.run();
     }
 
+    /**
+     *
+     */
     private void plot() {
 
         for (String sensor : sensors.keySet()) {
@@ -242,6 +265,9 @@ public class SensorAggregationParser extends GenericParser implements Observer, 
         }
     }
 
+    /**
+     * @param actionEvent
+     */
     public void actionPerformed(final ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(plotButton)) {
             reset();
@@ -257,6 +283,9 @@ public class SensorAggregationParser extends GenericParser implements Observer, 
         }
     }
 
+    /**
+     *
+     */
     private void reset() {
         senReadings = new ArrayList<SensorReading>();
         agReadings = new ArrayList<AggregatedSensorReading>();
@@ -265,16 +294,28 @@ public class SensorAggregationParser extends GenericParser implements Observer, 
         init();
     }
 
+    /**
+     *
+     */
     private class SensorReading implements Comparable {
         private final long time;
         private final String SensorName;
         private final double SensorValue;
         private final String urn;
 
+        /**
+         * @return
+         */
         public String getUrn() {
             return urn;
         }
 
+        /**
+         * @param time
+         * @param sensorName
+         * @param sensorValue
+         * @param urn
+         */
         private SensorReading(final long time, final String sensorName, final double sensorValue, final String urn) {
             this.time = time;
             SensorName = sensorName;
@@ -282,35 +323,63 @@ public class SensorAggregationParser extends GenericParser implements Observer, 
             this.urn = urn;
         }
 
+        /**
+         * @return
+         */
         public long getTime() {
             return time;
         }
 
+        /**
+         * @return
+         */
         public String getSensorName() {
             return SensorName;
         }
 
+        /**
+         * @return
+         */
         public double getSensorValue() {
             return SensorValue;
         }
 
+        /**
+         * @param object
+         * @return
+         */
         public int compareTo(final Object object) {
             final SensorReading other = (SensorReading) object;
             return (int) (getTime() - other.getTime());
         }
     }
 
+    /**
+     *
+     */
     private class AggregatedSensorReading implements Comparable {
         private final long time;
         private final String SensorName;
         private final String SeClusterID;
 
+        /**
+         * @return
+         */
         public String getSeClusterID() {
             return SeClusterID;
         }
 
+        /**
+         *
+         */
         private final double SensorValue;
 
+        /**
+         * @param time
+         * @param sensorName
+         * @param seClusterID
+         * @param sensorValue
+         */
         private AggregatedSensorReading(final long time, final String sensorName, final String seClusterID, final double sensorValue) {
             this.time = time;
             SensorName = sensorName;
@@ -318,18 +387,31 @@ public class SensorAggregationParser extends GenericParser implements Observer, 
             SeClusterID = seClusterID;
         }
 
+        /**
+         * @return
+         */
         public long getTime() {
             return time;
         }
 
+        /**
+         * @return
+         */
         public String getSensorName() {
             return SensorName;
         }
 
+        /**
+         * @return
+         */
         public double getSensorValue() {
             return SensorValue;
         }
 
+        /**
+         * @param object
+         * @return
+         */
         public int compareTo(final Object object) {
             final AggregatedSensorReading other = (AggregatedSensorReading) object;
             return (int) (getTime() - other.getTime());

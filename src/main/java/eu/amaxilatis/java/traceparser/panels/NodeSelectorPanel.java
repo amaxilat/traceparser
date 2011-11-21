@@ -11,6 +11,9 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *
+ */
 public class NodeSelectorPanel extends JPanel implements ActionListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeSelectorPanel.class);
@@ -18,9 +21,12 @@ public class NodeSelectorPanel extends JPanel implements ActionListener {
     private final static JButton UPDATE_BUTTON = new JButton("Reload Selections");
     private final static JLabel ENABLED_COUNT = new JLabel("unset");
 
-    private static JList nodesList;
+    private static JList nodesList = new JList(new DefaultListModel());
     private static Map<String, Integer> selectNodesMap = new HashMap<String, Integer>();
 
+    /**
+     *
+     */
     public NodeSelectorPanel() {
 
         this.setLayout(new BorderLayout());
@@ -31,8 +37,6 @@ public class NodeSelectorPanel extends JPanel implements ActionListener {
 
         mainPanel.add(new CouplePanel(UPDATE_BUTTON, ENABLED_COUNT), BorderLayout.SOUTH);
 
-        final ListModel nodesListModel = new DefaultListModel();
-        nodesList = new JList(nodesListModel);
         final JScrollPane nodeScrollPane = new JScrollPane(nodesList);
 
         mainPanel.add(nodeScrollPane);
@@ -42,7 +46,9 @@ public class NodeSelectorPanel extends JPanel implements ActionListener {
         this.add(mainPanel);
     }
 
-
+    /**
+     * @param actionEvent
+     */
     public void actionPerformed(final ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(UPDATE_BUTTON)) {
             updateSelected();
@@ -50,6 +56,9 @@ public class NodeSelectorPanel extends JPanel implements ActionListener {
 
     }
 
+    /**
+     *
+     */
     private static void updateSelected() {
         ENABLED_COUNT.setText(String.valueOf(nodesList.getSelectedIndices().length));
         selectNodesMap = new HashMap<String, Integer>();
@@ -58,6 +67,9 @@ public class NodeSelectorPanel extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     *
+     */
     public static void update() {
         final DefaultListModel listModel = (DefaultListModel) nodesList.getModel();
         listModel.clear();
@@ -74,6 +86,10 @@ public class NodeSelectorPanel extends JPanel implements ActionListener {
 
     }
 
+    /**
+     * @param urn
+     * @return
+     */
     public static boolean isSelected(final String urn) {
         return selectNodesMap.containsKey(urn);
     }

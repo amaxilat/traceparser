@@ -44,7 +44,7 @@ public class GenericParser extends JPanel {
      */
     protected GenericParser(final String name) {
         this.setLayout(new BorderLayout());
-        JPanel mainPanel = new JPanel(new GridLayout(0, COLUMNS, SPACING, SPACING));
+        final JPanel mainPanel = new JPanel(new GridLayout(0, COLUMNS, SPACING, SPACING));
         leftPanel = new JPanel(new GridLayout(0, 1));
         rightPanel = new JPanel(new GridLayout(0, 1));
         mainPanel.add(leftPanel);

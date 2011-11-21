@@ -24,6 +24,7 @@ public class TraceReader extends Observable implements Runnable {
      * default constructor
      */
     public TraceReader() {
+        //default
     }
 
     /**

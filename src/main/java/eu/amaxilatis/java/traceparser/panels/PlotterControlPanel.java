@@ -23,6 +23,9 @@ public class PlotterControlPanel extends JPanel implements ActionListener {
     private final static JCheckBox HIDE_TITLE = new JCheckBox("", ChartFormater.isHideTitle());
     private final static JSpinner BORDER_SIZE = new JSpinner();
 
+    /**
+     *
+     */
     public PlotterControlPanel() {
         this.setLayout(new BorderLayout());
 
@@ -62,7 +65,6 @@ public class PlotterControlPanel extends JPanel implements ActionListener {
     }
 
     /**
-     *
      * @param actionEvent
      */
     public void actionPerformed(final ActionEvent actionEvent) {
@@ -81,7 +83,6 @@ public class PlotterControlPanel extends JPanel implements ActionListener {
     }
 
     /**
-     *
      * @param text
      * @return
      */
@@ -90,7 +91,6 @@ public class PlotterControlPanel extends JPanel implements ActionListener {
     }
 
     /**
-     *
      * @param text
      * @return
      */
@@ -99,19 +99,10 @@ public class PlotterControlPanel extends JPanel implements ActionListener {
     }
 
     /**
-     *
      * @param text
      * @return
      */
     private int getBlue(final String text) {
         return Integer.parseInt(text.split(",")[2]);
     }
-
-//    private String color2string(final Color color) {
-//        final String red, green, blue;
-//        red = Integer.toString(color.getRed());
-//        green = Integer.toString(color.getGreen());
-//        blue = Integer.toString(color.getBlue());
-//        return red + "," + green + "," + blue;
-//    }
 }

@@ -86,7 +86,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         addParser = new javax.swing.JButton("Add Parser");
         addParser.addActionListener(this);
 
-        JButton saveProperties = new JButton("Save Properties");
+        final JButton saveProperties = new JButton("Save Properties");
         saveProperties.addActionListener(this);
 
         final DefaultListModel listModel = new DefaultListModel();
@@ -177,7 +177,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
     public void actionPerformed(final ActionEvent actionEvent) {
         final Object source = actionEvent.getSource();
         if (source.equals(addParser)) {
-            addParser(availableParsers.getSelectedValue().toString());
+            appendParser(availableParsers.getSelectedValue().toString());
         } else if ((source.equals(openFileChooser)) || ((source.equals(selectedFileText)))) {
             final JFileChooser chooser = new JFileChooser("~/");
             chooser.setDialogTitle("Select trace file to load");
@@ -193,7 +193,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
     }
 
-    private void addParser(final String title) {
+    private void appendParser(final String title) {
         try {
             GenericParser panel2add = null;
 

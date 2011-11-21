@@ -22,12 +22,15 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
+/**
+ *
+ */
 public class NeighborhoodParser extends GenericParser implements Observer, ActionListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NeighborhoodParser.class);
     public static final String NAME = "Neighborhood Parser";
 
-    private JTabbedPane tabbedPane;
+    private final transient JTabbedPane tabbedPane;
     private final transient JButton plotbutton;
     private final transient JButton removeButton;
     private final transient JTextField delimiterTf;
@@ -48,6 +51,9 @@ public class NeighborhoodParser extends GenericParser implements Observer, Actio
 
     private transient XYSeries[] series;
 
+    /**
+     * @param jTabbedPane1
+     */
     public NeighborhoodParser(final JTabbedPane jTabbedPane1) {
         super(NAME);
         tabbedPane = jTabbedPane1;
@@ -85,7 +91,12 @@ public class NeighborhoodParser extends GenericParser implements Observer, Actio
 
     }
 
-
+    /**
+     * @param prefixUni
+     * @param prefixLost
+     * @param prefixBidi
+     * @param prefixDrop
+     */
     void setTemplates(final String prefixUni, final String prefixLost, final String prefixBidi, final String prefixDrop) {
         this.prefixUni = prefixUni;
         this.prefixLost = prefixLost;
@@ -93,13 +104,19 @@ public class NeighborhoodParser extends GenericParser implements Observer, Actio
         this.prefixBidi = prefixBidi;
     }
 
+    /**
+     *
+     */
     private void init() {
         setDelimiter(";");
         setTemplates("NB", "NBL", "NBB", "NBD");
     }
 
+    /**
+     * @return
+     */
     private ChartPanel getPlot() {
-        XYSeriesCollection dataset = new XYSeriesCollection();
+        final XYSeriesCollection dataset = new XYSeriesCollection();
         XYSeries[] clustersSeries;
         clustersSeries = getAggregatedSeries();
 
@@ -107,65 +124,73 @@ public class NeighborhoodParser extends GenericParser implements Observer, Actio
             dataset.addSeries(clustersSery);
         }
 
-        JFreeChart chart = ChartFactory.createXYLineChart(
+        final JFreeChart chart = ChartFactory.createXYLineChart(
                 plotTitleTf.getText(),
                 xLabelTf.getText(),
                 yLabelTf.getText(),
                 dataset, PlotOrientation.VERTICAL, true, true, false);
-        JFreeChart chartTransformed = ChartFormater.transformChart(chart);
+        final JFreeChart chartTransformed = ChartFormater.transformChart(chart);
         return new ChartPanel(chartTransformed);
     }
 
+    /**
+     * @return
+     */
     private XYSeries[] getSeries() {
         return series;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /**
+     * @return
+     */
     private XYSeries[] getAggregatedSeries() {
         return getSeries();
     }
 
+    /**
+     * @param observable
+     * @param object
+     */
     public void update(final Observable observable, final Object object) {
         final TraceMessage message = (TraceMessage) object;
-        if (NodeSelectorPanel.isSelected(message.getUrn())) {
-
-
-            if (message.getText().startsWith(prefixUni)) {
+        if ((NodeSelectorPanel.isSelected(message.getUrn()))
+                && (message.getText().startsWith(prefixUni))) {
 //            LOGGER.info("Neighbor@" + message.getTime() + ":" + message.getUrn());
-                final String target = message.getText().split(delimiter)[1];
-                if ((message.getText().contains(prefixBidi))) {
+            final String target = message.getText().split(delimiter)[1];
+            if ((message.getText().contains(prefixBidi))) {
 
-                    if (neighborsBidi.containsKey(message.getUrn())) {
-                        final HashMap<String, Integer> tmp = neighborsBidi.get(message.getUrn());
-                        tmp.put(target, 1);
-                        neighborsBidi.put(message.getUrn(), tmp);
-                        LOGGER.debug(message.getText());
-                        LOGGER.debug(message.getUrn() + " nb size: " + tmp.size());
-                    } else {
-                        HashMap tmp = new HashMap<String, Integer>();
-                        tmp.put(target, 1);
-                        neighborsBidi.put(message.getUrn(), tmp);
-                        LOGGER.debug(message.getText());
-                        LOGGER.debug(message.getUrn() + " nb size: " + tmp.size());
-                    }
-                } else if ((message.getText().contains(prefixDrop)) || (message.getText().contains(prefixLost))) {
-                    if (neighborsBidi.containsKey(message.getUrn())) {
-                        HashMap<String, Integer> tmp = neighborsBidi.get(message.getUrn());
-                        tmp.remove(target);
-                        neighborsBidi.put(message.getUrn(), tmp);
-                        LOGGER.debug(message.getText());
-                        LOGGER.debug(message.getUrn() + " nb size: " + tmp.size());
-                    }
-
+                if (neighborsBidi.containsKey(message.getUrn())) {
+                    final HashMap<String, Integer> tmp = neighborsBidi.get(message.getUrn());
+                    tmp.put(target, 1);
+                    neighborsBidi.put(message.getUrn(), tmp);
+                    LOGGER.debug(message.getText());
+                    LOGGER.debug(message.getUrn() + " nb size: " + tmp.size());
+                } else {
+                    final HashMap tmp = new HashMap<String, Integer>();
+                    tmp.put(target, 1);
+                    neighborsBidi.put(message.getUrn(), tmp);
+                    LOGGER.debug(message.getText());
+                    LOGGER.debug(message.getUrn() + " nb size: " + tmp.size());
                 }
-
-                series[0].addOrUpdate(((int) ((message.getTime() - TraceFile.getInstance().getStartTime()) / 1000)), getAvgNeighbors());
-                series[1].addOrUpdate(((int) ((message.getTime() - TraceFile.getInstance().getStartTime()) / 1000)), getMinNeighbors());
-                series[2].addOrUpdate(((int) ((message.getTime() - TraceFile.getInstance().getStartTime()) / 1000)), getMaxNeighbors());
-
+            } else if (((message.getText().contains(prefixDrop)) || (message.getText().contains(prefixLost))) &&
+                    (neighborsBidi.containsKey(message.getUrn()))) {
+                final HashMap<String, Integer> tmp = neighborsBidi.get(message.getUrn());
+                tmp.remove(target);
+                neighborsBidi.put(message.getUrn(), tmp);
+                LOGGER.debug(message.getText());
+                LOGGER.debug(message.getUrn() + " nb size: " + tmp.size());
             }
+
+            series[0].addOrUpdate(((int) ((message.getTime() - TraceFile.getInstance().getStartTime()) / 1000)), getAvgNeighbors());
+            series[1].addOrUpdate(((int) ((message.getTime() - TraceFile.getInstance().getStartTime()) / 1000)), getMinNeighbors());
+            series[2].addOrUpdate(((int) ((message.getTime() - TraceFile.getInstance().getStartTime()) / 1000)), getMaxNeighbors());
+
         }
     }
 
+    /**
+     * @return
+     */
     private double getAvgNeighbors() {
         int count = 0;
         int sum = 0;
@@ -174,13 +199,16 @@ public class NeighborhoodParser extends GenericParser implements Observer, Actio
             sum += neighborsBidi.get(urn).size();
             count++;
         }
-        if (count > 0)
+        if (count > 0) {
             return (double) sum / count;
-        else {
+        } else {
             return 0;
         }
     }
 
+    /**
+     * @return
+     */
     private double getMaxNeighbors() {
         int max = 0;
         for (String urn : neighborsBidi.keySet()) {
@@ -191,6 +219,9 @@ public class NeighborhoodParser extends GenericParser implements Observer, Actio
         return max;
     }
 
+    /**
+     * @return
+     */
     private double getMinNeighbors() {
         int min = 0;
         for (String urn : neighborsBidi.keySet()) {
@@ -205,11 +236,14 @@ public class NeighborhoodParser extends GenericParser implements Observer, Actio
         return min;
     }
 
+    /**
+     * @param actionEvent
+     */
     public void actionPerformed(final ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(plotbutton)) {
             reset();
             LOGGER.info("|=== parsing tracefile: " + TraceFile.getInstance().getFilename() + "...");
-            TraceReader traceReader = new TraceReader();
+            final TraceReader traceReader = new TraceReader();
             traceReader.addObserver(this);
             traceReader.run();
             LOGGER.info("|--- done parsing!");
@@ -224,6 +258,9 @@ public class NeighborhoodParser extends GenericParser implements Observer, Actio
         }
     }
 
+    /**
+     *
+     */
     private void reset() {
         setDelimiter(delimiterTf.getText());
         setTemplates(nbTf.getText(), lostTf.getText(), bidiTf.getText(), dropTf.getText());
@@ -236,6 +273,9 @@ public class NeighborhoodParser extends GenericParser implements Observer, Actio
         LOGGER.info("NeighborhoodParser initialized");
     }
 
+    /**
+     * @param delimiter
+     */
     private void setDelimiter(final String delimiter) {
         this.delimiter = delimiter;
     }

@@ -20,7 +20,9 @@ import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
 
-
+/**
+ *
+ */
 public class SendParser extends GenericParser implements Observer, ActionListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SendParser.class);
@@ -47,7 +49,9 @@ public class SendParser extends GenericParser implements Observer, ActionListene
     private transient String hidden = "";
     private transient String prefix;
 
-
+    /**
+     * @param tabbedPane
+     */
     public SendParser(final JTabbedPane tabbedPane) {
         super(NAME);
         this.tabbedPane = tabbedPane;
@@ -80,7 +84,9 @@ public class SendParser extends GenericParser implements Observer, ActionListene
         LOGGER.info("SendParser initialized");
     }
 
-
+    /**
+     *
+     */
     private void init() {
         prefix = parts[0];
         if (parts[1].equals("%t")) {
@@ -95,6 +101,10 @@ public class SendParser extends GenericParser implements Observer, ActionListene
         LOGGER.info("SendParser initialized");
     }
 
+    /**
+     * @param observable
+     * @param object
+     */
     public void update(final Observable observable, final Object object) {
         final TraceMessage message = (TraceMessage) object;
         if (NodeSelectorPanel.isSelected(message.getUrn())) {
@@ -111,7 +121,10 @@ public class SendParser extends GenericParser implements Observer, ActionListene
         }
     }
 
-
+    /**
+     * @param aggregate
+     * @return
+     */
     public ChartPanel getPlot(final boolean aggregate) {
         final XYSeriesCollection dataset = new XYSeriesCollection();
         XYSeries[] messageTypes;
@@ -136,7 +149,10 @@ public class SendParser extends GenericParser implements Observer, ActionListene
         return new ChartPanel(chart);
     }
 
-
+    /**
+     * @param type
+     * @return
+     */
     boolean exists(final int type) {
         for (int i = 0; i < duration; i++) {
             if (messages[type][i] != 0) {
@@ -146,7 +162,9 @@ public class SendParser extends GenericParser implements Observer, ActionListene
         return false;
     }
 
-
+    /**
+     * @return
+     */
     public XYSeries[] getSeries() {
         final XYSeriesCollection seriesCollection = new XYSeriesCollection();
 
@@ -174,7 +192,9 @@ public class SendParser extends GenericParser implements Observer, ActionListene
         return series;
     }
 
-
+    /**
+     * @return
+     */
     public XYSeries[] getAggegatedSeries() {
         final XYSeriesCollection seriesCollection = new XYSeriesCollection();
 
@@ -198,6 +218,11 @@ public class SendParser extends GenericParser implements Observer, ActionListene
         return series;
     }
 
+    /**
+     * @param type
+     * @param time_until
+     * @return
+     */
     private int countUntil(final int type, final int time_until) {
         int sum = 0;
         for (int i = 0; i <= time_until; i++) {
@@ -206,6 +231,9 @@ public class SendParser extends GenericParser implements Observer, ActionListene
         return sum;
     }
 
+    /**
+     * @param actionEvent
+     */
     public void actionPerformed(final ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(plotButton)) {
             reset();
@@ -226,6 +254,9 @@ public class SendParser extends GenericParser implements Observer, ActionListene
         }
     }
 
+    /**
+     *
+     */
     private void reset() {
         duration = TraceFile.getInstance().getDuration() / 1000 + 1;
         messages = new int[255][(int) duration];
