@@ -2,20 +2,19 @@ package eu.amaxilatis.java.traceparser.test;
 
 
 import eu.amaxilatis.java.traceparser.TraceFile;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.net.URL;
 import java.util.Date;
 
 
 public class TraceFileTest
         extends TestCase {
-    private static final Logger LOGGER = Logger.getLogger(TraceFileTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TraceFileTest.class);
 
     /**
      * Create the test case

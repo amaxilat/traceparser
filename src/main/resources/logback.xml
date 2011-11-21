@@ -1,0 +1,45 @@
+<!-- For assistance related to logback-translator or configuration  -->
+<!-- files in general, please contact the logback user mailing list -->
+<!-- at http://www.qos.ch/mailman/listinfo/logback-user             -->
+<!--                                                                -->
+<!-- For professional support please see                            -->
+<!--    http://www.qos.ch/shop/products/professionalSupport         -->
+<!--                                                                -->
+<configuration>
+
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <Target>System.out</Target>
+        <encoder>
+            <pattern>[%d{ISO8601}] %5p %c{1}:%L - %m%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>info</level>
+        </filter>
+    </appender>
+
+    <appender name="parsers" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>parsers.log</File>
+        <encoder>
+            <pattern>[%d{ISO8601}] %5p %c{1}:%L - %m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <maxIndex>2</maxIndex>
+            <FileNamePattern>parsers.log.%i</FileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>5MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <!-- =========================================================== -->
+
+    <logger name="eu.amaxilatis.java.traceparser" level="INFO">
+        <appender-ref ref="stdout"/>
+    </logger>
+    <logger name="eu.amaxilatis.java.traceparser.parsers" level="INFO">
+        <appender-ref ref="parsers"/>
+    </logger>
+
+    <root level="ERROR"/>
+
+</configuration>

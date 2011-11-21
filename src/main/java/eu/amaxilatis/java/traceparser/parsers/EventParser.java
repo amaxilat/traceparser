@@ -4,13 +4,15 @@ import eu.amaxilatis.java.traceparser.TraceFile;
 import eu.amaxilatis.java.traceparser.TraceMessage;
 import eu.amaxilatis.java.traceparser.TraceReader;
 import eu.amaxilatis.java.traceparser.panels.NodeSelectorPanel;
-import org.apache.log4j.Logger;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,7 +30,7 @@ import java.util.Observer;
 public class EventParser extends GenericParser implements Observer, ActionListener {
 
     public static final String NAME = "Events Parser";
-    private static final Logger LOGGER = Logger.getLogger(EventParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventParser.class);
     private static final String PARTITIONER = ",";
     private transient long duration;
     private transient int events[][];

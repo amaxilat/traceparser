@@ -5,13 +5,15 @@ import eu.amaxilatis.java.traceparser.TraceFile;
 import eu.amaxilatis.java.traceparser.TraceMessage;
 import eu.amaxilatis.java.traceparser.TraceReader;
 import eu.amaxilatis.java.traceparser.panels.NodeSelectorPanel;
-import org.apache.log4j.Logger;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,7 +26,7 @@ import java.util.Observer;
 
 public class ClusterOverlapParser extends GenericParser implements Observer, ActionListener {
 
-    private static final Logger LOGGER = Logger.getLogger(ClustersParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClustersParser.class);
     public static final String NAME = "ClusterOverlap Parser";
     private static final String PLOT_TITLE = "Cluster Overlap Statistics";
     private static final String X_LABEL = "time in sec";

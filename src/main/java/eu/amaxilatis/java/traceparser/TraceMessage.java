@@ -1,6 +1,7 @@
 package eu.amaxilatis.java.traceparser;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,7 +17,7 @@ public class TraceMessage {
     /**
      * LOGGER.
      */
-    private static final Logger LOGGER = Logger.getLogger(TraceMessage.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TraceMessage.class);
     /**
      *
      */
@@ -121,7 +122,7 @@ public class TraceMessage {
             final Date dateParsed = dateFormat.parse(date);
             return dateParsed.getTime() + timeOffset * MILLIS_IN_HOUR;
         } catch (Exception e) {
-            LOGGER.error(e);
+            LOGGER.error(e.toString());
         }
 
 

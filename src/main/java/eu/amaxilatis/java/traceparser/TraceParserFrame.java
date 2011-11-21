@@ -9,7 +9,9 @@ package eu.amaxilatis.java.traceparser;
 
 import eu.amaxilatis.java.traceparser.panels.*;
 import eu.amaxilatis.java.traceparser.parsers.*;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,7 +28,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
 
-    private static final Logger LOGGER = Logger.getLogger(TraceParserFrame.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TraceParserFrame.class);
     private static final String PROP_FILE = "traceparser.properties";
 
 
@@ -213,7 +215,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
                 jTabbedPane1.updateUI();
             }
         } catch (Exception e1) {
-            LOGGER.debug(e1);
+            LOGGER.debug(e1.toString());
         }
     }
 
@@ -224,7 +226,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         try {
             TraceFile.getInstance().setFile(filename, new FileInputStream(filename));
         } catch (IOException exception) {
-            LOGGER.error(exception);
+            LOGGER.error(exception.toString());
         }
         durationFileText.setText(TraceFile.getInstance().getDuration() / 60000 + " min= " + TraceFile.getInstance().getDuration() / 1000 + " sec");
         nodesFileText.setText(TraceFile.getInstance().getNodeSize() + " nodes");

@@ -1,6 +1,7 @@
 package eu.amaxilatis.java.traceparser;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -17,7 +18,7 @@ public class TraceReader extends Observable implements Runnable {
     private static final String TEXT = "Text [";
     private static final String DATE = "Time [";
     private static final String END = "]";
-    private static final Logger LOGGER = Logger.getLogger(TraceReader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TraceReader.class);
 
     /**
      * default constructor
@@ -81,7 +82,7 @@ public class TraceReader extends Observable implements Runnable {
             final Date parseDate = dateFormat.parse(date);
             return parseDate.getTime();
         } catch (Exception e) {
-            LOGGER.error(e);
+            LOGGER.error(e.toString());
         }
         return -1;
     }

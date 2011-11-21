@@ -5,13 +5,15 @@ import eu.amaxilatis.java.traceparser.TraceFile;
 import eu.amaxilatis.java.traceparser.TraceMessage;
 import eu.amaxilatis.java.traceparser.TraceReader;
 import eu.amaxilatis.java.traceparser.panels.NodeSelectorPanel;
-import org.apache.log4j.Logger;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,7 +27,7 @@ import java.util.Observer;
 public class ClustersParser extends GenericParser implements Observer, ActionListener {
 
     public static final String NAME = "Clusters Parser";
-    private static final Logger LOGGER = Logger.getLogger(ClustersParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClustersParser.class);
     private static final String PLOT_TITLE = "Cluster Statistics";
     private static final String X_LABEL = "time in sec";
     private static final String Y_LABEL = "# of Clusters";
@@ -133,11 +135,11 @@ public class ClustersParser extends GenericParser implements Observer, ActionLis
         series[0] = new XYSeries("Clusters");
         series[1] = new XYSeries("Avg. Size of Cluster");
 
-        LOGGER.debug(duration);
+        LOGGER.debug("%d",duration);
         for (int i = 0; i < duration; i++) {
             int clusterCount = 0;
             int simple_count = 0;
-            LOGGER.debug(clusters[i].keySet().size());
+            LOGGER.debug("%d",clusters[i].keySet().size());
             for (String key : clusters[i].keySet()) {
 
                 if (clusters[i].get(key).equals(key)) {

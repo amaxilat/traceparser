@@ -1,7 +1,8 @@
 package eu.amaxilatis.java.traceparser.panels;
 
 import eu.amaxilatis.java.traceparser.TraceFile;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +13,7 @@ import java.util.Map;
 
 public class NodeSelectorPanel extends JPanel implements ActionListener {
 
-    private static final Logger LOGGER = Logger.getLogger(NodeSelectorPanel.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NodeSelectorPanel.class);
     public final static String NAME = "Node Selection";
     private final static JButton UPDATE_BUTTON = new JButton("Reload Selections");
     private final static JLabel ENABLED_COUNT = new JLabel("unset");

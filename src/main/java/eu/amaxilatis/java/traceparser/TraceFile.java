@@ -1,6 +1,7 @@
 package eu.amaxilatis.java.traceparser;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,7 +22,7 @@ public class TraceFile {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(TraceFile.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TraceFile.class);
 
     /**
      * traceFile filename.
