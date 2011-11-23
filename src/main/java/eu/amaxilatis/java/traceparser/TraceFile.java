@@ -108,11 +108,17 @@ public class TraceFile {
 
         String strLine;
         long tempDuration = 0;
-        final TraceMessage message = new TraceMessage();
         //Read File Line By Line
         while ((strLine = bufferedReader.readLine()) != null) {
             countLines++;
             // Print the content on the console
+            TraceMessage message;
+            if (TraceParserFrame.shawnMode.isSelected()) {
+                message = new ShawnTraceMessage();
+            } else {
+                message = new RuntimeTraceMessage();
+            }
+
             message.setString(strLine);
             final long date = message.getTime();
             if (date < countStartTime) {

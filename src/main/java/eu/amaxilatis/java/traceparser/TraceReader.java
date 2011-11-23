@@ -42,11 +42,17 @@ public class TraceReader extends Observable implements Runnable {
             final DataInputStream dataInputStream = new DataInputStream(stream);
             final BufferedReader reader = new BufferedReader(new InputStreamReader(dataInputStream));
             //Read File Line By Line
-            final TraceMessage message = new TraceMessage();
+
             while ((strLine = reader.readLine()) != null) {
                 // Print the content on the console
                 //LOGGER.debug(strLine);
                 //LOGGER.debug(extractNodeUrn(strLine) + "@" + extractDate(strLine) + ":" + extractText(strLine));
+                TraceMessage message;
+                if (TraceParserFrame.shawnMode.isSelected()) {
+                    message = new ShawnTraceMessage();
+                } else {
+                    message = new RuntimeTraceMessage();
+                }
                 message.setString(strLine);
                 notifyObservers(message);
                 notifyObservers();

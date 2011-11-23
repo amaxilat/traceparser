@@ -4,7 +4,6 @@ import eu.amaxilatis.java.traceparser.TraceFile;
 import eu.amaxilatis.java.traceparser.TraceMessage;
 import eu.amaxilatis.java.traceparser.TraceReader;
 import eu.amaxilatis.java.traceparser.panels.NodeSelectorPanel;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;

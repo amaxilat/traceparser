@@ -7,11 +7,17 @@
 package eu.amaxilatis.java.traceparser;
 
 
-import eu.amaxilatis.java.traceparser.panels.*;
-import eu.amaxilatis.java.traceparser.parsers.*;
+import eu.amaxilatis.java.traceparser.panels.NodeSelectorPanel;
+import eu.amaxilatis.java.traceparser.panels.PlotterControlPanel;
+import eu.amaxilatis.java.traceparser.parsers.ClusterOverlapParser;
+import eu.amaxilatis.java.traceparser.parsers.ClustersParser;
+import eu.amaxilatis.java.traceparser.parsers.EventParser;
+import eu.amaxilatis.java.traceparser.parsers.GenericParser;
+import eu.amaxilatis.java.traceparser.parsers.NeighborhoodParser;
+import eu.amaxilatis.java.traceparser.parsers.SendParser;
+import eu.amaxilatis.java.traceparser.parsers.SensorAggregationParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,6 +50,7 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
     private transient javax.swing.JLabel nodesFileText;
 
     private transient JTabbedPane jTabbedPane1;
+    public static transient JCheckBox shawnMode;
 
 
     /**
@@ -127,6 +134,13 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
         nodesFileText = new JLabel("0");
         fileOptionsPanel.add(new JLabel("Total Nodes in Trace"));
         fileOptionsPanel.add(nodesFileText);
+
+
+        shawnMode = new JCheckBox();
+
+        fileOptionsPanel.add(new JLabel(""));
+        fileOptionsPanel.add(new JLabel("Shawn Mode:"));
+        fileOptionsPanel.add(shawnMode);
 
 
         jTabbedPane1.addTab("File Options", fileOptionsPanel);
