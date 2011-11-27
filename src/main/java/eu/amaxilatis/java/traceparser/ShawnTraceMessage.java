@@ -81,6 +81,8 @@ public class ShawnTraceMessage extends TraceMessage {
         final int dateStart = strLine.indexOf(DATETEXT) + DATETEXT.length();
 
         final int dateStop = strLine.lastIndexOf(ENDTEXT);
+        LOGGER.info(String.valueOf(ENDTEXT));
+        LOGGER.info("{}", strLine.lastIndexOf(ENDTEXT));
         return Long.parseLong(strLine.substring(dateStart, dateStop));
 
     }
