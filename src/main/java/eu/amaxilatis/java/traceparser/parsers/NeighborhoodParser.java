@@ -153,9 +153,10 @@ public class NeighborhoodParser extends GenericParser implements Observer, Actio
      */
     public void update(final Observable observable, final Object object) {
         final TraceMessage message = (TraceMessage) object;
+        LOGGER.info(message.getText());
         if ((NodeSelectorPanel.isSelected(message.getUrn()))
                 && (message.getText().startsWith(prefixUni))) {
-//            LOGGER.info("Neighbor@" + message.getTime() + ":" + message.getUrn());
+            LOGGER.info("Neighbor@" + message.getTime() + ":" + message.getUrn());
             final String target = message.getText().split(delimiter)[1];
             if ((message.getText().contains(prefixBidi))) {
 
