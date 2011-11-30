@@ -71,9 +71,6 @@ public class TraceFile {
     }
 
     public static TraceFile getInstance() {
-        if (instance == null) {
-            instance = new TraceFile();
-        }
         return instance;
     }
 
