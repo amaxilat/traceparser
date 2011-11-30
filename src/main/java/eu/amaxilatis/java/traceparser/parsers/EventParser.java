@@ -31,21 +31,24 @@ public class EventParser extends GenericParser implements Observer, ActionListen
     public static final String NAME = "Events Parser";
     private static final Logger LOGGER = LoggerFactory.getLogger(EventParser.class);
     private static final String PARTITIONER = ",";
+    private static final String DELIMITER = ";";
     private transient long duration;
     private transient int events[][];
     private transient int eventTypes;
 
     private final transient JButton plot;
     private final transient JTextField partitionerTf;
+    private final transient JTextField delimiterTf;
     private final transient JTextField templatesTf;
     private final transient JTabbedPane tabbedPane;
-    private final transient TextField plotTitle;
-    private final transient TextField xLabel;
-    private final transient TextField yLabel;
+    private final transient JTextField plotTitle;
+    private final transient JTextField xLabel;
+    private final transient JTextField yLabel;
     private final transient JButton remove;
 
     private transient String[] prefixes;
     private transient String templates = "NB,CLL";
+
 
     /**
      * @param jTabbedPane1
@@ -63,15 +66,17 @@ public class EventParser extends GenericParser implements Observer, ActionListen
 
         partitionerTf = new JTextField(PARTITIONER);
         templatesTf = new JTextField(templates);
+        delimiterTf = new JTextField(DELIMITER);
         addLeft(new JLabel("partitioner"), partitionerTf);
+        addLeft(new JLabel("delimiter"), delimiterTf);
         addLeft(new JLabel("templates"), templatesTf);
 
 
-        plotTitle = new TextField("Event Statistics");
+        plotTitle = new JTextField("Event Statistics");
         addRight(new JLabel("Plot title:"), plotTitle);
-        xLabel = new TextField("getTime in sec");
+        xLabel = new JTextField("Time in sec");
         addRight(new JLabel("X axis Label:"), xLabel);
-        yLabel = new TextField("# of Events");
+        yLabel = new JTextField("# of Events");
         addRight(new JLabel("Y axis Label:"), yLabel);
 
         init();
@@ -94,7 +99,7 @@ public class EventParser extends GenericParser implements Observer, ActionListen
         if (NodeSelectorPanel.isSelected(message.getUrn())) {
 
             for (int type = 0; type < eventTypes; type++) {
-                if (message.getText().contains(prefixes[type])) {
+                if (message.getText().contains(prefixes[type] + delimiterTf.getText())) {
                     //LOGGER.info("Event@" + message.getTime() + ":" + message.getUrn());
                     events[type][((int) ((message.getTime() - TraceFile.getInstance().getStartTime()) / 1000))]++;
                 }
