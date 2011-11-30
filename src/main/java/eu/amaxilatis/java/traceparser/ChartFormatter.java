@@ -6,28 +6,28 @@ import java.awt.Color;
 import java.awt.BasicStroke;
 
 /**
- * ChartFormater
+ * ChartFormatter
  */
-public class ChartFormater {
+public class ChartFormatter {
 
     /**
      *
      */
-    private static ChartFormater instance = null;
+    private static ChartFormatter instance = null;
 
     /**
      * Constructor.
      */
-    protected ChartFormater() {
+    protected ChartFormatter() {
         // Exists only to defeat instantiation.
     }
 
     /**
      * @return
      */
-    public ChartFormater getInstance() {
+    public ChartFormatter getInstance() {
         if (this.instance == null) {
-            this.instance = new ChartFormater();
+            this.instance = new ChartFormatter();
         }
         return this.instance;
     }
@@ -60,50 +60,50 @@ public class ChartFormater {
     /**
      * @param instance
      */
-    public static void setInstance(final ChartFormater instance) {
-        ChartFormater.instance = instance;
+    public static void setInstance(final ChartFormatter instance) {
+        ChartFormatter.instance = instance;
     }
 
     /**
      * @param backgroundColor
      */
     public static void setBackgroundColor(final Color backgroundColor) {
-        ChartFormater.backgroundColor = backgroundColor;
+        ChartFormatter.backgroundColor = backgroundColor;
     }
 
     /**
      * @param borderColor
      */
     public static void setBorderColor(final Color borderColor) {
-        ChartFormater.borderColor = borderColor;
+        ChartFormatter.borderColor = borderColor;
     }
 
     /**
      * @param hasBorder
      */
     public static void setHasBorder(final boolean hasBorder) {
-        ChartFormater.hasBorder = hasBorder;
+        ChartFormatter.hasBorder = hasBorder;
     }
 
     /**
      * @param hideLegend
      */
     public static void setHideLegend(final boolean hideLegend) {
-        ChartFormater.hideLegend = hideLegend;
+        ChartFormatter.hideLegend = hideLegend;
     }
 
     /**
      * @param borderSize
      */
     public static void setBorderSize(final float borderSize) {
-        ChartFormater.borderSize = borderSize;
+        ChartFormatter.borderSize = borderSize;
     }
 
     /**
      * @param hideTitle
      */
     public static void setHideTitle(final boolean hideTitle) {
-        ChartFormater.hideTitle = hideTitle;
+        ChartFormatter.hideTitle = hideTitle;
     }
 
     /**
@@ -155,16 +155,16 @@ public class ChartFormater {
      * @return the formated chart
      */
     public static JFreeChart transformChart(final JFreeChart chart) {
-        chart.setBackgroundPaint(ChartFormater.backgroundColor);
-        chart.setBorderPaint(ChartFormater.borderColor);
-        chart.setBorderVisible(ChartFormater.hasBorder);
-        if (ChartFormater.hideLegend) {
+        chart.setBackgroundPaint(ChartFormatter.backgroundColor);
+        chart.setBorderPaint(ChartFormatter.borderColor);
+        chart.setBorderVisible(ChartFormatter.hasBorder);
+        if (ChartFormatter.hideLegend) {
             chart.removeLegend();
         }
-        if ((ChartFormater.hideTitle)) {
+        if ((ChartFormatter.hideTitle)) {
             chart.setTitle("");
         }
-        chart.setBorderStroke(new BasicStroke(ChartFormater.borderSize));
+        chart.setBorderStroke(new BasicStroke(ChartFormatter.borderSize));
 
         return chart;
     }

@@ -1,4 +1,4 @@
-package eu.amaxilatis.java.traceparser;
+package eu.amaxilatis.java.traceparser.traces;
 
 /**
  * Created by IntelliJ IDEA.
@@ -6,7 +6,7 @@ package eu.amaxilatis.java.traceparser;
  * Date: 7/10/11
  * Time: 5:09 PM
  */
-public abstract class TraceMessage {
+public abstract class AbstractTraceMessage {
 
     /**
      * @param strLine the string message

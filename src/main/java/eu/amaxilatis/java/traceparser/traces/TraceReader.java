@@ -1,5 +1,7 @@
-package eu.amaxilatis.java.traceparser;
+package eu.amaxilatis.java.traceparser.traces;
 
+import eu.amaxilatis.java.traceparser.AbstractTraceMessage;
+import eu.amaxilatis.java.traceparser.TraceParserFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +50,7 @@ public class TraceReader extends Observable implements Runnable {
                     // Print the content on the console
                     //LOGGER.debug(strLine);
                     //LOGGER.debug(extractNodeUrn(strLine) + "@" + extractDate(strLine) + ":" + extractText(strLine));
-                    TraceMessage message;
+                    AbstractTraceMessage message;
                     if (TraceParserFrame.shawnMode.isSelected()) {
                         message = new ShawnTraceMessage();
                     } else {
