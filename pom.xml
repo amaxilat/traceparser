@@ -73,7 +73,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <mainClass>eu.amaxilatis.java.traceparser.TraceParserAppSingletron</mainClass>
+                            <mainClass>eu.amaxilatis.java.traceparser.TraceParserApp</mainClass>
                         </configuration>
                         <goals>
                             <goal>one-jar</goal>

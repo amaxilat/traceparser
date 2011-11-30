@@ -3,28 +3,27 @@ package eu.amaxilatis.java.traceparser;
 import eu.amaxilatis.java.traceparser.frames.TraceParserFrame;
 
 /**
- *
+ * TraceParserApp
  */
-public class TraceParserAppSingletron {
+public class TraceParserApp {
     /**
      * instance of singletron
      */
-    private static TraceParserAppSingletron instance = new TraceParserAppSingletron();
+    private static TraceParserApp instance = new TraceParserApp();
+
+    /**
+     * singletron constructor
+     */
+    public TraceParserApp() {
+        //nothing
+    }
 
     /**
      * @return
      */
-    public static TraceParserAppSingletron getInstance() {
+    public static TraceParserApp getInstance() {
         return instance;
     }
-
-    /**
-     * singletron
-     */
-    public TraceParserAppSingletron() {
-
-    }
-
 
     /**
      * @param args
