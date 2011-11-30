@@ -18,7 +18,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>3.8.1</version>
+            <version>[3.8.1,)</version>
             <scope>test</scope>
         </dependency>
         <!--<dependency>-->
@@ -29,22 +29,22 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.0.0</version>
+            <version>[1.0.0,)</version>
         </dependency>
         <dependency>
             <groupId>jfree</groupId>
             <artifactId>jfreechart</artifactId>
-            <version>1.0.0</version>
+            <version>[1.0.0,)</version>
         </dependency>
         <dependency>
             <groupId>hudson.plugins.sloccount</groupId>
             <artifactId>sloccount</artifactId>
-            <version>1.4</version>
+            <version>[1.4,)</version>
         </dependency>
         <dependency>
             <groupId>hudson.plugins.sloccount</groupId>
             <artifactId>sloccount</artifactId>
-            <version>1.4</version>
+            <version>[1.4,)</version>
         </dependency>
     </dependencies>
     <build>
@@ -62,8 +62,8 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
+                    <source>1.6</source>
+                    <target>1.6</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -80,6 +80,40 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <configuration>
+                            <target>
+                                <scp file="${project.build.directory}/${artifactId}-${version}.one-jar.jar"
+                                     todir="amaxilatis@diogenis.ceid.upatras.gr:~/public_html/Projects/traceparser/"
+                                     keyfile="${user.home}/.ssh/id_rsa"
+                                     trust="true" verbose="true" port="22"
+                                     passphrase=""/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.ant</groupId>
+                        <artifactId>ant-jsch</artifactId>
+                        <version>[1.7.1,)</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.jcraft</groupId>
+                        <artifactId>jsch</artifactId>
+                        <version>[0.1.38,)</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
