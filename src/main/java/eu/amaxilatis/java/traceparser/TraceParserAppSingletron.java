@@ -5,23 +5,23 @@ import eu.amaxilatis.java.traceparser.frames.TraceParserFrame;
 /**
  *
  */
-public class TraceParserApp {
+public class TraceParserAppSingletron {
     /**
      * instance of singletron
      */
-    private static TraceParserApp instance = new TraceParserApp();
+    private static TraceParserAppSingletron instance = new TraceParserAppSingletron();
 
     /**
      * @return
      */
-    public static TraceParserApp getInstance() {
+    public static TraceParserAppSingletron getInstance() {
         return instance;
     }
 
     /**
      * singletron
      */
-    public TraceParserApp() {
+    public TraceParserAppSingletron() {
 
     }
 
