@@ -19,6 +19,14 @@ public class TraceParserApp {
     }
 
     /**
+     * singletron
+     */
+    public TraceParserApp() {
+
+    }
+
+
+    /**
      * @param args
      */
     public static void main(final String[] args) {
