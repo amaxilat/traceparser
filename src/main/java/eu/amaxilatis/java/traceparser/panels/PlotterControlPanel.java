@@ -1,6 +1,6 @@
 package eu.amaxilatis.java.traceparser.panels;
 
-import eu.amaxilatis.java.traceparser.ChartFormater;
+import eu.amaxilatis.java.traceparser.ChartFormatter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,9 +18,9 @@ public class PlotterControlPanel extends JPanel implements ActionListener {
     private final static JButton RESET_BUTTON = new JButton("Reset");
     private final static JTextField BG_COLOR = new JTextField("default");
     private final static JTextField BORDER_COLOR = new JTextField("default");
-    private final static JCheckBox HAS_BORDER = new JCheckBox("", ChartFormater.isBorder());
-    private final static JCheckBox HIDE_LEGEND = new JCheckBox("", ChartFormater.isHideLegend());
-    private final static JCheckBox HIDE_TITLE = new JCheckBox("", ChartFormater.isHideTitle());
+    private final static JCheckBox HAS_BORDER = new JCheckBox("", ChartFormatter.isBorder());
+    private final static JCheckBox HIDE_LEGEND = new JCheckBox("", ChartFormatter.isHideLegend());
+    private final static JCheckBox HIDE_TITLE = new JCheckBox("", ChartFormatter.isHideTitle());
     private final static JSpinner BORDER_SIZE = new JSpinner();
 
     /**
@@ -48,13 +48,13 @@ public class PlotterControlPanel extends JPanel implements ActionListener {
 
 
         //bgcolor
-        BG_COLOR.setBorder(BorderFactory.createLineBorder(ChartFormater.getBackgroundColor(), 5));
+        BG_COLOR.setBorder(BorderFactory.createLineBorder(ChartFormatter.getBackgroundColor(), 5));
         leftPanel.add(new CouplePanel(new JLabel("Bg color"), BG_COLOR));
         //bordeColor
-        BORDER_COLOR.setBorder(BorderFactory.createLineBorder(ChartFormater.getBorderColor(), 5));
+        BORDER_COLOR.setBorder(BorderFactory.createLineBorder(ChartFormatter.getBorderColor(), 5));
         leftPanel.add(new CouplePanel(new JLabel("Border color"), BORDER_COLOR));
         //bordeColor
-        BORDER_SIZE.setValue(ChartFormater.getBorderSize());
+        BORDER_SIZE.setValue(ChartFormatter.getBorderSize());
         leftPanel.add(new CouplePanel(new JLabel("Border size"), BORDER_SIZE));
         //use border
         rightPanel.add(new CouplePanel(new JLabel("Use Border"), HAS_BORDER));
@@ -71,14 +71,14 @@ public class PlotterControlPanel extends JPanel implements ActionListener {
         if (actionEvent.getSource().equals(UPDATE_BUTTON)) {
             final Color newBGColor = new Color(getRed(BG_COLOR.getText()), getGreen(BG_COLOR.getText()), getBlue(BG_COLOR.getText()));
             BG_COLOR.setBorder(BorderFactory.createLineBorder(newBGColor, 5));
-            ChartFormater.setBackgroundColor(newBGColor);
+            ChartFormatter.setBackgroundColor(newBGColor);
             final Color newBorderColor = new Color(getRed(BORDER_COLOR.getText()), getGreen(BORDER_COLOR.getText()), getBlue(BORDER_COLOR.getText()));
             BORDER_COLOR.setBorder(BorderFactory.createLineBorder(newBorderColor, 5));
-            ChartFormater.setBorderColor(newBorderColor);
-            ChartFormater.setBorderSize(Float.parseFloat(BORDER_SIZE.getValue().toString()));
-            ChartFormater.setHasBorder(HAS_BORDER.isSelected());
-            ChartFormater.setHideLegend(HIDE_LEGEND.isSelected());
-            ChartFormater.setHideTitle(HIDE_TITLE.isSelected());
+            ChartFormatter.setBorderColor(newBorderColor);
+            ChartFormatter.setBorderSize(Float.parseFloat(BORDER_SIZE.getValue().toString()));
+            ChartFormatter.setHasBorder(HAS_BORDER.isSelected());
+            ChartFormatter.setHideLegend(HIDE_LEGEND.isSelected());
+            ChartFormatter.setHideTitle(HIDE_TITLE.isSelected());
         }
     }
 

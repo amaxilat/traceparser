@@ -1,8 +1,8 @@
 package eu.amaxilatis.java.traceparser.parsers;
 
-import eu.amaxilatis.java.traceparser.TraceFile;
-import eu.amaxilatis.java.traceparser.TraceMessage;
-import eu.amaxilatis.java.traceparser.TraceReader;
+import eu.amaxilatis.java.traceparser.traces.AbstractTraceMessage;
+import eu.amaxilatis.java.traceparser.traces.TraceFile;
+import eu.amaxilatis.java.traceparser.traces.TraceReader;
 import eu.amaxilatis.java.traceparser.panels.NodeSelectorPanel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -95,7 +95,7 @@ public class EventParser extends GenericParser implements Observer, ActionListen
      * @param obj
      */
     public void update(final Observable observable, final Object obj) {
-        final TraceMessage message = (TraceMessage) obj;
+        final AbstractTraceMessage message = (AbstractTraceMessage) obj;
         if (NodeSelectorPanel.isSelected(message.getUrn())) {
 
             for (int type = 0; type < eventTypes; type++) {

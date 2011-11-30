@@ -16,6 +16,7 @@ import eu.amaxilatis.java.traceparser.parsers.GenericParser;
 import eu.amaxilatis.java.traceparser.parsers.NeighborhoodParser;
 import eu.amaxilatis.java.traceparser.parsers.SendParser;
 import eu.amaxilatis.java.traceparser.parsers.SensorAggregationParser;
+import eu.amaxilatis.java.traceparser.traces.TraceFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

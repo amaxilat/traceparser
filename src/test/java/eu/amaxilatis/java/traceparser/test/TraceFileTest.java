@@ -1,7 +1,7 @@
 package eu.amaxilatis.java.traceparser.test;
 
 
-import eu.amaxilatis.java.traceparser.TraceFile;
+import eu.amaxilatis.java.traceparser.traces.TraceFile;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

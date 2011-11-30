@@ -1,6 +1,5 @@
 package eu.amaxilatis.java.traceparser.traces;
 
-import eu.amaxilatis.java.traceparser.AbstractTraceMessage;
 import eu.amaxilatis.java.traceparser.TraceParserFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +53,7 @@ public class TraceFile {
     /**
      * instance of singletron
      */
-    private static TraceFile instance = null;
+    private static TraceFile instance = new TraceFile();
 
     /**
      * @return
@@ -110,16 +109,17 @@ public class TraceFile {
 
         String strLine;
         long tempDuration = 0;
+        AbstractTraceMessage message;
+        if (TraceParserFrame.shawnMode.isSelected()) {
+            message = new ShawnTraceMessage();
+        } else {
+            message = new RuntimeTraceMessage();
+        }
+
         //Read File Line By Line
         while ((strLine = bufferedReader.readLine()) != null) {
             countLines++;
             // Print the content on the console
-            AbstractTraceMessage message;
-            if (TraceParserFrame.shawnMode.isSelected()) {
-                message = new ShawnTraceMessage();
-            } else {
-                message = new RuntimeTraceMessage();
-            }
 
             message.setString(strLine);
             final long date = message.getTime();

@@ -13,7 +13,7 @@ public class ChartFormatter {
     /**
      *
      */
-    private static ChartFormatter instance = null;
+    private static ChartFormatter instance = new ChartFormatter();
 
     /**
      * Constructor.

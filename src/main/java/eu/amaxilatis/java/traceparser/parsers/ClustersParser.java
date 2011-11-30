@@ -1,9 +1,9 @@
 package eu.amaxilatis.java.traceparser.parsers;
 
-import eu.amaxilatis.java.traceparser.ChartFormater;
-import eu.amaxilatis.java.traceparser.TraceFile;
-import eu.amaxilatis.java.traceparser.TraceMessage;
-import eu.amaxilatis.java.traceparser.TraceReader;
+import eu.amaxilatis.java.traceparser.traces.AbstractTraceMessage;
+import eu.amaxilatis.java.traceparser.ChartFormatter;
+import eu.amaxilatis.java.traceparser.traces.TraceFile;
+import eu.amaxilatis.java.traceparser.traces.TraceReader;
 import eu.amaxilatis.java.traceparser.panels.NodeSelectorPanel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -135,7 +135,7 @@ public class ClustersParser extends GenericParser implements Observer, ActionLis
                 dataset, PlotOrientation.VERTICAL, true, true, false);
 
 
-        final JFreeChart chartTransformed = ChartFormater.transformChart(chart);
+        final JFreeChart chartTransformed = ChartFormatter.transformChart(chart);
         return new ChartPanel(chartTransformed);
     }
 
@@ -193,7 +193,7 @@ public class ClustersParser extends GenericParser implements Observer, ActionLis
      * @param obj
      */
     public void update(final Observable observable, final Object obj) {
-        final TraceMessage message = (TraceMessage) obj;
+        final AbstractTraceMessage message = (AbstractTraceMessage) obj;
         if (!NodeSelectorPanel.isSelected(message.getUrn())) {
             return;
         }

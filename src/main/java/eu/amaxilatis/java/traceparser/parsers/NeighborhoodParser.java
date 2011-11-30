@@ -1,9 +1,9 @@
 package eu.amaxilatis.java.traceparser.parsers;
 
-import eu.amaxilatis.java.traceparser.ChartFormater;
-import eu.amaxilatis.java.traceparser.TraceFile;
-import eu.amaxilatis.java.traceparser.TraceMessage;
-import eu.amaxilatis.java.traceparser.TraceReader;
+import eu.amaxilatis.java.traceparser.ChartFormatter;
+import eu.amaxilatis.java.traceparser.traces.AbstractTraceMessage;
+import eu.amaxilatis.java.traceparser.traces.TraceFile;
+import eu.amaxilatis.java.traceparser.traces.TraceReader;
 import eu.amaxilatis.java.traceparser.panels.NodeSelectorPanel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -129,7 +129,7 @@ public class NeighborhoodParser extends GenericParser implements Observer, Actio
                 xLabelTf.getText(),
                 yLabelTf.getText(),
                 dataset, PlotOrientation.VERTICAL, true, true, false);
-        final JFreeChart chartTransformed = ChartFormater.transformChart(chart);
+        final JFreeChart chartTransformed = ChartFormatter.transformChart(chart);
         return new ChartPanel(chartTransformed);
     }
 
@@ -152,7 +152,7 @@ public class NeighborhoodParser extends GenericParser implements Observer, Actio
      * @param object
      */
     public void update(final Observable observable, final Object object) {
-        final TraceMessage message = (TraceMessage) object;
+        final AbstractTraceMessage message = (AbstractTraceMessage) object;
 //        LOGGER.info(message.getText());
         if ((NodeSelectorPanel.isSelected(message.getUrn()))
                 && (message.getText().startsWith(prefixUni))) {

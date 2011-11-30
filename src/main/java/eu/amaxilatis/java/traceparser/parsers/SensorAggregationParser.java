@@ -1,9 +1,9 @@
 package eu.amaxilatis.java.traceparser.parsers;
 
-import eu.amaxilatis.java.traceparser.ChartFormater;
-import eu.amaxilatis.java.traceparser.TraceFile;
-import eu.amaxilatis.java.traceparser.TraceMessage;
-import eu.amaxilatis.java.traceparser.TraceReader;
+import eu.amaxilatis.java.traceparser.traces.AbstractTraceMessage;
+import eu.amaxilatis.java.traceparser.ChartFormatter;
+import eu.amaxilatis.java.traceparser.traces.TraceFile;
+import eu.amaxilatis.java.traceparser.traces.TraceReader;
 import eu.amaxilatis.java.traceparser.panels.NodeSelectorPanel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -134,7 +134,7 @@ public class SensorAggregationParser extends GenericParser implements Observer, 
         chart.getXYPlot().setRenderer(renderer);
 
 
-        JFreeChart chartTransformed = ChartFormater.transformChart(chart);
+        JFreeChart chartTransformed = ChartFormatter.transformChart(chart);
         return new ChartPanel(chartTransformed);
 
     }
@@ -222,7 +222,7 @@ public class SensorAggregationParser extends GenericParser implements Observer, 
      * @param o
      */
     public void update(Observable observable, Object o) {
-        final TraceMessage m = (TraceMessage) o;
+        final AbstractTraceMessage m = (AbstractTraceMessage) o;
         if (!NodeSelectorPanel.isSelected(m.getUrn())) return;
         if (m.getTime() < TraceFile.getInstance().getStartTime() + startTime * 1000) return;
         if (m.getText().contains(meanTf.getText())) {

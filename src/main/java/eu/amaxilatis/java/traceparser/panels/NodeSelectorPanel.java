@@ -1,6 +1,6 @@
 package eu.amaxilatis.java.traceparser.panels;
 
-import eu.amaxilatis.java.traceparser.TraceFile;
+import eu.amaxilatis.java.traceparser.traces.TraceFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
