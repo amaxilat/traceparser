@@ -145,54 +145,51 @@ public class SensorAggregationParser extends GenericParser implements Observer, 
      */
     XYSeries[] getSeries(final String sensor) {
 
-        XYSeriesCollection seriesCollection = new XYSeriesCollection();
+        final XYSeriesCollection seriesCollection = new XYSeriesCollection();
 
-        for (final String cursensor : sensors.keySet()) {
-            if (cursensor.equals(sensor)) {
-                String s2 = "Sensor  " + sensor + "  Value";
-                for (String key : semantics.keySet()) {
-                    s2 = s2.replaceFirst(" " + key + " ", semantics.get(key));
+
+        String sensTitle = "Sensor  " + sensor + "  Value";
+        for (String key : semantics.keySet()) {
+            sensTitle = sensTitle.replaceFirst(" " + key + " ", semantics.get(key));
+        }
+        XYSeries newseries = new XYSeries(sensTitle);
+        final HashMap<String, Double> SensorReadingMap = new HashMap<String, Double>();
+
+        double avgReading = 0;
+        for (final SensorReading sensorReading : senReadings) {
+            if (sensorReading.getSensorName().equals(sensor)) {
+                LOGGER.debug("avgReading:" + avgReading + ", sensorReading.value:" + sensorReading.getSensorValue() + "@" + sensorReading.getUrn());
+                SensorReadingMap.put(sensorReading.getUrn(), sensorReading.getSensorValue());
+                avgReading = 0;
+                for (String key : SensorReadingMap.keySet()) {
+                    avgReading += SensorReadingMap.get(key);
+
                 }
-                XYSeries newseries = new XYSeries(s2);
-                HashMap<String, Double> SensorReadingMap = new HashMap<String, Double>();
-
-                double avgReading = 0;
-                for (final SensorReading sensorReading : senReadings) {
-                    if (sensorReading.getSensorName().equals(sensor)) {
-                        LOGGER.debug("avgReading:" + avgReading + ", sensorReading.value:" + sensorReading.getSensorValue() + "@" + sensorReading.getUrn());
-                        SensorReadingMap.put(sensorReading.getUrn(), sensorReading.getSensorValue());
-                        avgReading = 0;
-                        for (String key : SensorReadingMap.keySet()) {
-                            avgReading += SensorReadingMap.get(key);
-
-                        }
-                        avgReading /= SensorReadingMap.keySet().size();
+                avgReading /= SensorReadingMap.keySet().size();
 
 //                    avgReading = (int) ((((avgReading * readingsCount) + sensorReading.getSensorValue())) / (readingsCount + 1));
 //                    avgReading = (int) ((((avgReading * (file.getNodeSize() - 1)) + sensorReading.getSensorValue())) / file.getNodeSize());
 //                    avgReading = (int) ((avgReading + sensorReading.getSensorValue()) / 2);
 
-                        LOGGER.debug("avg: " + avgReading);
+                LOGGER.debug("avg: " + avgReading);
 
-                        newseries.add((int) (sensorReading.getTime() - TraceFile.getInstance().getStartTime()) / 1000, avgReading);
-                    }
-                }
-                newseries.add((int) (TraceFile.getInstance().getEndTime() - TraceFile.getInstance().getStartTime()) / 1000, avgReading);
-                seriesCollection.addSeries(newseries);
+                newseries.add((int) (sensorReading.getTime() - TraceFile.getInstance().getStartTime()) / 1000, avgReading);
             }
         }
+        newseries.add((int) (TraceFile.getInstance().getEndTime() - TraceFile.getInstance().getStartTime()) / 1000, avgReading);
+        seriesCollection.addSeries(newseries);
 
         Collections.sort(agReadings);
         for (String sensorCluster : senClusters.keySet()) {
             if (sensorCluster.contains(sensor)) {
 
 
-                String s2 = "Aggregated " + sensorCluster + " Value";
+                sensTitle = "Aggregated " + sensorCluster + " Value";
                 for (String key : semantics.keySet()) {
-                    s2 = s2.replaceFirst("-" + key + " ", "-" + semantics.get(key) + " ");
+                    sensTitle = sensTitle.replaceFirst("-" + key + " ", "-" + semantics.get(key) + " ");
                 }
 
-                final XYSeries newseries = new XYSeries(s2);
+                newseries = new XYSeries(sensTitle);
 
                 final String sensorSeCluster = sensorCluster.substring(0, sensorCluster.indexOf("-"));
                 final String sensorName = sensorCluster.substring(sensorCluster.indexOf("-"));
@@ -219,33 +216,35 @@ public class SensorAggregationParser extends GenericParser implements Observer, 
 
     /**
      * @param observable
-     * @param o
+     * @param object
      */
-    public void update(Observable observable, Object o) {
-        final AbstractTraceMessage m = (AbstractTraceMessage) o;
-        if (!NodeSelectorPanel.isSelected(m.getUrn())) return;
-        if (m.getTime() < TraceFile.getInstance().getStartTime() + startTime * 1000) return;
-        if (m.getText().contains(meanTf.getText())) {
-            final String text = m.getText();
-//            LOGGER.info("Sensor@" + m.getTime() + ":" + m.getUrn() + "\"" + text + "\"");
-            final String[] parts = text.split(delimiterTf.getText());
+    public void update(final Observable observable, final Object object) {
+        final AbstractTraceMessage message = (AbstractTraceMessage) object;
+        if (NodeSelectorPanel.isSelected(message.getUrn())) {
 
-            final String sensorName = parts[1];
-            final String sensorValue = parts[2];
-            senReadings.add(new SensorReading(m.getTime(), sensorName, Double.parseDouble(sensorValue), m.getUrn()));
-            sensors.put(sensorName, 1);
-        } else if (m.getText().contains(agTf.getText())) {
-            final String text = m.getText();
+            if (message.getTime() < TraceFile.getInstance().getStartTime() + startTime * 1000) return;
+            if (message.getText().contains(meanTf.getText())) {
+                final String text = message.getText();
+//            LOGGER.info("Sensor@" + message.getTime() + ":" + message.getUrn() + "\"" + text + "\"");
+                final String[] parts = text.split(delimiterTf.getText());
 
-            final String[] parts = text.split(delimiterTf.getText());
+                final String sensorName = parts[1];
+                final String sensorValue = parts[2];
+                senReadings.add(new SensorReading(message.getTime(), sensorName, Double.parseDouble(sensorValue), message.getUrn()));
+                sensors.put(sensorName, 1);
+            } else if (message.getText().contains(agTf.getText())) {
+                final String text = message.getText();
 
-            final String cluster = parts[1].substring(0, parts[1].indexOf("-"));
-            final String sensorName = parts[1].substring(parts[1].indexOf("-"));
-            final String sensorValue = parts[2];
-//            LOGGER.info("AggregatedSensor@" + m.getTime() + ":" + cluster + "\"" + sensorName + "\"");
-            agReadings.add(new AggregatedSensorReading(m.getTime(), sensorName, cluster, Double.parseDouble(sensorValue)));
-            senClusters.put(cluster + sensorName, 1);
+                final String[] parts = text.split(delimiterTf.getText());
 
+                final String cluster = parts[1].substring(0, parts[1].indexOf('-'));
+                final String sensorName = parts[1].substring(parts[1].indexOf('-'));
+                final String sensorValue = parts[2];
+//            LOGGER.info("AggregatedSensor@" + message.getTime() + ":" + cluster + "\"" + sensorName + "\"");
+                agReadings.add(new AggregatedSensorReading(message.getTime(), sensorName, cluster, Double.parseDouble(sensorValue)));
+                senClusters.put(cluster + sensorName, 1);
+
+            }
         }
     }
 
@@ -253,21 +252,20 @@ public class SensorAggregationParser extends GenericParser implements Observer, 
      *
      */
     void parse() {
-        TraceReader a = new TraceReader();
-        a.addObserver(this);
-        a.run();
+        final TraceReader reader = new TraceReader();
+        reader.addObserver(this);
+        reader.run();
     }
 
     /**
      *
      */
     private void plot() {
-
         for (String sensor : sensors.keySet()) {
-            JFrame jnew = new JFrame();
-            jnew.add(getPlot(sensor));
-            jnew.pack();
-            jnew.setVisible(true);
+            final JFrame frame = new JFrame();
+            frame.add(getPlot(sensor));
+            frame.pack();
+            frame.setVisible(true);
         }
     }
 
@@ -304,10 +302,10 @@ public class SensorAggregationParser extends GenericParser implements Observer, 
      *
      */
     private class SensorReading implements Comparable {
-        private final long time;
-        private final String SensorName;
-        private final double SensorValue;
-        private final String urn;
+        private final transient long time;
+        private final transient String SensorName;
+        private final transient double SensorValue;
+        private final transient String urn;
 
         /**
          * @return
@@ -322,7 +320,7 @@ public class SensorAggregationParser extends GenericParser implements Observer, 
          * @param sensorValue
          * @param urn
          */
-        private SensorReading(final long time, final String sensorName, final double sensorValue, final String urn) {
+        public SensorReading(final long time, final String sensorName, final double sensorValue, final String urn) {
             this.time = time;
             SensorName = sensorName;
             SensorValue = sensorValue;
@@ -364,9 +362,9 @@ public class SensorAggregationParser extends GenericParser implements Observer, 
      *
      */
     private class AggregatedSensorReading implements Comparable {
-        private final long time;
-        private final String SensorName;
-        private final String SeClusterID;
+        private final transient long time;
+        private final transient String SensorName;
+        private final transient String SeClusterID;
 
         /**
          * @return
@@ -386,7 +384,7 @@ public class SensorAggregationParser extends GenericParser implements Observer, 
          * @param seClusterID
          * @param sensorValue
          */
-        private AggregatedSensorReading(final long time, final String sensorName, final String seClusterID, final double sensorValue) {
+        public AggregatedSensorReading(final long time, final String sensorName, final String seClusterID, final double sensorValue) {
             this.time = time;
             SensorName = sensorName;
             SensorValue = sensorValue;

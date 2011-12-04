@@ -118,7 +118,7 @@ public class NeighborhoodParser extends GenericParser implements Observer, Actio
     private ChartPanel getPlot() {
         final XYSeriesCollection dataset = new XYSeriesCollection();
         XYSeries[] clustersSeries;
-        clustersSeries = getAggregatedSeries();
+        clustersSeries = series;
 
         for (XYSeries clustersSery : clustersSeries) {
             dataset.addSeries(clustersSery);
@@ -131,20 +131,6 @@ public class NeighborhoodParser extends GenericParser implements Observer, Actio
                 dataset, PlotOrientation.VERTICAL, true, true, false);
         final JFreeChart chartTransformed = ChartFormatter.transformChart(chart);
         return new ChartPanel(chartTransformed);
-    }
-
-    /**
-     * @return
-     */
-    private XYSeries[] getSeries() {
-        return series;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    /**
-     * @return
-     */
-    private XYSeries[] getAggregatedSeries() {
-        return getSeries();
     }
 
     /**

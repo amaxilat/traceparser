@@ -89,8 +89,10 @@ public class ClustersParser extends GenericParser implements Observer, ActionLis
      *
      */
     private void init() {
+        this.template = "CLP;ID;TYPE;CLUSTER";
+        parts = template.split(delimiter);
+        prefix = template.substring(0, template.indexOf(delimiter));
 
-        setTemplate("CLP;ID;TYPE;CLUSTER");
 
         pcluster = 0;
         pid = 0;

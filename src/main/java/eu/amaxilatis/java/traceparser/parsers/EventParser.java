@@ -161,13 +161,15 @@ public class EventParser extends GenericParser implements Observer, ActionListen
     public XYSeries[] getSeriesAggregate() {
         XYSeries[] series = new XYSeries[eventTypes];
         for (int type = 0; type < eventTypes; type++) {
+            series[type] = new XYSeries("");
             if ("CLL".equals(prefixes[type])) {
-                series[type] = new XYSeries("Semantic Entity Changes");
+                series[type].setKey("Semantic Entity Changes");
             } else if ("NB".equals(prefixes[type])) {
-                series[type] = new XYSeries("Neighborhood Changes");
+                series[type].setKey("Neighborhood Changes");
             } else {
-                series[type] = new XYSeries("Events " + prefixes[type]);
+                series[type].setKey("Events " + prefixes[type]);
             }
+
             for (int i = 0; i < duration; i++) {
                 series[type].add(i, countUntil(type, i));
             }
