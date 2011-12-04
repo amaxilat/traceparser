@@ -33,7 +33,7 @@ public class SensorAggregationParser extends GenericParser implements Observer, 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorAggregationParser.class);
     public static final String NAME = "SensorAggregation Parser";
-    private final static String DELIMITER = ":";
+    private static final String DELIMITER = ":";
     private static final String SENS_PREFIX = "Sread";
     private static final String AG_PREFIX = "Sval";
 

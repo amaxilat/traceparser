@@ -24,17 +24,17 @@ public class NodeSelectorPanel extends JPanel implements ActionListener {
     /**
      * Panel name.
      */
-    public final static String NAME = "Node Selection";
+    public static final String NAME = "Node Selection";
 
     /**
      * Update button name.
      */
-    private final static JButton UPDATE_BUTTON = new JButton("Reload Selections");
+    private static final JButton UPDATE_BUTTON = new JButton("Reload Selections");
 
     /**
      * counter label.
      */
-    private final static JLabel ENABLED_COUNT = new JLabel("unset");
+    private static final JLabel ENABLED_COUNT = new JLabel("unset");
 
     /**
      * List of nodes.

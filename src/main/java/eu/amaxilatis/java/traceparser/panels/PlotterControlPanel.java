@@ -17,35 +17,35 @@ public class PlotterControlPanel extends JPanel implements ActionListener {
     /**
      * button.
      */
-    private final static JButton UPDATE_BUTTON = new JButton("Apply new Settings");
+    private static final JButton UPDATE_BUTTON = new JButton("Apply new Settings");
     /**
      * button.
      */
-    private final static JButton RESET_BUTTON = new JButton("Reset");
+    private static final JButton RESET_BUTTON = new JButton("Reset");
     /**
      * field.
      */
-    private final static JTextField BG_COLOR = new JTextField("default");
+    private static final JTextField BG_COLOR = new JTextField("default");
     /**
      * field.
      */
-    private final static JTextField BORDER_COLOR = new JTextField("default");
+    private static final JTextField BORDER_COLOR = new JTextField("default");
     /**
      * checkbox.
      */
-    private final static JCheckBox HAS_BORDER = new JCheckBox("", ChartFormatter.isBorder());
+    private static final JCheckBox HAS_BORDER = new JCheckBox("", ChartFormatter.isBorder());
     /**
      * checkbox.
      */
-    private final static JCheckBox HIDE_LEGEND = new JCheckBox("", ChartFormatter.isHideLegend());
+    private static final JCheckBox HIDE_LEGEND = new JCheckBox("", ChartFormatter.isHideLegend());
     /**
      * checkbox.
      */
-    private final static JCheckBox HIDE_TITLE = new JCheckBox("", ChartFormatter.isHideTitle());
+    private static final JCheckBox HIDE_TITLE = new JCheckBox("", ChartFormatter.isHideTitle());
     /**
      * size.
      */
-    private final static JSpinner BORDER_SIZE = new JSpinner();
+    private static final JSpinner BORDER_SIZE = new JSpinner();
 
     /**
      * Constructor.
