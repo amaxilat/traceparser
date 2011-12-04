@@ -34,37 +34,39 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
     private static final String X_LABEL = "time in sec";
     private static final String Y_LABEL = "# of Clusters";
 
-    private final JButton plotButton;
-    private final JButton removeButton;
-    private final JTextField delimiterTf;
-    private final JTextField templateTf;
-    private final JTabbedPane tabbedPane;
-    private final JTextField plotTitleTf;
-    private final JTextField xLabelTf;
-    private final JTextField yLabelTf;
-    private final JTextField clTypeTf;
+    private final transient JButton plotButton;
+    private final transient JButton removeButton;
+    private final transient JTextField delimiterTf;
+    private final transient JTextField templateTf;
+    private final transient JTabbedPane tabbedPane;
+    private final transient JTextField plotTitleTf;
+    private final transient JTextField xLabelTf;
+    private final transient JTextField yLabelTf;
+    private final transient JTextField clTypeTf;
 
-    private Map<String, Node> nodes;
-    private Map<String, SemanticEntity> semanticEntityMap;
-    private int pid, pcluster, pparent, ptname, ptid;
-    private String template;
-    private String prefix;
-    private String clType = "NAME-ID";
-    private String delimiter = ";";
-    private String[] parts;
-    private String clTypeDelimiter = "-";
-    int prev = 0;
+    private transient Map<String, Node> nodes;
+    private transient Map<String, SemanticEntity> semanticEntityMap;
+    private transient int pid, pcluster, pparent, ptname, ptid;
+    private transient String template;
+    private transient String prefix;
+    private final transient String clType = "NAME-ID";
+    private transient String delimiter = ";";
+    private transient String[] parts;
+    private final transient String clTypeDelimiter = "-";
+    private transient int prev = 0;
 
     XYSeries avgClusters = new XYSeries("avg SE per node");
 
     /**
      * @param jTabbedPane1
      */
-    public ClusterOverlapParser(JTabbedPane jTabbedPane1) {
+    public ClusterOverlapParser(final JTabbedPane jTabbedPane1) {
         super(NAME);
         this.tabbedPane = jTabbedPane1;
 
-        setTemplate("CLL;ID;CLUSTER;PARENT");
+        template = "CLL;ID;CLUSTER;PARENT";
+        parts = template.split(delimiter);
+        prefix = template.substring(0, template.indexOf(delimiter));
 
         this.setLayout(new BorderLayout());
 
@@ -142,26 +144,26 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
      * @param ylabel
      * @return
      */
-    public ChartPanel getPlot(boolean aggregate, String title, String xlabel, String ylabel) {
-        XYSeriesCollection dataset = new XYSeriesCollection();
+    public ChartPanel getPlot(boolean aggregate, final String title, final String xlabel, final String ylabel) {
+        final XYSeriesCollection dataSet = new XYSeriesCollection();
         XYSeries[] clustersSeries;
 
         clustersSeries = getSeries();
 
 
-        for (XYSeries clustersSery : clustersSeries) {
-            dataset.addSeries(clustersSery);
+        for (XYSeries series : clustersSeries) {
+            dataSet.addSeries(series);
         }
 
 
-        JFreeChart chart = ChartFactory.createXYLineChart(
+        final JFreeChart chart = ChartFactory.createXYLineChart(
                 title,
                 xlabel,
                 ylabel,
-                dataset, PlotOrientation.VERTICAL, true, true, false);
+                dataSet, PlotOrientation.VERTICAL, true, true, false);
 
 
-        JFreeChart chartTransformed = ChartFormatter.transformChart(chart);
+        final JFreeChart chartTransformed = ChartFormatter.transformChart(chart);
         return new ChartPanel(chartTransformed);
     }
 
@@ -174,14 +176,14 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
             LOGGER.info("SE : " + entry + "contains :" + semanticEntityMap.get(entry).countNodes());
         }
 
-        return getPlot(false, "", "", "");
+        return getPlot(false, plotTitleTf.getText(), xLabelTf.getText(), yLabelTf.getText());
     }
 
     /**
      * @return
      */
     public XYSeries[] getSeries() {
-        XYSeriesCollection collection = new XYSeriesCollection();
+        final XYSeriesCollection collection = new XYSeriesCollection();
         collection.addSeries(avgClusters);
 
         XYSeries[] series = new XYSeries[collection.getSeriesCount()];
@@ -195,7 +197,7 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
     /**
      * @param template
      */
-    void setTemplate(String template) {
+    void setTemplate(final String template) {
         parts = template.split(delimiter);
         prefix = template.substring(0, template.indexOf(delimiter));
         this.template = template;
@@ -203,18 +205,20 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
 
     /**
      * @param observable
-     * @param o
+     * @param object
      */
-    public void update(Observable observable, Object o) {
-        final AbstractTraceMessage m = (AbstractTraceMessage) o;
-        if (!NodeSelectorPanel.isSelected(m.getUrn())) return;
+    public void update(final Observable observable, final Object object) {
+        final AbstractTraceMessage message = (AbstractTraceMessage) object;
+        if (NodeSelectorPanel.isSelected(message.getUrn())) {
 
-        LOGGER.debug(m.getText());
-        if (m.getText().startsWith(prefix)) {
-//            LOGGER.debug("Cluster@" + m.getTime() + ":" + m.getUrn());
-            final String[] mess = m.getText().split(delimiter);
-            setCluster(mess[pid], mess[pcluster].split(clTypeDelimiter)[ptname], ((int) ((m.getTime() - TraceFile.getInstance().getStartTime()) / 1000)));
-            setSemanticEntity(mess[pcluster].split(clTypeDelimiter)[ptname], mess[pid], ((int) ((m.getTime() - TraceFile.getInstance().getStartTime()) / 1000)));
+            LOGGER.debug(message.getText());
+            if (message.getText().startsWith(prefix)) {
+//            LOGGER.debug("Cluster@" + message.getTime() + ":" + message.getUrn());
+                final String[] mess = message.getText().split(delimiter);
+                final int time = ((int) ((message.getTime() - TraceFile.getInstance().getStartTime()) / 1000));
+                setCluster(mess[pid], mess[pcluster].split(clTypeDelimiter)[ptname], time);
+                setSemanticEntity(mess[pcluster].split(clTypeDelimiter)[ptname], mess[pid], time);
+            }
         }
     }
 
@@ -223,13 +227,13 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
      * @param id
      * @param time
      */
-    private void setSemanticEntity(String semanticEntity, String id, int time) {
+    private void setSemanticEntity(final String semanticEntity, final String id, final int time) {
         if (semanticEntityMap.containsKey(semanticEntity)) {
             semanticEntityMap.get(semanticEntity).addNode(id);
         } else {
-            final SemanticEntity semanticEntityEntry = new SemanticEntity(semanticEntity);
-            semanticEntityEntry.addNode(id);
-            semanticEntityMap.put(semanticEntity, semanticEntityEntry);
+            final SemanticEntity seEntityEntry = new SemanticEntity(semanticEntity);
+            seEntityEntry.addNode(id);
+            semanticEntityMap.put(semanticEntity, seEntityEntry);
         }
     }
 
@@ -238,7 +242,7 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
      * @param cluster
      * @param time
      */
-    private void setCluster(String node, String cluster, int time) {
+    private void setCluster(final String node, final String cluster, final int time) {
         Node tempNode;
         if (nodes.containsKey(node)) {
             tempNode = nodes.get(node);
@@ -256,7 +260,7 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
     /**
      * @param time
      */
-    private void set2series(long time) {
+    private void set2series(final long time) {
         double totalClusters = 0;
         final double totalNodes = nodes.size();
 
@@ -280,19 +284,19 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
     /**
      * @param actionEvent
      */
-    public void actionPerformed(ActionEvent actionEvent) {
+    public void actionPerformed(final ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(plotButton)) {
             reset();
             LOGGER.info("|=== parsing tracefile: " + TraceFile.getInstance().getFilename() + "...");
-            TraceReader a = new TraceReader();
-            a.addObserver(this);
-            a.run();
+            final TraceReader reader = new TraceReader();
+            reader.addObserver(this);
+            reader.run();
             LOGGER.info("|--- done parsing!");
             LOGGER.info("|=== generating plot...");
-            JFrame jnew = new JFrame();
-            jnew.add(getPlot());
-            jnew.pack();
-            jnew.setVisible(true);
+            final JFrame frame = new JFrame();
+            frame.add(getPlot());
+            frame.pack();
+            frame.setVisible(true);
             LOGGER.info("|--- presenting plot...");
         } else if (actionEvent.getSource().equals(removeButton)) {
             tabbedPane.remove(this);
@@ -316,29 +320,29 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
      *
      */
     private class Node {
-        private final String id;
-        private Map<String, String> semantics;
+        private final transient String nodeId;
+        private final transient Map<String, String> semantics;
 
         /**
-         * @param id
+         * @param nodeId
          */
-        private Node(String id) {
-            this.id = id;
+        public Node(String nodeId) {
+            this.nodeId = nodeId;
             semantics = new HashMap<String, String>();
         }
 
         /**
          * @return
          */
-        public String getId() {
-            return id;
+        public String getNodeId() {
+            return nodeId;
         }
 
         /**
          * @param semantic
          * @param semid
          */
-        public void setSemantic(String semantic, String semid) {
+        public void setSemantic(final String semantic, final String semid) {
             if (semantics.containsKey(semantic)) {
                 semantics.put(semantic, semid);
             } else {
@@ -359,13 +363,13 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
      *
      */
     private class SemanticEntity {
-        private final String name;
-        private Map<String, String> nodes;
+        private final transient String name;
+        private final transient Map<String, String> nodes;
 
         /**
          * @param name
          */
-        private SemanticEntity(String name) {
+        public SemanticEntity(final String name) {
             this.name = name;
             nodes = new HashMap<String, String>();
         }
@@ -378,10 +382,10 @@ public class ClusterOverlapParser extends GenericParser implements Observer, Act
         }
 
         /**
-         * @param id
+         * @param node
          */
-        public void addNode(String id) {
-            nodes.put(id, "1");
+        public void addNode(final String node) {
+            nodes.put(node, "1");
         }
 
         /**
