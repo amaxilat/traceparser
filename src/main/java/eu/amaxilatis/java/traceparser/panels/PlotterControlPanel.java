@@ -14,17 +14,41 @@ import java.awt.event.ActionListener;
  * Time: 8:03 PM
  */
 public class PlotterControlPanel extends JPanel implements ActionListener {
+    /**
+     * button.
+     */
     private final static JButton UPDATE_BUTTON = new JButton("Apply new Settings");
+    /**
+     * button.
+     */
     private final static JButton RESET_BUTTON = new JButton("Reset");
+    /**
+     * field.
+     */
     private final static JTextField BG_COLOR = new JTextField("default");
+    /**
+     * field.
+     */
     private final static JTextField BORDER_COLOR = new JTextField("default");
+    /**
+     * checkbox.
+     */
     private final static JCheckBox HAS_BORDER = new JCheckBox("", ChartFormatter.isBorder());
+    /**
+     * checkbox.
+     */
     private final static JCheckBox HIDE_LEGEND = new JCheckBox("", ChartFormatter.isHideLegend());
+    /**
+     * checkbox.
+     */
     private final static JCheckBox HIDE_TITLE = new JCheckBox("", ChartFormatter.isHideTitle());
+    /**
+     * size.
+     */
     private final static JSpinner BORDER_SIZE = new JSpinner();
 
     /**
-     *
+     * Constructor.
      */
     public PlotterControlPanel() {
         this.setLayout(new BorderLayout());
@@ -65,7 +89,9 @@ public class PlotterControlPanel extends JPanel implements ActionListener {
     }
 
     /**
-     * @param actionEvent
+     * event listener.
+     *
+     * @param actionEvent action happened
      */
     public void actionPerformed(final ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(UPDATE_BUTTON)) {
@@ -83,24 +109,30 @@ public class PlotterControlPanel extends JPanel implements ActionListener {
     }
 
     /**
-     * @param text
-     * @return
+     * get the rgb code for red.
+     *
+     * @param text value as string
+     * @return value as int
      */
     private int getRed(final String text) {
         return Integer.parseInt(text.split(",")[0]);
     }
 
     /**
-     * @param text
-     * @return
+     * get the rgb code for green.
+     *
+     * @param text value as string
+     * @return value as int
      */
     private int getGreen(final String text) {
         return Integer.parseInt(text.split(",")[1]);
     }
 
     /**
-     * @param text
-     * @return
+     * get the rgb code for blue.
+     *
+     * @param text value as string
+     * @return value as int
      */
     private int getBlue(final String text) {
         return Integer.parseInt(text.split(",")[2]);

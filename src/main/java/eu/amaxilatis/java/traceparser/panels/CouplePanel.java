@@ -4,12 +4,15 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- *
+ * A class use to add 2 Components in a row of a panel.
  */
 public class CouplePanel extends JPanel {
+
     /**
-     * @param first
-     * @param second
+     * constructor.
+     *
+     * @param first  the first component
+     * @param second the second component
      */
     public CouplePanel(final Component first, final Component second) {
 
