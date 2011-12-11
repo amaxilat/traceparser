@@ -20,8 +20,19 @@ import eu.amaxilatis.java.traceparser.traces.TraceFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileInputStream;
@@ -56,8 +67,11 @@ public class TraceParserFrame extends javax.swing.JFrame implements ActionListen
 
     /**
      * Creates new form TraceParserFrame
+     *
+     * @param title
      */
-    public TraceParserFrame() {
+    public TraceParserFrame(String title) {
+        this.setTitle(title);
 
         initComponents();
         this.setVisible(true);
