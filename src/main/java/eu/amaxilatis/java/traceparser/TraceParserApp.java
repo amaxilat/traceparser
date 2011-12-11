@@ -18,14 +18,14 @@ public class TraceParserApp {
         try {
             final Properties properties = new Properties();
             properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("app.properties"));
-            StringBuilder builder = new StringBuilder();
+            final StringBuilder builder = new StringBuilder();
             builder.append(properties.getProperty("name"));
             builder.append(" Version:").append(properties.getProperty("version"));
             builder.append(" Build:").append(properties.getProperty("build"));
             title = builder.toString();
 
         } catch (IOException e) {
-
+            title = "traceparse no version info";
         }
         new TraceParserFrame(title);
     }
