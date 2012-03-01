@@ -33,4 +33,6 @@ public abstract class AbstractTraceMessage {
      * @return
      */
     public abstract String getUrn();
+
+    public abstract String getStrLine();
 }

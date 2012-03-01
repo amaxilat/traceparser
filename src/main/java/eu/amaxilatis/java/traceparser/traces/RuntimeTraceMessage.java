@@ -63,6 +63,9 @@ public class RuntimeTraceMessage extends AbstractTraceMessage {
         this.strLine = strLine;
     }
 
+    public String getStrLine() {
+        return strLine;
+    }
 
     /**
      * @return

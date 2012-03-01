@@ -120,7 +120,7 @@ public class NeighborhoodParser extends GenericParser implements Observer, Actio
         XYSeries[] clustersSeries;
         clustersSeries = series;
 
-        for (XYSeries clustersSery : clustersSeries) {
+        for (final XYSeries clustersSery : clustersSeries) {
             dataset.addSeries(clustersSery);
         }
 
@@ -145,12 +145,13 @@ public class NeighborhoodParser extends GenericParser implements Observer, Actio
 //            LOGGER.info("Neighbor@" + message.getTime() + ":" + message.getUrn());
             final String target = message.getText().split(delimiter)[1];
             if ((message.getText().contains(prefixBidi))) {
-
+                LOGGER.debug("new nbb"+message.getUrn()+" "+message.getStrLine());
                 if (neighborsBidi.containsKey(message.getUrn())) {
                     final HashMap<String, Integer> tmp = neighborsBidi.get(message.getUrn());
-//                    LOGGER.debug("nbsize : " + tmp.size());
+
+
                     tmp.put(target, 1);
-//                    LOGGER.debug("nbsize : " + tmp.size());
+
                     neighborsBidi.put(message.getUrn(), tmp);
                     LOGGER.debug(message.getText());
                     LOGGER.debug(message.getUrn() + " nb size: " + tmp.size());
@@ -161,6 +162,16 @@ public class NeighborhoodParser extends GenericParser implements Observer, Actio
                     LOGGER.debug(message.getText());
                     LOGGER.debug(message.getUrn() + " nb size: " + tmp.size());
                 }
+                synchronized (this) {
+                    final double avgVal = getAvgNeighbors();
+                    final double minVal = getMinNeighbors();
+                    final double maxVal = getMaxNeighbors();
+                    final double timeDouble = ((message.getTime() - TraceFile.getInstance().getStartTime()) / 1000);
+                    LOGGER.info("@" + timeDouble + " : a" + avgVal + " l" + minVal + " h" + maxVal + " ");
+                    series[0].addOrUpdate((int) timeDouble, avgVal);
+                    series[1].addOrUpdate((int) timeDouble, minVal);
+                    series[2].addOrUpdate((int) timeDouble, maxVal);
+                }
             } else if (((message.getText().contains(prefixDrop)) || (message.getText().contains(prefixLost))) &&
                     (neighborsBidi.containsKey(message.getUrn()))) {
                 final HashMap<String, Integer> tmp = neighborsBidi.get(message.getUrn());
@@ -168,16 +179,17 @@ public class NeighborhoodParser extends GenericParser implements Observer, Actio
                 neighborsBidi.put(message.getUrn(), tmp);
                 LOGGER.debug(message.getText());
                 LOGGER.debug(message.getUrn() + " nb size: " + tmp.size());
+                synchronized (this) {
+                    final double avgVal = getAvgNeighbors();
+                    final double minVal = getMinNeighbors();
+                    final double maxVal = getMaxNeighbors();
+                    final double timeDouble = ((message.getTime() - TraceFile.getInstance().getStartTime()) / 1000);
+                    LOGGER.info("@" + timeDouble + " : a" + avgVal + " l" + minVal + " h" + maxVal + " ");
+                    series[0].addOrUpdate((int) timeDouble, avgVal);
+                    series[1].addOrUpdate((int) timeDouble, minVal);
+                    series[2].addOrUpdate((int) timeDouble, maxVal);
+                }
             }
-            final double avgVal = getAvgNeighbors();
-            final double minVal = getMinNeighbors();
-            final double maxVal = getMaxNeighbors();
-            final double timeDouble = ((message.getTime() - TraceFile.getInstance().getStartTime()) / 1000);
-            LOGGER.info("@" + timeDouble + " : a" + avgVal + " l" + minVal + " h" + maxVal + " ");
-            series[0].addOrUpdate((int) timeDouble, avgVal);
-            series[1].addOrUpdate((int) timeDouble, minVal);
-            series[2].addOrUpdate((int) timeDouble, maxVal);
-
 
         }
     }
@@ -188,9 +200,9 @@ public class NeighborhoodParser extends GenericParser implements Observer, Actio
     private double getAvgNeighbors() {
         int count = 0;
         int sum = 0;
-//        LOGGER.info(neighborsBidi.keySet().toString());
-        for (String urn : neighborsBidi.keySet()) {
-//            LOGGER.info(String.valueOf(neighborsBidi.get(urn).size()));
+        LOGGER.debug(neighborsBidi.keySet().toString());
+        for (final String urn : neighborsBidi.keySet()) {
+            LOGGER.debug(String.valueOf(neighborsBidi.get(urn).size()));
             sum += neighborsBidi.get(urn).size();
             count++;
         }
@@ -206,7 +218,7 @@ public class NeighborhoodParser extends GenericParser implements Observer, Actio
      */
     private double getMaxNeighbors() {
         int max = 0;
-        for (String urn : neighborsBidi.keySet()) {
+        for (final String urn : neighborsBidi.keySet()) {
             if (max < neighborsBidi.get(urn).size()) {
                 max = neighborsBidi.get(urn).size();
             }
@@ -218,13 +230,10 @@ public class NeighborhoodParser extends GenericParser implements Observer, Actio
      * @return
      */
     private double getMinNeighbors() {
-        int min = 0;
-        for (String urn : neighborsBidi.keySet()) {
+        int min = 999;
+        for (final String urn : neighborsBidi.keySet()) {
 
             if (min > neighborsBidi.get(urn).size()) {
-                min = neighborsBidi.get(urn).size();
-            }
-            if (min == 0) {
                 min = neighborsBidi.get(urn).size();
             }
         }

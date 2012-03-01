@@ -1,9 +1,3 @@
-/*
- * ParseOrPlotFrame.java
- *
- * Created on Jun 22, 2011, 5:23:34 PM
- */
-
 package eu.amaxilatis.java.traceparser.frames;
 
 

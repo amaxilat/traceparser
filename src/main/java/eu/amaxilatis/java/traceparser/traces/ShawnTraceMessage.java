@@ -94,4 +94,9 @@ public class ShawnTraceMessage extends AbstractTraceMessage {
         final int nodeUrnStop = strLine.indexOf(ENDTEXT, nodeUrnStart);
         return strLine.substring(nodeUrnStart, nodeUrnStop);
     }
+
+    @Override
+    public String getStrLine() {
+        return strLine;
+    }
 }

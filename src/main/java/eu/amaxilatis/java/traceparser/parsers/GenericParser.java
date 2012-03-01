@@ -2,11 +2,11 @@ package eu.amaxilatis.java.traceparser.parsers;
 
 import eu.amaxilatis.java.traceparser.panels.CouplePanel;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import javax.swing.JLabel;
 import java.awt.Component;
+import java.awt.GridLayout;
 
 /**
  * Superclass for all parsers.
@@ -37,9 +37,11 @@ public class GenericParser extends JPanel {
      * number of columns.
      */
     private static final int COLUMNS = 2;
+    public static String NAME = "";
 
     /**
      * default constructor.
+     *
      * @param name the name of the panel
      */
     protected GenericParser(final String name) {
